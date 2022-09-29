@@ -2,7 +2,7 @@ def load(model_name='en_legal_ner_trf'):
     from opennyai.ner.InLegalNER.InLegalNER import InLegalNER
     AVAILABLE_MODELS = ['en_legal_ner_trf', 'en_legal_ner_sm']
     if model_name not in AVAILABLE_MODELS:
-        ValueError(f'{model_name} doesn\'t exit in list of available models {AVAILABLE_MODELS}')
+        raise RuntimeError(f'{model_name} doesn\'t exit in list of available models {AVAILABLE_MODELS}')
     return InLegalNER(model_name)
 
 

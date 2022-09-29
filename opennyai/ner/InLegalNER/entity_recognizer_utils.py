@@ -164,4 +164,3 @@ def get_sentence_docs(doc_judgment, nlp_judgment):
         docs.append(doc)
     combined_docs = spacy.tokens.Doc.from_docs(docs)
     return combined_docs
-

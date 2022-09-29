@@ -12,7 +12,7 @@ class InLegalNER:
                 if models_url.get(mdl) is not None:
                     install(models_url[mdl])
                 else:
-                    ValueError(f'{model_name} doesn\'t exist in list of available opennyai ner models')
+                    raise RuntimeError(f'{model_name} doesn\'t exist in list of available opennyai ner models')
         try:
             if spacy.prefer_gpu():
                 msg.info(title='GPU')
@@ -23,7 +23,11 @@ class InLegalNER:
             msg.info(title='CPU')
         self.model_name = model_name
         self.nlp = spacy.load(self.model_name)
-        self.__splitter_nlp__ = spacy.load('en_core_web_sm')
+        try:
+            self.__splitter_nlp__ = spacy.load('en_core_web_sm')
+        except:
+            raise RuntimeError(
+                'There was an error while loading en_core_web_sm\n To rectify try running:\n pip install -U https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.2.0/en_core_web_sm-3.2.0-py3-none-any.whl')
 
     def __call__(self, text, do_sentence_level=True):
         nlp_doc = extract_entities_from_judgment_text(txt=text, legal_nlp=self.nlp,
