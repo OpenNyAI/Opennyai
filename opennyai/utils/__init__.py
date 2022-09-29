@@ -1,0 +1,1 @@
+from .__ikscrapper__ import get_text_from_indiankanoon_url
