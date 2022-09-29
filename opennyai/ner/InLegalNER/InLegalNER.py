@@ -1,6 +1,6 @@
 import spacy
 from wasabi import msg
-from .utils import extract_entities_from_judgment_text
+from .entity_recognizer_utils import extract_entities_from_judgment_text
 from .download import install, models_url
 
 
@@ -26,6 +26,7 @@ class InLegalNER:
         self.__splitter_nlp__ = spacy.load('en_core_web_sm')
 
     def __call__(self, text, do_sentence_level=True):
-        return extract_entities_from_judgment_text(txt=text, legal_nlp=self.nlp,
+        nlp_doc = extract_entities_from_judgment_text(txt=text, legal_nlp=self.nlp,
                                                    preamble_splitting_nlp=self.__splitter_nlp__,
                                                    do_sentence_level=do_sentence_level)
+        return nlp_doc
