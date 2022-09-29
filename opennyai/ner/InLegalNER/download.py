@@ -10,5 +10,5 @@ def install(package):
     import sys
 
     subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", package, "--no-deps"],
+        [sys.executable, "-m", "pip", "install", package, "--no-deps"],stdout=subprocess.DEVNULL
     )
