@@ -1,3 +1,6 @@
+import subprocess
+import sys
+
 """Functions for downloading opennyai ner models."""
 models_url = {
     "en_legal_ner_trf": "https://huggingface.co/opennyaiorg/en_legal_ner_trf/resolve/main/en_legal_ner_trf-any-py3-none-any.whl",
@@ -7,9 +10,6 @@ models_url = {
 
 
 def install(package):
-    import subprocess
-    import sys
-
     subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", package, "--no-deps"],stdout=subprocess.DEVNULL
+        [sys.executable, "-m", "pip", "install", package, "--no-deps"], stdout=subprocess.DEVNULL
     )

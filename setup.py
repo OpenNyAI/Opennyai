@@ -12,14 +12,9 @@ Instructions for creating a release of the opennyai library.
    This step will ask you for a username and password - the username & password get from [AUTHOR]
 """
 
-VERSION = {}
-# version.py defines VERSION variables.
-with open("opennyai/__init__.py", "r") as version_file:
-    exec(version_file.read(), VERSION)
-
 setup(
     name="opennyai",
-    version=VERSION["__version__"],
+    version="0.0.3",
     url="",
     author="Aman Tiwari",
     author_email="aman.tiwari@thoughtworks.com",
