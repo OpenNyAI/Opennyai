@@ -1,6 +1,8 @@
 import spacy
 from wasabi import msg
 from .entity_recognizer_utils import extract_entities_from_judgment_text
+from .postprocessing_utils import precedent_coref_resol, other_person_coref_res, pro_statute_coref_resol, \
+    remove_overlapping_entities
 from .download import install, models_url
 
 
@@ -29,8 +31,21 @@ class InLegalNER:
             raise RuntimeError(
                 'There was an error while loading en_core_web_sm\n To rectify try running:\n pip install -U https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.2.0/en_core_web_sm-3.2.0-py3-none-any.whl')
 
-    def __call__(self, text, do_sentence_level=True):
+    def __call__(self, text, do_sentence_level=True, do_postprocess=False):
         nlp_doc = extract_entities_from_judgment_text(txt=text, legal_nlp=self.nlp,
-                                                   preamble_splitting_nlp=self.__splitter_nlp__,
-                                                   do_sentence_level=do_sentence_level)
+                                                      preamble_splitting_nlp=self.__splitter_nlp__,
+                                                      do_sentence_level=do_sentence_level)
+        if do_sentence_level and do_postprocess:
+            precedent_clusters = precedent_coref_resol(nlp_doc)
+
+            other_person_entiites = other_person_coref_res(nlp_doc)
+            pro_sta_clusters = pro_statute_coref_resol(nlp_doc)
+            all_entities = remove_overlapping_entities(nlp_doc.ents)
+
+            all_entities.extend(other_person_entiites)
+
+            nlp_doc.ents = all_entities
+            nlp_doc.set_extension("precedent_clusters", default=precedent_clusters, force=True)
+            nlp_doc.set_extension("provision_statute_clusters", default=pro_sta_clusters, force=True)
+
         return nlp_doc

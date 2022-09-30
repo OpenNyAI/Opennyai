@@ -41,7 +41,8 @@ setup(
         "spacy-transformers==1.1.5",
         "urllib3==1.26.11",
         "beautifulsoup4==4.10.0",
-        "requests==2.28.1"],
+        "requests==2.28.1",
+        "nltk==3.7"],
     tests_require=["pytest", "pytest-cov"],
     python_requires=">=3.9.0",
 )
