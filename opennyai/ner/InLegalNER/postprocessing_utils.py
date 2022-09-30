@@ -79,23 +79,25 @@ def create_precedent_clusters(precedent_breakup, threshold):
 
         cluster = []
         cluster.append(pre)
+        if pet != None and res != None:
 
-        for j in range(i + 1, len(precedent_breakup)):
+            for j in range(i + 1, len(precedent_breakup)):
 
-            pet_1 = list(precedent_breakup.values())[j][0]
-            res_1 = list(precedent_breakup.values())[j][1]
-            if pet_1 == None or res_1 == None:
-                exclude.append(j)
-                continue
-            dis_pet = nltk.edit_distance(pet, pet_1)
-            dis_res = nltk.edit_distance(res, res_1)
+                pet_1 = list(precedent_breakup.values())[j][0]
+                res_1 = list(precedent_breakup.values())[j][1]
+                if pet_1 == None or res_1 == None:
+                    exclude.append(j)
+                    continue
 
-            if dis_pet < threshold and dis_res < threshold:
-                exclude.append(j)
-                cluster.append(list(precedent_breakup.keys())[j])
+                dis_pet = nltk.edit_distance(pet, pet_1)
+                dis_res = nltk.edit_distance(res, res_1)
 
-        precedent_clusters[cluster_num] = cluster
-        cluster_num = cluster_num + 1
+                if dis_pet < threshold and dis_res < threshold:
+                    exclude.append(j)
+                    cluster.append(list(precedent_breakup.keys())[j])
+
+            precedent_clusters[cluster_num] = cluster
+            cluster_num = cluster_num + 1
     return precedent_clusters
 
 
@@ -155,7 +157,7 @@ def precedent_coref_resol(doc):
     precedent_breakup = split_precedents(entities_precedents)
 
     precedent_clusters = create_precedent_clusters(precedent_breakup,
-                                                   threshold=5)  # ToDo solve bug of len() in precedent_coref_resol
+                                                   threshold=5)
 
     precedent_supra_matches = get_precedent_supras(doc, entities_pn, entities_precedents)
 
