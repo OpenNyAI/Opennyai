@@ -26,7 +26,7 @@ class InLegalNER:
         self.model_name = model_name
         self.nlp = spacy.load(self.model_name)
         try:
-            self.__splitter_nlp__ = spacy.load('en_core_web_sm')
+            self.__splitter_nlp__ = spacy.load('en_core_web_md', exclude=['attribute_ruler', 'lemmatizer', 'ner'])
         except:
             raise RuntimeError(
                 'There was an error while loading en_core_web_sm\n To rectify try running:\n pip install -U https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.2.0/en_core_web_sm-3.2.0-py3-none-any.whl')
@@ -40,7 +40,8 @@ class InLegalNER:
 
             other_person_entiites = other_person_coref_res(nlp_doc)
             pro_sta_clusters = pro_statute_coref_resol(nlp_doc)
-            all_entities = remove_overlapping_entities(nlp_doc.ents)
+
+            all_entities = remove_overlapping_entities(nlp_doc.ents, pro_sta_clusters)
 
             all_entities.extend(other_person_entiites)
 
