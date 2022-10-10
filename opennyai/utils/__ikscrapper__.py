@@ -15,12 +15,13 @@ def get_useful_text_from_indiankanoon_html_tag(ik_tag):
 
 
 def check_hidden_text_is_invalid(text):
-    if not bool(re.match('[a-zA-Z]', "".join(text.split()))):
-        return True
-    elif bool(re.match('::: (Uploaded on - |Downloaded on -)+ .*?:::', text)):
-        return True
-    else:
-        return False
+    return True  ## Most of the times hiddent text is garbage
+    # if not bool(re.match('[a-zA-Z]',"".join(text.split()))):
+    #     return True
+    # elif bool(re.match('::: (Uploaded on - |Downloaded on -)+ .*?:::',text)):
+    #     return True
+    # else:
+    #     return False
 
 
 def get_text_from_indiankanoon_url(url):
@@ -39,10 +40,10 @@ def get_text_from_indiankanoon_url(url):
                                                            judgment_txt_tag['id'].startswith('pre_')):
                 for content in judgment_txt_tag.contents:
                     if isinstance(content, Tag):
-                        if content.get('class') is not None and 'hidden_text' not in content['class']:
-                            # if not check_hidden_text_is_invalid(content.text.strip()):
-                            #     tag_txt = tag_txt + str(content)
-                            # else:
+                        if content.get('class') is not None and 'hidden_text' in content['class']:
+                            if not check_hidden_text_is_invalid(content.text.strip()):
+                                tag_txt = tag_txt + str(content)
+                        else:
                             tag_txt = tag_txt + content.text
                     else:
                         tag_txt = tag_txt + str(content)
