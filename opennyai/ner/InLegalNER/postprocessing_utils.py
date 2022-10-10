@@ -1,5 +1,6 @@
 import re
 import nltk
+import spacy
 
 
 def get_entities(doc, labels):
@@ -156,8 +157,7 @@ def precedent_coref_resol(doc):
 
     precedent_breakup = split_precedents(entities_precedents)
 
-    precedent_clusters = create_precedent_clusters(precedent_breakup,
-                                                   threshold=5)
+    precedent_clusters = create_precedent_clusters(precedent_breakup, threshold=5)
 
     precedent_supra_matches = get_precedent_supras(doc, entities_pn, entities_precedents)
 
@@ -325,11 +325,17 @@ def other_person_coref_res(doc):
     return other_person_found
 
 
-def remove_overlapping_entities(ents):
+def remove_overlapping_entities(ents, pro_sta_clusters):
     final_ents = []
     for i in ents:
-        if i.label_ not in ['PETITIONER', 'RESPONDENT', 'LAWYER', 'JUDGE', 'OTHER_PERSON', 'WITNESS']:
+        if i.label_ not in ['PETITIONER', 'RESPONDENT', 'LAWYER', 'JUDGE', 'OTHER_PERSON', 'WITNESS', 'PROVISION']:
             final_ents.append(i)
+
+    for cluster in pro_sta_clusters:
+        if cluster[0] not in final_ents:
+            final_ents.append(cluster[0])
+    final_ents = spacy.util.filter_spans(final_ents)
+
     return final_ents
 
 
@@ -552,4 +558,42 @@ def pro_statute_coref_resol(doc):
                                                                                      explicit_ents, pro_statute,
                                                                                      total_statutes)
     clusters = get_clusters(pro_statute, explicit_ents, total_statutes)
+    clusters = seperate_provision(doc, clusters)
     return clusters
+
+
+def seperate_provision(doc, clusters):
+    new_clusters = []
+
+    for cluster in clusters:
+        provision = cluster[0]
+        statute = cluster[1]
+        section = re.split(',|and|/|or', provision.text)
+        start = provision.start_char
+        pro = provision.text
+        keyword = section[0].split(' ')[0]
+        if keyword[-1] == 's':
+            keyword = keyword[:-1]
+        combined = False
+        for sec in section:
+            if not sec.strip()[0].isalpha() and not sec.strip()[0].isnumeric():
+                combined = True
+                break
+
+        if len(section) > 1 and not combined:
+            for sec in section:
+
+                ind = pro.find(sec)
+                sect = doc.char_span(start + ind, start + ind + len(sec), "PROVISION", alignment_mode='expand')
+                pro = pro[ind + len(sec):]
+                start = start + ind + len(sec)
+                if not sec.strip()[0].isalpha():
+                    new_clusters.append((sect, statute, keyword + ' ' + sect.text))
+                else:
+                    new_clusters.append((sect, statute, keyword + ' ' + ' '.join(sect.text.split(' ')[1:])))
+
+
+
+        else:
+            new_clusters.append((cluster[0], cluster[1], cluster[0].text))
+    return new_clusters
