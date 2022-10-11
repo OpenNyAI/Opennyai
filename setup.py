@@ -14,7 +14,7 @@ Instructions for creating a release of the opennyai library.
 
 setup(
     name="opennyai",
-    version="0.0.3",
+    version="0.0.4",
     url="",
     author="Aman Tiwari",
     author_email="aman.tiwari@thoughtworks.com",
@@ -39,5 +39,5 @@ setup(
         "requests==2.28.1",
         "nltk==3.7"],
     tests_require=["pytest", "pytest-cov"],
-    python_requires=">=3.9.0",
+    python_requires=">=3.7.0",
 )

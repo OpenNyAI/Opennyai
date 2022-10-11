@@ -3,7 +3,7 @@
 # Opennyai : An efficient NLP Pipeline for Indian Legal documents
 
 [![PyPI version](https://badge.fury.io/py/opennyai.svg)](https://pypi.org/project/opennyai/)
-[![python version](https://img.shields.io/badge/Python-%3E=3.9-blue)](https://github.com/OpenNyAI/Opennyai)
+[![python version](https://img.shields.io/badge/Python-%3E=3.7-blue)](https://github.com/OpenNyAI/Opennyai)
 
 Opennyai is a natural language preprocessing framework made with SpaCy. Its pipeline has achieved State-of-the-Art
 performance on Named entity recognition on Indian legal NER.
@@ -30,13 +30,14 @@ To use the NER model you first have to select and load model from given list.
 * en_legal_ner_trf (This model provides the highest accuracy)
 * en_legal_ner_sm (This model provides the highest efficiency)
 
+Available sentence splitter models are ['en_core_web_md', 'en_core_web_sm', 'en_core_web_trf']
+
 To download and load a model simply execute:
 
 ```python
 import opennyai.ner as InLegalNER
 
-nlp = InLegalNER.load('en_legal_ner_trf',
-                      sentence_splitter_model_name='en_core_web_trf')  # available sentence splitter models are ['en_core_web_md', 'en_core_web_sm', 'en_core_web_trf']
+nlp = InLegalNER.load('en_legal_ner_trf', sentence_splitter_model_name='en_core_web_trf')
 text = 'Section 319 Cr.P.C. contemplates a situation where the evidence adduced by the prosecution for Respondent No.3-G. Sambiah on 20th June 1984'
 doc = nlp(text, do_sentence_level=False,
           do_postprocess=False)  # set do_sentence_level=True if you pass whole judgement 
