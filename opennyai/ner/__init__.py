@@ -1,11 +1,15 @@
 from opennyai.ner.InLegalNER.InLegalNER import InLegalNER
 
 
-def load(model_name='en_legal_ner_trf'):
-    AVAILABLE_MODELS = ['en_legal_ner_trf', 'en_legal_ner_sm']
-    if model_name not in AVAILABLE_MODELS:
-        raise RuntimeError(f'{model_name} doesn\'t exit in list of available models {AVAILABLE_MODELS}')
-    return InLegalNER(model_name)
+def load(model_name='en_legal_ner_trf', sentence_splitter_model_name='en_core_web_trf'):
+    AVAILABLE_LEGAL_NER_MODELS = ['en_legal_ner_trf', 'en_legal_ner_sm']
+    if model_name not in AVAILABLE_LEGAL_NER_MODELS:
+        raise RuntimeError(f'{model_name} doesn\'t exit in list of available models {AVAILABLE_LEGAL_NER_MODELS}')
+    AVAILABLE_TEXT_SPLITTING_MODELS = ['en_core_web_md', 'en_core_web_sm', 'en_core_web_trf']
+    if sentence_splitter_model_name not in AVAILABLE_TEXT_SPLITTING_MODELS:
+        raise RuntimeError(
+            f'{sentence_splitter_model_name} doesn\'t exit in list of available models {AVAILABLE_TEXT_SPLITTING_MODELS}')
+    return InLegalNER(model_name, sentence_splitter_model_name)
 
 
 def get_json_from_spacy_doc(doc):
@@ -16,15 +20,14 @@ def get_json_from_spacy_doc(doc):
     for ent in doc.ents:
         import uuid
         uid = uuid.uuid4()
-        output['annotations'][0]['result'].append(copy.deepcopy({
-            "value": {
-                "start": ent.start_char,
-                "end": ent.end_char,
-                "text": ent.text,
-                "labels": [ent.label_],
-                "id": uid.hex
-            }
-        }))
+        output['annotations'][0]['result'].append(copy.deepcopy({"id": uid.hex,
+                                                                 "value": {
+                                                                     "start": ent.start_char,
+                                                                     "end": ent.end_char,
+                                                                     "text": ent.text,
+                                                                     "labels": [ent.label_],
+                                                                 }
+                                                                 }))
     return output
 
 
