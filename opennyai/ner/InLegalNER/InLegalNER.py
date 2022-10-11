@@ -7,8 +7,8 @@ from .download import install, models_url
 
 
 class InLegalNER:
-    def __init__(self, model_name='en_legal_ner_trf'):
-        for mdl in [model_name, 'en_core_web_sm']:
+    def __init__(self, model_name='en_legal_ner_trf', sentence_splitter_model_name='en_core_web_trf'):
+        for mdl in [model_name, sentence_splitter_model_name]:
             if mdl not in spacy.util.get_installed_models():
                 msg.info(f'Installing {mdl} this is a one time process!!')
                 if models_url.get(mdl) is not None:
@@ -26,7 +26,8 @@ class InLegalNER:
         self.model_name = model_name
         self.nlp = spacy.load(self.model_name)
         try:
-            self.__splitter_nlp__ = spacy.load('en_core_web_trf', exclude=['attribute_ruler', 'lemmatizer', 'ner'])
+            self.__splitter_nlp__ = spacy.load(sentence_splitter_model_name,
+                                               exclude=['attribute_ruler', 'lemmatizer', 'ner'])
         except:
             raise RuntimeError(
                 'There was an error while loading en_core_web_sm\n To rectify try running:\n pip install -U https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.2.0/en_core_web_sm-3.2.0-py3-none-any.whl')
