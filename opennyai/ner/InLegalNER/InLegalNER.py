@@ -26,7 +26,7 @@ class InLegalNER:
         self.model_name = model_name
         self.nlp = spacy.load(self.model_name)
         try:
-            self.__splitter_nlp__ = spacy.load('en_core_web_md', exclude=['attribute_ruler', 'lemmatizer', 'ner'])
+            self.__splitter_nlp__ = spacy.load('en_core_web_trf', exclude=['attribute_ruler', 'lemmatizer', 'ner'])
         except:
             raise RuntimeError(
                 'There was an error while loading en_core_web_sm\n To rectify try running:\n pip install -U https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.2.0/en_core_web_sm-3.2.0-py3-none-any.whl')
