@@ -36,7 +36,8 @@ setup(
         "urllib3==1.26.11",
         "beautifulsoup4==4.10.0",
         "requests==2.28.1",
-        "nltk==3.7"],
+        "nltk==3.7",
+        "tqdm>=4.63.0,<4.64.1"],
     tests_require=["pytest", "pytest-cov"],
     python_requires=">=3.7.0",
 )
