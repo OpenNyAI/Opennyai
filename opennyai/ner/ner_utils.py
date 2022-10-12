@@ -56,8 +56,9 @@ def update_json_with_clusters(ls_formatted_doc: dict, precedent_clusters: list, 
 
 
 def get_json_from_spacy_doc(doc):
-    id = "LegalNER_" + str(sha256(doc.text.encode('utf-8')).hexdigest())
-    output = {'id': id, 'annotations': [{'result': []}], 'data': {'text': doc.text}}
+    id = "LegalNER_" + doc._.doc_id
+    output = {'id': id, 'annotations': [{'result': []}],
+              'data': {'text': doc.text, 'original_text': doc._.original_text}}
     for ent in doc.ents:
         import uuid
         uid = uuid.uuid4()

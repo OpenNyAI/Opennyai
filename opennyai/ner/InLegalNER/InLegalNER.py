@@ -37,6 +37,8 @@ class InLegalNER:
             nlp_doc = extract_entities_from_judgment_text(to_process=to_process, legal_nlp=self.nlp,
                                                           do_sentence_level=do_sentence_level,
                                                           mini_batch_size=mini_batch_size)
+            nlp_doc.set_extension("doc_id", default=to_process['file_id'], force=True)
+            nlp_doc.set_extension("original_text", default=to_process['original_text'], force=True)
             try:
                 if do_sentence_level and do_postprocess:
                     precedent_clusters = precedent_coref_resol(nlp_doc)
