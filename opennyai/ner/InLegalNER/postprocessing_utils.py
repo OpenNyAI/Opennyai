@@ -38,7 +38,6 @@ def get_precedent_supras(doc, entities_pn, entities_precedents):
             supras.append(entities_pn[ends.index(match.start())])
 
     supra_precedent_matches = {}
-    updated_supra_precedent_matches = {}
 
     for supra in supras:
         matches = []
@@ -54,16 +53,6 @@ def get_precedent_supras(doc, entities_pn, entities_precedents):
                 matches.append(precedent)
         if len(matches) > 0:
             supra_precedent_matches[supra] = matches[-1]
-
-        # else:
-        #     supra_precedent_matches[supra]=supra
-
-    # for supra_keys in supra_precedent_matches.keys():
-    #     if len(supra_precedent_matches[supra_keys]) > 0:
-    #         updated_supra_precedent_matches[supra_keys] = max(supra_precedent_matches[supra_keys], key=len)
-    #     else:
-    #         updated_supra_precedent_matches[supra_keys] = supra_keys
-
     return supra_precedent_matches
 
 
@@ -150,7 +139,6 @@ def set_main_cluster(clusters):
     return final_clusters
 
 
-# @Language.component("precedent_resolution")
 def precedent_coref_resol(doc):
     entities_pn = get_entities(doc, ['OTHER_PERSON', 'ORG', 'PETITIONER', 'RESPONDENT'])
     entities_precedents = get_entities(doc, ['PRECEDENT'])
@@ -165,22 +153,6 @@ def precedent_coref_resol(doc):
 
     final_clusters = set_main_cluster(precedent_supra_clusters)
 
-    all_entities = list(doc.ents)
-    # c = 0
-    # for i, cluster in enumerate(final_clusters.keys()):
-    #
-    #
-    #     if len( final_clusters[cluster])>1:
-    #         for pre in final_clusters[cluster]:
-    #
-    #
-    #                 if pre in all_entities':
-    #                     all_entities.remove(pre)
-    #                     pre.label_ = str(c) + '_precedent'
-    #
-    #
-    #                     all_entities.append(pre)
-    #         c = c + 1
     return final_clusters
 
 
@@ -212,12 +184,10 @@ def map_exact_other_person(doc):
     ents_text = [' '.join(oth.text.split()).lower().replace(',', '') for oth in entities]
     count = 0
     other_person_found = []
-    person_label_known = []
     other_person_to_remove = []
     for i, other_p in enumerate(other_person):
 
         if other_person_text[i] in ents_text:
-            labels = []
             labels = [entities[j].label_ for j, x in enumerate(ents_text) if other_person_text[i] == x]
 
             if len(set(labels)) == 1:
@@ -241,7 +211,6 @@ def check_alias(names):
     names_labels = []
     for i, name in enumerate(names_text):
         new_names = re.split('@|alias', name[0])
-        #
         if len(new_names) > 1:
             for n in new_names:
                 names_labels.append([n.strip(), name[1], i])
@@ -260,7 +229,6 @@ def separate_name(names, only_first_last_name):
             if not only_first_last_name:
                 separated_names.append([separated[-1], name[1], name[2]])
                 separated_names.append([' '.join(separated[:-1]), name[1], name[2]])
-
 
         else:
             separated_names.append([separated[0], name[1], name[2]])
@@ -496,17 +464,8 @@ def get_clusters(pro_statute, explicit_ents, total_statute):
     ents = []
     for ent in custom_ents:
         clusters.append((ent[0], ent[1]))
-        # ent[0].label_ = ent[1].text+'_statute'
-        # ents.append(ent[0])
     for ent in explicit_ents:
         clusters.append((ent[0], ent[1]))
-        # ents.append(ent[0])
-        # if ent[1] not in ents:
-        #     ents.append(ent[1])
-    # ents = list(set(ents))
-    # for sta in total_statute:
-    #     if sta not in ents:
-    #         ents.append(sta)
     return clusters
 
 
@@ -591,8 +550,6 @@ def seperate_provision(doc, clusters):
                     new_clusters.append((sect, statute, keyword + ' ' + sect.text))
                 else:
                     new_clusters.append((sect, statute, keyword + ' ' + ' '.join(sect.text.split(' ')[1:])))
-
-
 
         else:
             new_clusters.append((cluster[0], cluster[1], cluster[0].text))

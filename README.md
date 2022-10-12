@@ -36,7 +36,7 @@ To download and load a model simply execute:
 
 ```python
 import opennyai.ner as InLegalNER
-from opennyai.utils.preprocess import Data
+from opennyai.utils import Data
 
 text = 'Section 319 Cr.P.C. contemplates a situation where the evidence adduced by the prosecution for Respondent No.3-G. Sambiah on 20th June 1984'
 # you can pass multiple documents in form of list to below line of code
