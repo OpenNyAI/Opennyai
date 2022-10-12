@@ -40,10 +40,10 @@ from opennyai.utils.preprocess import Data
 
 text = 'Section 319 Cr.P.C. contemplates a situation where the evidence adduced by the prosecution for Respondent No.3-G. Sambiah on 20th June 1984'
 data = Data(text, preprocessing_nlp_model='en_core_web_trf', mini_batch_size=40000, use_gpu=True, verbose=False)
-nlp = InLegalNER.load('en_legal_ner_trf')
-doc = nlp(text, do_sentence_level=True,
+nlp = InLegalNER.load('en_legal_ner_trf', use_gpu=True)
+doc = nlp(data, do_sentence_level=True,
           do_postprocess=True, mini_batch_size=40000,
-          verbose=False)  # set do_sentence_level and do_postprocess to False if you pass sentence 
+          verbose=False)  # set do_sentence_level and do_postprocess to False if you pass a sentence 
 identified_entites = [(ent, ent.label_) for ent in doc.ents]
 ```
 

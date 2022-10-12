@@ -8,20 +8,23 @@ from opennyai.utils.download import install, models_url
 
 
 class InLegalNER:
-    def __init__(self, model_name='en_legal_ner_trf'):
+    def __init__(self, model_name='en_legal_ner_trf', use_gpu=True):
         if model_name not in spacy.util.get_installed_models():
             msg.info(f'Installing {model_name} this is a one time process!!')
             if models_url.get(model_name) is not None:
                 install(models_url[model_name])
             else:
                 raise RuntimeError(f'{model_name} doesn\'t exist in list of available opennyai ner models')
-        try:
-            if spacy.prefer_gpu():
-                msg.info(title='NER will run on GPU')
-            else:
+        if use_gpu:
+            try:
+                if spacy.prefer_gpu():
+                    msg.info(title='NER will run on GPU')
+                else:
+                    msg.info(title='NER will run on CPU')
+                spacy.prefer_gpu()
+            except:
                 msg.info(title='NER will run on CPU')
-            spacy.prefer_gpu()
-        except:
+        else:
             msg.info(title='NER will run on CPU')
         self.model_name = model_name
         self.nlp = spacy.load(self.model_name)
@@ -34,19 +37,23 @@ class InLegalNER:
             nlp_doc = extract_entities_from_judgment_text(to_process=to_process, legal_nlp=self.nlp,
                                                           do_sentence_level=do_sentence_level,
                                                           mini_batch_size=mini_batch_size)
-            if do_sentence_level and do_postprocess:
-                precedent_clusters = precedent_coref_resol(nlp_doc)
+            try:
+                if do_sentence_level and do_postprocess:
+                    precedent_clusters = precedent_coref_resol(nlp_doc)
 
-                other_person_entites = other_person_coref_res(nlp_doc)
-                pro_sta_clusters = pro_statute_coref_resol(nlp_doc)
+                    other_person_entites = other_person_coref_res(nlp_doc)
+                    pro_sta_clusters = pro_statute_coref_resol(nlp_doc)
 
-                all_entities = remove_overlapping_entities(nlp_doc.ents, pro_sta_clusters)
+                    all_entities = remove_overlapping_entities(nlp_doc.ents, pro_sta_clusters)
 
-                all_entities.extend(other_person_entites)
+                    all_entities.extend(other_person_entites)
 
-                nlp_doc.ents = all_entities
-                nlp_doc.set_extension("precedent_clusters", default=precedent_clusters, force=True)
-                nlp_doc.set_extension("provision_statute_clusters", default=pro_sta_clusters, force=True)
+                    nlp_doc.ents = all_entities
+                    nlp_doc.set_extension("precedent_clusters", default=precedent_clusters, force=True)
+                    nlp_doc.set_extension("provision_statute_clusters", default=pro_sta_clusters, force=True)
+            except:
+                msg.warn(
+                    'There was some issue while performing postprocessing, skipping postprocessing...')
             processed_data.append(nlp_doc)
         if len(processed_data) == 1:
             return processed_data[0]

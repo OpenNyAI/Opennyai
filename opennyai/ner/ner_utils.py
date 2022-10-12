@@ -1,12 +1,13 @@
 from opennyai.ner.InLegalNER.InLegalNER import InLegalNER
 import copy
+from hashlib import sha256
 
 
-def load(model_name='en_legal_ner_trf'):
+def load(model_name='en_legal_ner_trf', use_gpu=True):
     AVAILABLE_LEGAL_NER_MODELS = ['en_legal_ner_trf', 'en_legal_ner_sm']
     if model_name not in AVAILABLE_LEGAL_NER_MODELS:
         raise RuntimeError(f'{model_name} doesn\'t exit in list of available models {AVAILABLE_LEGAL_NER_MODELS}')
-    return InLegalNER(model_name)
+    return InLegalNER(model_name, use_gpu)
 
 
 def find_parent_child_id(cluster: list, ls_formatted_doc: dict):
@@ -55,9 +56,7 @@ def update_json_with_clusters(ls_formatted_doc: dict, precedent_clusters: list, 
 
 
 def get_json_from_spacy_doc(doc):
-    import uuid, copy
-    uid = uuid.uuid4()
-    id = "LegalNER_" + str(uid.hex)
+    id = "LegalNER_" + str(sha256(doc.text.encode('utf-8')).hexdigest())
     output = {'id': id, 'annotations': [{'result': []}], 'data': {'text': doc.text}}
     for ent in doc.ents:
         import uuid
