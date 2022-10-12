@@ -2,7 +2,7 @@ import spacy
 from hashlib import sha256
 from wasabi import msg
 from tqdm import tqdm
-from .download import models_url, install
+from .download import PIP_INSTALLER_URLS, install
 from .sentencizer import split_main_judgement_to_preamble_and_judgement
 
 
@@ -23,10 +23,11 @@ class Data:
             raise RuntimeError('No input or wrong given, we accept input as string or list of strings')
         if preprocessing_nlp_model not in spacy.util.get_installed_models():
             msg.info(f'Installing {preprocessing_nlp_model} this is a one time process!!')
-            if models_url.get(preprocessing_nlp_model) is not None and preprocessing_nlp_model in ['en_core_web_trf',
-                                                                                                   'en_core_web_sm',
-                                                                                                   'en_core_web_md']:
-                install(models_url[preprocessing_nlp_model])
+            if PIP_INSTALLER_URLS.get(preprocessing_nlp_model) is not None and preprocessing_nlp_model in [
+                'en_core_web_trf',
+                'en_core_web_sm',
+                'en_core_web_md']:
+                install(PIP_INSTALLER_URLS[preprocessing_nlp_model])
             else:
                 raise RuntimeError(
                     f'{preprocessing_nlp_model} doesn\'t exist in list of available opennyai preprocessing models')
@@ -47,7 +48,7 @@ class Data:
                                                     exclude=['attribute_ruler', 'lemmatizer', 'ner'])
         except:
             raise RuntimeError(
-                f'There was an error while loading en_core_web_sm\n To rectify try running:\n pip install -U {models_url[preprocessing_nlp_model]}')
+                f'There was an error while loading en_core_web_sm\n To rectify try running:\n pip install -U {PIP_INSTALLER_URLS[preprocessing_nlp_model]}')
 
     def _clean_cache(self):
         ids = [sha256(text.encode('utf-8')).hexdigest() for text in self._input_text]

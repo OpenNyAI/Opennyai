@@ -4,15 +4,15 @@ from tqdm import tqdm
 from .entity_recognizer_utils import extract_entities_from_judgment_text
 from .postprocessing_utils import precedent_coref_resol, other_person_coref_res, pro_statute_coref_resol, \
     remove_overlapping_entities
-from opennyai.utils.download import install, models_url
+from opennyai.utils.download import install, PIP_INSTALLER_URLS
 
 
 class InLegalNER:
     def __init__(self, model_name='en_legal_ner_trf', use_gpu=True):
         if model_name not in spacy.util.get_installed_models():
             msg.info(f'Installing {model_name} this is a one time process!!')
-            if models_url.get(model_name) is not None:
-                install(models_url[model_name])
+            if PIP_INSTALLER_URLS.get(model_name) is not None:
+                install(PIP_INSTALLER_URLS[model_name])
             else:
                 raise RuntimeError(f'{model_name} doesn\'t exist in list of available opennyai ner models')
         if use_gpu:
