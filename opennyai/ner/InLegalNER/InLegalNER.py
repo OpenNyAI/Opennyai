@@ -3,7 +3,7 @@ from wasabi import msg
 from .entity_recognizer_utils import extract_entities_from_judgment_text
 from .postprocessing_utils import precedent_coref_resol, other_person_coref_res, pro_statute_coref_resol, \
     remove_overlapping_entities
-from .download import install, models_url
+from opennyai.utils.download import install, models_url
 
 
 class InLegalNER:
