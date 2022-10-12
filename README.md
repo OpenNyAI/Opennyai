@@ -61,3 +61,4 @@ To get result in json format with span information:
 ```python
 json_result = InLegalNER.get_json_from_spacy_doc(doc)
 ```
+Note: You can import generated json to label studio and visualize all the details
