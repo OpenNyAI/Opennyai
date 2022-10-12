@@ -1,19 +1,18 @@
 import spacy, warnings
-from opennyai.utils.sentencizer import split_main_judgement_to_preamble_and_judgement
+from opennyai.utils.sentencizer import process_nlp_in_chunks
 
 
-def extract_entities_from_judgment_text(txt, legal_nlp, preamble_splitting_nlp, do_sentence_level=True):
+def extract_entities_from_judgment_text(to_process, legal_nlp, mini_batch_size, do_sentence_level=True):
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        preamble, judgement = split_main_judgement_to_preamble_and_judgement(text=txt,
-                                                                             sentence_splitting_nlp=preamble_splitting_nlp,
-                                                                             return_nlp_doc=do_sentence_level)
+        judgement = to_process['judgement_doc']
+        preamble = to_process['preamble_doc']
         if do_sentence_level:
             doc_judgement = get_sentence_docs(judgement, legal_nlp)
             doc_preamble = legal_nlp(preamble.text)
         else:
-            doc_judgement = legal_nlp(judgement)
-            doc_preamble = legal_nlp(preamble)
+            doc_judgement = process_nlp_in_chunks(judgement.text, mini_batch_size, legal_nlp)
+            doc_preamble = legal_nlp(preamble.text)
 
         ######### Combine preamble doc & judgement doc
         combined_doc = spacy.tokens.Doc.from_docs([doc_preamble, doc_judgement])

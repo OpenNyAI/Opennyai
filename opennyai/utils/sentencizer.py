@@ -132,7 +132,7 @@ def seperate_and_clean_preamble(txt, preamble_splitting_nlp):
     return title_txt, preamble_end
 
 
-def split_main_judgement_to_preamble_and_judgement(text, sentence_splitting_nlp, return_nlp_doc=True):
+def split_main_judgement_to_preamble_and_judgement(text, sentence_splitting_nlp, mini_batch_size=40000):
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         ########## Separate preamble from judgement text
@@ -142,11 +142,19 @@ def split_main_judgement_to_preamble_and_judgement(text, sentence_splitting_nlp,
         judgement_text = text[preamble_end:]
         #####  replace new lines in middle of sentence with spaces.
         judgement_text = re.sub(r'(\w[ -]*)(\n+)', r'\1 ', judgement_text)
-        if return_nlp_doc:
-            judgement = sentence_splitting_nlp(judgement_text)
-            preamble = sentence_splitting_nlp(preamble_text)
-        else:
-            judgement = judgement_text
-            preamble = preamble_text
+        judgement = process_nlp_in_chunks(judgement_text, mini_batch_size, sentence_splitting_nlp)
+        preamble = sentence_splitting_nlp(preamble_text)
 
         return preamble, judgement
+
+
+def process_nlp_in_chunks(judgement_text, mini_batch_size, nlp):
+    max_length = mini_batch_size
+    tokens = nlp.tokenizer(judgement_text)
+    if len(tokens) > max_length:
+        chunks = [tokens[i:i + max_length] for i in range(0, len(tokens), max_length)]
+        nlp_docs = [nlp(i.text) for i in chunks]
+        judgement = spacy.tokens.Doc.from_docs(nlp_docs)
+    else:
+        judgement = nlp(judgement_text)
+    return judgement
