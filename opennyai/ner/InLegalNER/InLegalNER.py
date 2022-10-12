@@ -30,7 +30,7 @@ class InLegalNER:
                                                exclude=['attribute_ruler', 'lemmatizer', 'ner'])
         except:
             raise RuntimeError(
-                'There was an error while loading en_core_web_sm\n To rectify try running:\n pip install -U https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.2.0/en_core_web_sm-3.2.0-py3-none-any.whl')
+                f'There was an error while loading en_core_web_sm\n To rectify try running:\n pip install -U {models_url[sentence_splitter_model_name]}')
 
     def __call__(self, text, do_sentence_level=True, do_postprocess=False):
         nlp_doc = extract_entities_from_judgment_text(txt=text, legal_nlp=self.nlp,

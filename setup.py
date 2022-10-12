@@ -1,6 +1,5 @@
 from setuptools import setup, find_packages
 
-
 """
 Instructions for creating a release of the opennyai library.
 1. Make sure your working directory is clean.
