@@ -23,7 +23,7 @@ cupy refer to [page](https://spacy.io/usage)
 
 Remember you need spacy of 3.2.4 version for models to work perfectly.
 
-# 👩‍💻 Usage
+# 👩‍💻 Usage NER
 
 To use the NER model you first have to select and load model from given list.
 
@@ -63,4 +63,33 @@ To get result in json format with span information:
 ```python
 json_result = InLegalNER.get_json_from_spacy_doc(doc)
 ```
+
 Note: You can import generated json to label studio and visualize all the details
+
+# 👩‍💻 Usage Extractive Summarizer
+
+To use the Extractive Summarizer model you first need to have rhetorical role module output.
+
+Here we will use a pre-saved for demo purpose
+
+To use model simply execute:
+
+```python
+import json
+from opennyai.summarizer.ExtractiveSummarizer import ExtractiveSummarizer
+sample_rr_output = json.load(open('samples/sample_rhetorical_role_output.json'))
+
+summarizer = ExtractiveSummarizer(use_gpu=True, verbose=False)
+summaries = summarizer(sample_rr_output)
+```
+
+Result:
+
+```
+[{'facts': 'xxxx',
+  'arguments': 'xxxx',
+  'ANALYSIS': 'xxxx',
+  'issue': 'xxxx',
+  'decision': 'xxxx',
+  'PREAMBLE': 'xxxx'}]
+ ```
