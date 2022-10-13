@@ -15,7 +15,7 @@ class Data:
         """Returns object of Data class.
          It is used for common preprocessing of all the components present in this library.
         Args:
-            input_text (string or list): The desired type
+            input_text (string or list): This is where you will provide input as string or list of strings
             preprocessing_nlp_model (string): Accepts a model name of spacy as string that will be used for processing
             available models are 'en_core_web_trf', 'en_core_web_sm', 'en_core_web_md'
             mini_batch_size (int): This accepts an int as batch size for processing of a document,
