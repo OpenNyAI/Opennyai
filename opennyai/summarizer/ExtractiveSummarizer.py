@@ -59,9 +59,6 @@ class ExtractiveSummarizer:
                 raise TypeError("Missing data in input for processing")
         except:
             raise TypeError("Invalid data format")
-
-        if self.__verbose__:
-            msg.info('Performing preprocessing...')
         bert_formatted = preprocess_for_summarization(input_data, self.bert_tokenizer, self.__tokenizer__)
         bert_formatted_and_tokenized = format_to_bert(bert_formatted, self.preprocessing_args)
         return bert_formatted_and_tokenized
