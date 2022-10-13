@@ -9,6 +9,12 @@ Opennyai is a natural language preprocessing framework made with SpaCy. Its pipe
 performance on Named entity recognition on Indian legal NER.
 Try [demo](https://huggingface.co/opennyaiorg/en_legal_ner_trf)
 
+We are giving access to three model developed by us which specializes in Indian legal domain:
+
+* NER
+* Rhetorical Role prediction **Coming Soon**
+* Extractive Summarizer
+
 # 🔧 Installation
 
 To get started using opennyai simply install it using pip by running the following line in your terminal:
