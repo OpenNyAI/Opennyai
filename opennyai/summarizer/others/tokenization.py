@@ -21,8 +21,10 @@ import os
 import unicodedata
 from io import open
 from wasabi import msg
-
+from opennyai.utils.download import CACHE_DIR
 from pytorch_transformers import cached_path
+
+EXTRACTIVE_SUMMARIZER_CACHE_PATH = os.path.join(CACHE_DIR, 'ExtractiveSummarizer'.lower())
 
 PRETRAINED_VOCAB_ARCHIVE_MAP = {
     'bert-base-uncased': "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-uncased-vocab.txt",
@@ -127,7 +129,8 @@ class BertTokenizer(object):
         return tokens
 
     @classmethod
-    def from_pretrained(cls, pretrained_model_name_or_path, cache_dir=None, *inputs, **kwargs):
+    def from_pretrained(cls, pretrained_model_name_or_path, cache_dir=EXTRACTIVE_SUMMARIZER_CACHE_PATH, *inputs,
+                        **kwargs):
         """
         Instantiate a PreTrainedBertModel from a pre-trained model file.
         Download and cache the pre-trained model file if needed.
@@ -142,7 +145,7 @@ class BertTokenizer(object):
         try:
             resolved_vocab_file = cached_path(vocab_file, cache_dir=cache_dir)
         except EnvironmentError:
-            msg.error(
+            msg.fail(
                 "Model name '{}' was not found in model name list ({}). "
                 "We assumed '{}' was a path or url but couldn't find any file "
                 "associated to this path or url.".format(
@@ -150,11 +153,11 @@ class BertTokenizer(object):
                     ', '.join(PRETRAINED_VOCAB_ARCHIVE_MAP.keys()),
                     vocab_file))
             return None
-        if resolved_vocab_file == vocab_file:
-            msg.info("loading vocabulary file {}".format(vocab_file))
-        else:
-            msg.info("loading vocabulary file {} from cache at {}".format(
-                vocab_file, resolved_vocab_file))
+        # if resolved_vocab_file == vocab_file:
+        #     msg.info("loading vocabulary file {}".format(vocab_file))
+        # else:
+        #     msg.info("loading vocabulary file {} from cache at {}".format(
+        #         vocab_file, resolved_vocab_file))
         if pretrained_model_name_or_path in PRETRAINED_VOCAB_POSITIONAL_EMBEDDINGS_SIZE_MAP:
             # if we're using a pretrained model, ensure the tokenizer won't index sequences longer
             # than the number of positional embeddings

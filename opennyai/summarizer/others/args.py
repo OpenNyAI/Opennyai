@@ -1,3 +1,9 @@
+from opennyai.utils.download import CACHE_DIR
+import os
+
+EXTRACTIVE_SUMMARIZER_CACHE_PATH = os.path.join(CACHE_DIR, 'ExtractiveSummarizer'.lower())
+
+
 class ARGS:
     def __init__(self):
         self.default = True
@@ -8,10 +14,10 @@ def __setargs__():
     parser.task = 'ext'
     parser.encoder = 'bert'
     parser.mode = 'test'
-    parser.bert_data_path = './'
-    parser.model_path = './'
-    parser.result_path = './'
-    parser.temp_dir = './'
+    parser.bert_data_path = EXTRACTIVE_SUMMARIZER_CACHE_PATH
+    parser.model_path = EXTRACTIVE_SUMMARIZER_CACHE_PATH
+    parser.result_path = EXTRACTIVE_SUMMARIZER_CACHE_PATH
+    parser.temp_dir = EXTRACTIVE_SUMMARIZER_CACHE_PATH
     parser.batch_size = 5000
     parser.test_batch_size = 1
     parser.max_pos = 512
@@ -84,9 +90,9 @@ def __setargs__():
 
     parser_preprocessing.mode = 'format_to_bert'
     parser_preprocessing.select_mode = 'greedy'
-    parser_preprocessing.map_path = './'
-    parser_preprocessing.raw_path = './'
-    parser_preprocessing.save_patt = './'
+    parser_preprocessing.map_path = EXTRACTIVE_SUMMARIZER_CACHE_PATH
+    parser_preprocessing.raw_path = EXTRACTIVE_SUMMARIZER_CACHE_PATH
+    parser_preprocessing.save_patt = EXTRACTIVE_SUMMARIZER_CACHE_PATH
 
     parser_preprocessing.shard_size = 2000
     parser_preprocessing.min_src_nsents = 0
@@ -99,7 +105,7 @@ def __setargs__():
     parser_preprocessing.lower = True
     parser_preprocessing.use_bert_basic_tokenizer = False
 
-    parser_preprocessing.log_file = './log.log'
+    parser_preprocessing.log_file = os.path.join(EXTRACTIVE_SUMMARIZER_CACHE_PATH, 'log.log')
 
     parser_preprocessing.dataset = ''
 

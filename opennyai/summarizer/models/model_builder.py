@@ -8,6 +8,10 @@ from torch.nn.init import xavier_uniform_
 from .decoder import TransformerDecoder
 from .encoder import Classifier, ExtTransformerEncoder
 from .optimizers import Optimizer
+from opennyai.utils.download import CACHE_DIR
+import os
+
+EXTRACTIVE_SUMMARIZER_CACHE_PATH = os.path.join(CACHE_DIR, 'ExtractiveSummarizer'.lower())
 
 
 def build_optim(args, model, checkpoint):
@@ -114,7 +118,7 @@ def get_generator(vocab_size, dec_hidden_size, device):
 
 
 class Bert(nn.Module):
-    def __init__(self, large, temp_dir, finetune=False):
+    def __init__(self, large, temp_dir=EXTRACTIVE_SUMMARIZER_CACHE_PATH, finetune=False):
         super(Bert, self).__init__()
         if (large):
             self.model = BertModel.from_pretrained('bert-large-uncased', cache_dir=temp_dir)
