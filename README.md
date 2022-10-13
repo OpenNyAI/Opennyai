@@ -76,7 +76,8 @@ To use model simply execute:
 
 ```python
 import json
-from opennyai.summarizer.ExtractiveSummarizer import ExtractiveSummarizer
+from opennyai import ExtractiveSummarizer
+
 sample_rr_output = json.load(open('samples/sample_rhetorical_role_output.json'))
 
 summarizer = ExtractiveSummarizer(use_gpu=True, verbose=False)
