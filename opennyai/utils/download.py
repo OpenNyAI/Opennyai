@@ -19,12 +19,22 @@ CACHE_DIR = os.path.join(str(Path.home()), '.opennyai')
 
 
 def install(package):
+    """
+    It is used for installing pip wheel file for model supported
+    Args:
+        package (string): wheel file url
+    """
     subprocess.check_call(
         [sys.executable, "-m", "pip", "install", package, "--no-deps"], stdout=subprocess.DEVNULL
     )
 
 
 def load_model_from_cache(model_name):
+    """
+    It is used for downloading model.pt files supported and developed by Opennyai
+    Args:
+        model_name (string): model name to download and save
+    """
     if TORCH_PT_MODEL_URLS.get(model_name) is None:
         raise RuntimeError(f'{model_name} is not supported by opennyai, please check the name!')
     else:

@@ -25,6 +25,8 @@ def check_hidden_text_is_invalid(text):
 
 
 def get_text_from_indiankanoon_url(url):
+    """Returns text from Indiakannon URL.
+    """
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
 
     try:
