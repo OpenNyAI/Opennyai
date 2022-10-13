@@ -34,6 +34,7 @@ setup(
         "torch<1.13.0,>=1.10.0",
         "torchvision<0.14.0,>=0.8.1",
         "transformers<4.16,>=4.1",
+        "pytorch-transformers==1.2.0",
         "allennlp==2.9.0",
         "spacy<3.2.5,>=3.2.2",
         "spacy-transformers<1.1.6,>=1.1.4",
