@@ -156,7 +156,7 @@ class BertTokenizer(object):
             msg.info("loading vocabulary file {} from cache at {}".format(
                 vocab_file, resolved_vocab_file))
         if pretrained_model_name_or_path in PRETRAINED_VOCAB_POSITIONAL_EMBEDDINGS_SIZE_MAP:
-            # if we're using a pretrained model, ensure the tokenizer wont index sequences longer
+            # if we're using a pretrained model, ensure the tokenizer won't index sequences longer
             # than the number of positional embeddings
             max_len = PRETRAINED_VOCAB_POSITIONAL_EMBEDDINGS_SIZE_MAP[pretrained_model_name_or_path]
             kwargs['max_len'] = min(kwargs.get('max_len', int(1e12)), max_len)
@@ -256,15 +256,15 @@ class BasicTokenizer(object):
         # despite its name. The modern Korean Hangul alphabet is a different block,
         # as is Japanese Hiragana and Katakana. Those alphabets are used to write
         # space-separated words, so they are not treated specially and handled
-        # like the all of the other languages.
-        if ((cp >= 0x4E00 and cp <= 0x9FFF) or  #
-                (cp >= 0x3400 and cp <= 0x4DBF) or  #
-                (cp >= 0x20000 and cp <= 0x2A6DF) or  #
-                (cp >= 0x2A700 and cp <= 0x2B73F) or  #
-                (cp >= 0x2B740 and cp <= 0x2B81F) or  #
-                (cp >= 0x2B820 and cp <= 0x2CEAF) or
-                (cp >= 0xF900 and cp <= 0xFAFF) or  #
-                (cp >= 0x2F800 and cp <= 0x2FA1F)):  #
+        # like the all the other languages.
+        if ((0x4E00 <= cp <= 0x9FFF) or  #
+                (0x3400 <= cp <= 0x4DBF) or  #
+                (0x20000 <= cp <= 0x2A6DF) or  #
+                (0x2A700 <= cp <= 0x2B73F) or  #
+                (0x2B740 <= cp <= 0x2B81F) or  #
+                (0x2B820 <= cp <= 0x2CEAF) or
+                (0xF900 <= cp <= 0xFAFF) or  #
+                (0x2F800 <= cp <= 0x2FA1F)):  #
             return True
 
         return False
