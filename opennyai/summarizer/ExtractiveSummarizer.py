@@ -23,3 +23,6 @@ class ExtractiveSummarizer:
         else:
             self.device = torch.device('cpu')
             msg.info('Extractive Summarizer will use CPU!')
+
+        # load summarizer checkpoint
+        state_dict = load_model_from_cache('ExtractiveSummarizer')
