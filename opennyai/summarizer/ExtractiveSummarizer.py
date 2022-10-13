@@ -13,7 +13,7 @@ from .models import data_loader
 from .others.args import __setargs__
 from spacy.lang.en import English
 from .models.model_builder import ExtSummarizer
-from .others.tokenization import BertTokenizer
+from transformers import BertTokenizer
 from opennyai.utils.download import load_model_from_cache
 from .others.utils import preprocess_for_summarization, format_to_bert
 
