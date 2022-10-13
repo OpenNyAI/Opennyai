@@ -9,6 +9,15 @@ from opennyai.utils.download import install, PIP_INSTALLER_URLS
 
 class InLegalNER:
     def __init__(self, model_name='en_legal_ner_trf', use_gpu=True):
+        """Returns object of InLegalNER class.
+         It is used for loading InLegalNER model in memory.
+        Args:
+            model_name (string): Accepts a model name of spacy as InLegalNER that will be used for NER inference
+            available models are 'en_legal_ner_trf', 'en_legal_ner_sm'
+            use_gpu (bool): Functionality to give a choice whether to use GPU for inference or not
+             Setting it True doesn't ensure GPU will be utilized it need proper support libraries as mentioned in
+             documentation
+        """
         if model_name not in spacy.util.get_installed_models():
             msg.info(f'Installing {model_name} this is a one time process!!')
             if PIP_INSTALLER_URLS.get(model_name) is not None:
@@ -30,6 +39,19 @@ class InLegalNER:
         self.nlp = spacy.load(self.model_name)
 
     def __call__(self, data, do_sentence_level=True, do_postprocess=True, mini_batch_size=40000, verbose=False):
+        """Returns doc of InLegalNER nlp.
+         It is used for doing inference on input doc using InLegalNER model in memory.
+        Args:
+            data (object of Data class): Data class object containing input docs
+            do_sentence_level (bool): To perform inference at sentence level or not, at sentence level it better accuracy
+            do_postprocess (bool): To perform post-processing over processed doc
+            mini_batch_size (int): This accepts an int as batch size for processing of a document,
+            if length of document is bigger that given batch size it will be chunked and then processed.
+            verbose (bool): Set it to if you want to see progress bar while processing happens
+        Note:
+            do_postprocess is depends on do_sentence_level so for doing postprocessing doing sentence level inference
+            is mandatory.
+        """
         processed_data = []
         if verbose:
             msg.info('Processing documents')

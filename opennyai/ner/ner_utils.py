@@ -3,16 +3,16 @@ import copy
 from hashlib import sha256
 
 
-def load(model_name='en_legal_ner_trf', use_gpu=True):
+def load(model_name: str = 'en_legal_ner_trf', use_gpu: bool = True):
     """Returns object of InLegalNER class.
-             It is used for loading InLegalNER model in memory.
-            Args:
-                model_name (string): Accepts a model name of spacy as InLegalNER that will be used for NER inference
-                available models are 'en_legal_ner_trf', 'en_legal_ner_sm'
-                use_gpu (bool): Functionality to give a choice whether to use GPU for inference or not
-                 Setting it True doesn't ensure GPU will be utilized it need proper support libraries as mentioned in
-                 documentation
-            """
+     It is used for loading InLegalNER model in memory.
+    Args:
+        model_name (string): Accepts a model name of spacy as InLegalNER that will be used for NER inference
+        available models are 'en_legal_ner_trf', 'en_legal_ner_sm'
+        use_gpu (bool): Functionality to give a choice whether to use GPU for inference or not
+         Setting it True doesn't ensure GPU will be utilized it need proper support libraries as mentioned in
+         documentation
+    """
     AVAILABLE_LEGAL_NER_MODELS = ['en_legal_ner_trf', 'en_legal_ner_sm']
     if model_name not in AVAILABLE_LEGAL_NER_MODELS:
         raise RuntimeError(f'{model_name} doesn\'t exit in list of available models {AVAILABLE_LEGAL_NER_MODELS}')
@@ -64,11 +64,11 @@ def update_json_with_clusters(ls_formatted_doc: dict, precedent_clusters: list, 
     return ls_formatted_doc
 
 
-def get_json_from_spacy_doc(doc):
-    """Returns json of InLegalNER doc.
-                Args:
-                    doc: InLegalNER doc
-                """
+def get_json_from_spacy_doc(doc) -> dict:
+    """Returns dict of InLegalNER doc.
+    Args:
+        doc: InLegalNER doc
+    """
     id = "LegalNER_" + doc._.doc_id
     output = {'id': id, 'annotations': [{'result': []}],
               'data': {'text': doc.text, 'original_text': doc._.original_text}}

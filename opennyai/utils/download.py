@@ -18,7 +18,7 @@ TORCH_PT_MODEL_URLS = {
 CACHE_DIR = os.path.join(str(Path.home()), '.opennyai')
 
 
-def install(package):
+def install(package: str):
     """
     It is used for installing pip wheel file for model supported
     Args:
@@ -29,7 +29,7 @@ def install(package):
     )
 
 
-def load_model_from_cache(model_name):
+def load_model_from_cache(model_name: str):
     """
     It is used for downloading model.pt files supported and developed by Opennyai
     Args:
