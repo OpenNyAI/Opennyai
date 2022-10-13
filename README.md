@@ -93,7 +93,8 @@ summaries = summarizer(sample_rr_output)
 Result:
 
 ```
-[{'facts': 'xxxx',
+{'id': 'ExtractiveSummarizer_xxxxxxx]',
+  'summaries': {'facts': 'xxxx',
   'arguments': 'xxxx',
   'ANALYSIS': 'xxxx',
   'issue': 'xxxx',

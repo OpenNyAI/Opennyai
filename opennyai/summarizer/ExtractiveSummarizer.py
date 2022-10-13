@@ -121,11 +121,12 @@ class ExtractiveSummarizer:
         if self.__verbose__:
             msg.info('Running inference')
         for data in tqdm(input_data, disable=not self.__verbose__):
+            task_id = data['id'].split('_')[-1]
             preprocessed_data = self._preprocess(data)
             data_iter = data_loader.Dataloader(self.model_args, self._load_dataset(preprocessed_data),
                                                self.model_args.test_batch_size, self.device,
                                                shuffle=False, is_test=True)
             inference_output = self._inference(data_iter)
             final_processed_output = _postprocess(inference_output, data['data']['preamble_text'])
-            result.append(copy.deepcopy(final_processed_output))
+            result.append(copy.deepcopy({"id": 'ExtractiveSummarizer_' + task_id, "summaries": final_processed_output}))
         return result
