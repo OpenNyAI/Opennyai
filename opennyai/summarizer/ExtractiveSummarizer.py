@@ -1,7 +1,7 @@
 import torch
 from wasabi import msg
 from opennyai.utils.download import load_model_from_cache
-
+from .others.tokenization import BertTokenizer
 
 class ExtractiveSummarizer:
     def __init__(self, use_gpu: bool = True, verbose: bool = False):
@@ -26,3 +26,6 @@ class ExtractiveSummarizer:
 
         # load summarizer checkpoint
         state_dict = load_model_from_cache('ExtractiveSummarizer')
+
+        # setup tokenizer
+        self.bert_tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case=True)
