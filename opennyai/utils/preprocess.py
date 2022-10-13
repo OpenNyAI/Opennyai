@@ -1,3 +1,5 @@
+from typing import Union
+
 import spacy
 from hashlib import sha256
 from wasabi import msg
@@ -7,8 +9,35 @@ from .sentencizer import split_main_judgement_to_preamble_and_judgement
 
 
 class Data:
-    def __init__(self, input_text, preprocessing_nlp_model='en_core_web_trf', mini_batch_size=40000, use_gpu=True,
-                 use_cache=True, verbose=False):
+    def __init__(self, input_text: Union[str, list], preprocessing_nlp_model: str = 'en_core_web_trf',
+                 mini_batch_size: int = 40000, use_gpu: bool = True,
+                 use_cache: bool = True, verbose: bool = False):
+        """Returns object of Data class.
+         It is used for common preprocessing of all the components present in this library.
+        Args:
+            input_text (string or list): The desired type
+            preprocessing_nlp_model (string): Accepts a model name of spacy as string that will be used for processing
+            available models are 'en_core_web_trf', 'en_core_web_sm', 'en_core_web_md'
+            mini_batch_size (int): This accepts an int as batch size for processing of a document,
+             if length of document is bigger that given batch size it will be chunked and then processed.
+            use_gpu (bool): Functionality to give a choice whether to use GPU for processing or not
+             Setting it True doesn't ensure GPU will be utilized it need proper support libraries as mentioned in
+             documentation
+            use_cache (bool): Set it to true if you want to enable caching while preprocessing
+            verbose (bool): Set it to if you want to see progress bar while processing happens
+
+            Examples::
+            >>> text = 'Section 319 Cr.P.C. contemplates a situation where the evidence adduced by the prosecution for Respondent No.3-G. Sambiah on 20th June 1984'
+            >>> data1 = Data(text)
+            >>> data2 = Data([text,text])
+            >>> data1.append(text)
+            >>> data2.pop(1)
+            >>> data1+text
+            >>> len(data1)
+            >>> text in data1
+            >>> processed_data1 = [i for i in data1]
+            >>> processed_data2 = data2[0]
+        """
         self.__input_text__ = input_text
         self.__mini_batch_size__ = mini_batch_size
         self.__verbose__ = verbose
@@ -17,7 +46,8 @@ class Data:
             self.__cache__ = {}
         if isinstance(self.__input_text__, str):
             self.__input_text__ = [self.__input_text__]
-        elif isinstance(self.__input_text__, list) and len(self.__input_text__) >= 1:
+        elif isinstance(self.__input_text__, list) and len(self.__input_text__) >= 1 and all(
+                isinstance(item, str) for item in self.__input_text__):
             pass
         else:
             raise RuntimeError('No input or wrong given, we accept input as string or list of strings')
