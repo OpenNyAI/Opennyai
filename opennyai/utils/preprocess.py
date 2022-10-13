@@ -48,7 +48,7 @@ class Data:
                                                     exclude=['attribute_ruler', 'lemmatizer', 'ner'])
         except:
             raise RuntimeError(
-                f'There was an error while loading en_core_web_sm\n To rectify try running:\n pip install -U {PIP_INSTALLER_URLS[preprocessing_nlp_model]}')
+                f'There was an error while loading {preprocessing_nlp_model}\n To rectify try running:\n pip install -U {PIP_INSTALLER_URLS[preprocessing_nlp_model]}')
 
     def _clean_cache(self):
         ids = [sha256(text.encode('utf-8')).hexdigest() for text in self.__input_text__]
