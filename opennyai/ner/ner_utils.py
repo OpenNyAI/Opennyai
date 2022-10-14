@@ -69,9 +69,9 @@ def get_json_from_spacy_doc(doc) -> dict:
     Args:
         doc: InLegalNER doc
     """
-    id = "LegalNER_" + doc._.doc_id
+    id = "LegalNER_" + doc.user_data['doc_id']
     output = {'id': id, 'annotations': [{'result': []}],
-              'data': {'text': doc.text, 'original_text': doc._.original_text}}
+              'data': {'text': doc.text, 'original_text': doc.user_data['original_text']}}
     for ent in doc.ents:
         import uuid
         uid = uuid.uuid4()
@@ -87,8 +87,8 @@ def get_json_from_spacy_doc(doc) -> dict:
                                                                  "from_name": "label"
                                                                  }))
 
-    final_output = update_json_with_clusters(copy.deepcopy(output), doc._.precedent_clusters,
-                                             doc._.provision_statute_clusters)
+    final_output = update_json_with_clusters(copy.deepcopy(output), doc.user_data['precedent_clusters'],
+                                             doc.user_data['provision_statute_clusters'])
 
     return final_output
 

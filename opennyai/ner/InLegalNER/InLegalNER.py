@@ -59,8 +59,8 @@ class InLegalNER:
             nlp_doc = extract_entities_from_judgment_text(to_process=to_process, legal_nlp=self.nlp,
                                                           do_sentence_level=do_sentence_level,
                                                           mini_batch_size=mini_batch_size)
-            nlp_doc.set_extension("doc_id", default=to_process['file_id'], force=True)
-            nlp_doc.set_extension("original_text", default=to_process['original_text'], force=True)
+            nlp_doc.user_data['doc_id'] = to_process['file_id']
+            nlp_doc.user_data['original_text'] = to_process['original_text']
             try:
                 if do_sentence_level and do_postprocess:
                     precedent_clusters = precedent_coref_resol(nlp_doc)
@@ -73,8 +73,8 @@ class InLegalNER:
                     all_entities.extend(other_person_entites)
 
                     nlp_doc.ents = all_entities
-                    nlp_doc.set_extension("precedent_clusters", default=precedent_clusters, force=True)
-                    nlp_doc.set_extension("provision_statute_clusters", default=pro_sta_clusters, force=True)
+                    nlp_doc.user_data['precedent_clusters'] = precedent_clusters
+                    nlp_doc.user_data['provision_statute_clusters'] = pro_sta_clusters
             except:
                 msg.warn(
                     'There was some issue while performing postprocessing, skipping postprocessing...')
