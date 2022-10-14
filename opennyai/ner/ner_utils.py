@@ -93,10 +93,9 @@ def get_json_from_spacy_doc(doc) -> dict:
     return final_output
 
 
+
 ner_displacy_option = {
-    "colors": {"PETITIONER": "yellow", "RESPONDENT": "green", "JUDGE": "pink", "WITNESS": "purple", "LAWYER": "red",
-               "OTHER_PERSON": "cyan",
-               "PETITIONER_match": "yellow", "RESPONDENT_match": "green", "JUDGE_match": "pink",
-               "WITNESS_match": "purple", "LAWYER_match": "red",
-               "PROVISION": "#33E9FF", "STATUTE": "#1C4D53", "GPE": "#A6A82F", "ORG": "#603255", "COURT": "#56A065",
-               "DATE": "#804538", "CASE_NUMBER": "#71326E"}}
+    'colors': {'COURT': "#bbabf2", 'PETITIONER': "#f570ea", "RESPONDENT": "#cdee81", 'JUDGE': "#fdd8a5",
+               "LAWYER": "#f9d380", 'WITNESS': "violet", "STATUTE": "#faea99", "PROVISION": "yellow",
+               'CASE_NUMBER': "#fbb1cf", "PRECEDENT": "#fad6d6", 'DATE': "#b1ecf7", 'OTHER_PERSON': "#b0f6a2",
+               'ORG': '#a57db5', 'GPE': '#7fdbd4'}}

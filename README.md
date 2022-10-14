@@ -11,11 +11,11 @@ Try [demo](https://huggingface.co/opennyaiorg/en_legal_ner_trf)
 
 We are giving access to three model developed by us which specializes in Indian legal domain:
 
-* NER
-* Rhetorical Role prediction **Coming Soon**
+* Named Entity Recognition (NER)
+* Rhetorical Role prediction
 * Extractive Summarizer
 
-# 🔧 Installation
+# 🔧 1. Installation
 
 To get started using opennyai simply install it using pip by running the following line in your terminal:
 
@@ -29,30 +29,45 @@ cupy refer to [page](https://spacy.io/usage)
 
 Remember you need spacy of 3.2.4 version for models to work perfectly.
 
-# 👩‍💻 Usage NER
+# 👩‍💻 2. Usage
+To run the 3 OpenNyAI models on judgment texts of your choice please run following python code
+```python
+from opennyai import Pipeline
+from opennyai.utils import Data,get_text_from_indiankanoon_url
 
-To use the NER model you first have to select and load model from given list.
+###### Create text on which to run the AI models
+text1 = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/811682/')
+text2 = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/1386912/')
+texts_to_process = [text1,text2] ### you can also load your text files directly into this
+data = Data(texts_to_process)  #### create Data object for data  preprocessing before running ML models
 
-* en_legal_ner_trf (This model provides the highest accuracy)
-* en_legal_ner_sm (This model provides the highest efficiency)
+use_gpu = True #### If you have access to GPU then set this to True else False
+###### Choose which of the components you want to run from the 3 models 'NER', 'Rhetorical_Role','Summarizer'
+pipeline = Pipeline(components = ['NER', 'Rhetorical_Role','Summarizer'],use_gpu=use_gpu) #E.g. If just Named Entity is of interest then just select 'NER'
+results = pipeline(data)
+```
+The output of each model is present in following keys of each element of the output
+```python
+results[0]['ner_annotations'][0]['result'] ## shows the NER model output for the first text
+results[0]['rr_annotations'][0]['result']  ## shows the Rhetorical Roles model output for the first text
+results[0]['summary'] ## shows Summary for each of the Rheorical Role for first text 
+```
 
-Available preprocessing models are ['en_core_web_md', 'en_core_web_sm', 'en_core_web_trf']
 
+### 2.1 Running each of the 3 AI models individually
+If you need to more customizations on the output of each of the models then you can also run each of the models individually
+####  2.1.1 Run NER model only
 To download and load a model simply execute:
 
 ```python
 import opennyai.ner as InLegalNER
-from opennyai.utils import Data
+from opennyai.utils import Data,get_text_from_indiankanoon_url
 
-text = 'Section 319 Cr.P.C. contemplates a situation where the evidence adduced by the prosecution for Respondent No.3-G. Sambiah on 20th June 1984'
-# you can pass multiple documents in form of list to below line of code
-data = Data(text, preprocessing_nlp_model='en_core_web_trf', mini_batch_size=40000, use_gpu=True, use_cache=True,
-            verbose=False)
-nlp = InLegalNER.load('en_legal_ner_trf', use_gpu=True)
-doc = nlp(data, do_sentence_level=True,
-          do_postprocess=True, mini_batch_size=40000,
-          verbose=False)  # set do_sentence_level and do_postprocess to False if you pass a sentence 
-identified_entites = [(ent, ent.label_) for ent in doc.ents]
+text = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/811682/')
+data = Data(text) #### Data object for preprocessing
+NER_model = InLegalNER.load('en_legal_ner_trf', use_gpu=True)  ## load spacy pipeline for Named Entity Recognition
+ner_output = NER_model(data, do_sentence_level=True,do_postprocess=True)  #  
+identified_entites = [(ent, ent.label_) for ent in ner_output.ents]
 ```
 
 Result:
@@ -64,30 +79,58 @@ Result:
  (20th June 1984, 'DATE')]
  ```
 
+To visualize the NER results please run 
+```python
+from spacy import displacy
+from opennyai.ner.ner_utils import ner_displacy_option
+displacy.serve(ner_output, style='ent',port=8080,options=ner_displacy_option)
+```
+Please click on the link displayed in the console to see the annotated entities
+
 To get result in json format with span information:
 
 ```python
-json_result = InLegalNER.get_json_from_spacy_doc(doc)
+json_result = InLegalNER.get_json_from_spacy_doc(ner_output)
 ```
 
-Note: You can import generated json to label studio and visualize all the details
+Note: You can import generated json to label studio and visualize all the details about the postprocessing
 
-# 👩‍💻 Usage Extractive Summarizer
 
-To use the Extractive Summarizer model you first need to have rhetorical role module output.
 
-Here we will use a pre-saved for demo purpose
+#### 2.1.2 Run Rhetorical Role model only
+```python
+from opennyai import RhetoricalRolePredictor
+from opennyai.utils import Data,get_text_from_indiankanoon_url
 
-To use model simply execute:
+text1 = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/811682/')
+text2 = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/1386912/')
+texts_to_process = [text1,text2] ### you can also load your text files directly into this
+data = Data(texts_to_process)  #### create Data object for data  preprocessing before running ML models
+
+rr_model = RhetoricalRolePredictor(use_gpu=True)
+rr_output = rr_model(data)
+```
+
+#### 2.1.3 Run Summarizer model only
+Summarizer model needs Rhetorical Role model output as input. Hence Rhetorical Role prediction model needs to run before Summarizer model rune.
+
+To use Summarizer model simply execute:
 
 ```python
-import json
-from opennyai import ExtractiveSummarizer
+from opennyai import RhetoricalRolePredictor,ExtractiveSummarizer
+from opennyai.utils import Data,get_text_from_indiankanoon_url
 
-sample_rr_output = json.load(open('samples/sample_rhetorical_role_output.json'))
+text1 = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/811682/')
+text2 = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/1386912/')
+texts_to_process = [text1,text2] ### you can also load your text files directly into this
+data = Data(texts_to_process)  #### create Data object for data  preprocessing before running ML models
+
+rr_model = RhetoricalRolePredictor(use_gpu=True)
+rr_output = rr_model(data)
+
 
 summarizer = ExtractiveSummarizer(use_gpu=True, verbose=False)
-summaries = summarizer(sample_rr_output)
+summaries = summarizer(rr_output)
 ```
 
 Result:
@@ -101,3 +144,16 @@ Result:
   'decision': 'xxxx',
   'PREAMBLE': 'xxxx'}]
  ```
+
+## 2.2 Advanced Usage
+### 2.2.1 Trade off between run time and accuracy for data preprocessing 
+Data Preprocessing performs tasks like sentence splitting , splitting the preamble and judgment. Performance of this preprocessing critically determines the performance of AI models.
+We recommend using 'en_core_web_trf' for preprocessing of the data, but it can be slow.
+Available preprocessing models are 'en_core_web_trf' (slowest but best accuracy), 'en_core_web_md', 'en_core_web_sm'(fastest but less accurate)
+
+### 2.2.2 Trade off between run time and accuracy for NER 
+You can choose from following NER models in InLegalNER.load() depending on your accuracy and run time needs
+* en_legal_ner_trf (This model provides the highest accuracy)
+* en_legal_ner_sm (This model provides the highest efficiency)
+
+If do_sentence_level=True (recommended) then single sentence is passed through the model which gives better results. If set to False then multiple sentences which fit the max length of 512 tokens are passed through the model. This reduces run time but gives poor accuracy.

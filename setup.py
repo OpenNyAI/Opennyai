@@ -44,7 +44,8 @@ setup(
         "beautifulsoup4<4.11.0,>=4.10.0",
         "requests<2.28.2,>=2.27.1",
         "nltk<3.6.6,>=3.6",
-        "tqdm>=4.63.0,<4.64.1"],
+        "tqdm>=4.63.0,<4.64.1",
+        "prettytable>=3.1.1,<3.4.1"],
     tests_require=["pytest", "pytest-cov"],
     python_requires=">=3.7.0",
 )
