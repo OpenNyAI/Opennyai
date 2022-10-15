@@ -506,11 +506,158 @@ def separate_provision_get_pairs_pro(pro_left):
     return matching_pro_left
 
 
+def create_statute_clusters(doc):
+    clusters = {}
+    statutes = []
+
+    for ent in doc.ents:
+        if ent.label_ == 'STATUTE':
+            statutes.append(ent)
+    for statute in statutes:
+        stat = check_stat(statute.text)
+        if stat == '':
+            continue
+        if stat in clusters.keys():
+            clusters[stat].append(statute)
+        else:
+            clusters[stat] = []
+            clusters[stat].append(statute)
+
+    return clusters
+
+
+def check_stat(text):
+    regex_crpc = r'(?i)\b(((c|criminal|cr)\.*\s*(procedure|p)\.*\s*(c|code)\.*)|(code\s*of\s*criminal\s*procedure))\s*'
+    regex_ipc = r'(?i)\b((i|indian)*\.*\s*(penal|p)\.*\s*(c|code))\.*'
+    regex_cons = r'(?i)\b((constitution)+\s*(of\s*india\s*)*)\b'
+    regex_itact = r'(?i)\b((i\.*\s*t\.*\s*|income\s*\-+tax\s+)act\s*)\b'
+
+    match_crpc = re.search(regex_crpc, text)
+    match_ipc = re.search(regex_ipc, text)
+    match_cons = re.search(regex_cons, text)
+    match_ita = re.search(regex_itact, text)
+    if match_crpc:
+        return 'Criminal Procedure Code'
+    elif match_ipc:
+        return 'Indian Penal Code'
+    elif match_cons:
+        return 'Constitution'
+    elif match_ita:
+        return 'Income Tax Act'
+    else:
+        return ''
+
+
+def remove_unidentified_statutes(doc, new_statutes):
+    entities = doc.ents
+    stats = []
+    new_entities = []
+
+    stats.extend(new_statutes)
+    for ents in entities:
+        if ents not in stats:
+            new_entities.append(ents)
+
+    return new_entities
+
+
+def create_unidentified_statutes(doc):
+    # regex=r'(?i)\((\s*.*\s*act.*\)?)'
+    regex = r'\((.*?)\)'
+    clusters_new_statutes = {}
+    statutes = []
+    for ent in doc.ents:
+        if ent.label_ == 'STATUTE':
+            statutes.append(ent)
+
+    statutes_start_end = [(sta.start, sta.end) for sta in statutes]
+    statutes_text = [statute.text for statute in statutes]
+    for statute in statutes:
+        end_char = statute.end_char
+        text = doc.text[end_char:]
+        match = re.search(regex, text)
+
+        if match and match.span()[0] == 1:
+
+            # regex_act=r'\b(?i).*act\s*'
+            regex_act = r"\b(([A-Z][A-Za-z'']*|\d{4})(?:\s+[A-Z][a-z'']*)*\s*(a|A)ct|\s*(a|A)ct)\b"  ###to match consecutive  words starting with upper case or years followed by the word act
+
+            match1 = re.search(regex_act, match.group())
+
+            if match1:
+
+                stat_text = match1.group()
+
+                if statute not in clusters_new_statutes.keys():
+                    clusters_new_statutes[statute] = []
+                    clusters_new_statutes[statute].append(stat_text.strip())
+                else:
+                    clusters_new_statutes[statute].append(stat_text.strip())
+
+    new_statutes = []
+    new_statutes_clusters = {}
+    text = doc.text
+    for statute in clusters_new_statutes.keys():
+        for sta in clusters_new_statutes[statute]:
+            ent = re.finditer(sta, text)
+
+            stat_new = [doc.char_span(e.start(), e.end(), label="STATUTE", alignment_mode='expand') for e in ent]
+            new_statutes.extend(stat_new)
+            if sta not in new_statutes_clusters.keys():
+                new_statutes_clusters[statute] = []
+                new_statutes_clusters[statute].extend(stat_new)
+            else:
+                new_statutes_clusters[statute].extend(stat_new)
+
+    discarded_statutes = []
+    for sta in new_statutes:
+        for s in statutes_start_end:
+            if sta.start >= s[0] and sta.end <= s[1]:
+                new_statutes.remove(sta)
+                discarded_statutes.append(sta)
+
+    for sta in new_statutes_clusters.keys():
+        for s in new_statutes_clusters[sta]:
+
+            if s in discarded_statutes:
+                new_statutes_clusters[sta].remove(s)
+
+    return new_statutes_clusters, new_statutes
+
+
+def add_statute_head(clusters, stat_clusters):
+    new_clusters = []
+
+    for stat_cluster in stat_clusters.keys():
+        acts = stat_clusters[stat_cluster]
+        for cluster in clusters:
+            if cluster[1] in acts:
+                new_clusters.append((cluster[0], cluster[1], cluster[2], stat_cluster))
+                clusters.remove(cluster)
+
+    for cluster in clusters:
+        if cluster not in new_clusters:
+            new_clusters.append((cluster[0], cluster[1], cluster[2], cluster[1].text))
+
+    return new_clusters
+
+
 def pro_statute_coref_resol(doc):
+    new_statutes_clusters, new_statutes = create_unidentified_statutes(doc)
+    old_entities = list(doc.ents)
+
+    for ent in new_statutes:
+        if ent not in old_entities:
+            old_entities.append(ent)
+    old_entities = spacy.util.filter_spans(old_entities)
+
+    doc.ents = old_entities
+
     pro_statute, pro_left, total_statutes = get_exact_match_pro_statute(doc)
     explicit_ents = pro_statute
     matching_pro_statute = separate_provision_get_pairs_statute(pro_statute)
     matching_pro_left = separate_provision_get_pairs_pro(pro_left)
+    stat_clusters = create_statute_clusters(doc)
 
     matching_pro_statute, pro_statute, explicit_ents = map_pro_statute_on_heuristics(matching_pro_left,
                                                                                      matching_pro_statute,
@@ -518,7 +665,13 @@ def pro_statute_coref_resol(doc):
                                                                                      total_statutes)
     clusters = get_clusters(pro_statute, explicit_ents, total_statutes)
     clusters = seperate_provision(doc, clusters)
-    return clusters
+    new_entities = remove_unidentified_statutes(doc, new_statutes)
+    doc.ents = new_entities
+    new_statutes_clusters.update(stat_clusters)
+
+    new_clusters = add_statute_head(clusters, new_statutes_clusters)
+
+    return new_clusters, new_statutes_clusters
 
 
 def seperate_provision(doc, clusters):

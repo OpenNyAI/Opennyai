@@ -19,47 +19,24 @@ def load(model_name: str = 'en_legal_ner_trf', use_gpu: bool = True):
     return InLegalNER(model_name, use_gpu)
 
 
-def find_parent_child_id(cluster: list, ls_formatted_doc: dict):
-    cluster = [i for i in cluster if type(i) != str]
-    entities_list = ls_formatted_doc['annotations'][0]['result']
-    parent_id = ''
-    child_ids = []
-    parent = cluster[0]
-    childs = cluster[1:]
-    for i in entities_list:
-        if parent_id == '' and i['value']['start'] == parent.start_char and i['value']['end'] == parent.end_char:
-            parent_id = i['id']
-        for child in childs:
-            if i['value']['start'] == child.start_char and i['value']['end'] == child.end_char:
-                child_ids.append(i['id'])
-    return parent_id, child_ids
+def update_json_with_clusters(ls_formatted_doc: dict, precedent_clusters: dict, provision_statute_clusters: list,
+                              statute_clusters: dict):
+    for entity, _, __, val in provision_statute_clusters:
+        for result in ls_formatted_doc['annotations'][0]['result']:
+            if result['value']['start'] == entity.start_char and result['value']['end'] == entity.end_char:
+                result['meta']['text'].append(val)
 
+    for val in statute_clusters.keys():
+        for entity in statute_clusters[val]:
+            for result in ls_formatted_doc['annotations'][0]['result']:
+                if result['value']['start'] == entity.start_char and result['value']['end'] == entity.end_char:
+                    result['meta']['text'].append(str(val))
 
-def update_json_with_clusters(ls_formatted_doc: dict, precedent_clusters: list, provision_statute_clusters: list):
-    entities_list = copy.deepcopy(ls_formatted_doc['annotations'][0]['result'])
-    provision_statute_clusters_ids = [find_parent_child_id(i, ls_formatted_doc) for i in provision_statute_clusters]
-    precedent_clusters_ids = [find_parent_child_id(precedent_clusters[i], ls_formatted_doc) for i in
-                              precedent_clusters.keys() if len(precedent_clusters[i]) > 1]
-    for i in precedent_clusters_ids:
-        parent_id = i[0]
-        parent_text = ''
-        for _ in entities_list:
-            if _['id'] == parent_id:
-                parent_text = _['value']['text']
-        for j in i[1]:
-            for _ in ls_formatted_doc['annotations'][0]['result']:
-                if _['id'] == j:
-                    _['meta']['text'].append(parent_text)
-    for i in provision_statute_clusters_ids:
-        parent_id = i[0]
-        child_texts = []
-        for j in i[1]:
-            for _ in entities_list:
-                if _['id'] == j:
-                    child_texts.append(_['value']['text'])
-        for _ in ls_formatted_doc['annotations'][0]['result']:
-            if _['id'] == parent_id:
-                _['meta']['text'] = child_texts
+    for val in precedent_clusters.keys():
+        for entity in precedent_clusters[val]:
+            for result in ls_formatted_doc['annotations'][0]['result']:
+                if result['value']['start'] == entity.start_char and result['value']['end'] == entity.end_char:
+                    result['meta']['text'].append(str(val))
 
     return ls_formatted_doc
 
@@ -88,10 +65,9 @@ def get_json_from_spacy_doc(doc) -> dict:
                                                                  }))
 
     final_output = update_json_with_clusters(copy.deepcopy(output), doc.user_data['precedent_clusters'],
-                                             doc.user_data['provision_statute_clusters'])
+                                             doc.user_data['provision_statute_clusters'], doc.user_data['statute_clusters'])
 
     return final_output
-
 
 
 ner_displacy_option = {
