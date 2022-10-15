@@ -13,9 +13,10 @@ from pathlib import Path
 import warnings
 import shutil
 
+
 class RhetoricalRolePredictor():
 
-    def __init__(self,use_gpu=True,verbose=False):
+    def __init__(self, use_gpu=True, verbose=False):
         BERT_MODEL = "bert-base-uncased"
         self.config = {
             "bert_model": BERT_MODEL,
@@ -46,8 +47,8 @@ class RhetoricalRolePredictor():
         Loads labels to name mapping file for post-processing inference response
         """
         self.CACHE_DIR = os.path.join(str(Path.home()), '.opennyai')
-        self.hsln_format_txt_dirpath = os.path.join(self.CACHE_DIR,'temp_hsln/pubmed-20k',)
-        os.makedirs(self.hsln_format_txt_dirpath,exist_ok=True)
+        self.hsln_format_txt_dirpath = os.path.join(self.CACHE_DIR, 'temp_hsln/pubmed-20k', )
+        os.makedirs(self.hsln_format_txt_dirpath, exist_ok=True)
 
         if self.use_gpu:
             if torch.cuda.is_available():
@@ -60,10 +61,10 @@ class RhetoricalRolePredictor():
             self.device = torch.device('cpu')
             msg.info('Rhetorical Roles will use CPU!')
 
-
         # Load model
         def create_task(create_func):
-            return create_func(train_batch_size=self.config["batch_size"], max_docs=-1, data_folder=self.CACHE_DIR,verbose=self.__verbose__)
+            return create_func(train_batch_size=self.config["batch_size"], max_docs=-1, data_folder=self.CACHE_DIR,
+                               verbose=self.__verbose__)
 
         task = create_task(pubmed_task)
         self.model = getattr(models, self.config["model"])(self.config, [task])
@@ -85,13 +86,14 @@ class RhetoricalRolePredictor():
             warnings.simplefilter("ignore")
             # Tokenize the texts and write files
             split_into_sentences_tokenize_write(data, os.path.join(self.hsln_format_txt_dirpath, 'input_to_hsln.json'),
-                                                hsln_format_txt_dirpath=self.hsln_format_txt_dirpath,verbose=self.__verbose__)
+                                                hsln_format_txt_dirpath=self.hsln_format_txt_dirpath,
+                                                verbose=self.__verbose__)
 
             write_in_hsln_format(os.path.join(self.hsln_format_txt_dirpath, 'input_to_hsln.json'),
                                  self.hsln_format_txt_dirpath, self.tokenizer)
 
             task = pubmed_task(train_batch_size=self.config["batch_size"], max_docs=-1,
-                               data_folder=self.hsln_format_txt_dirpath,verbose=self.__verbose__)
+                               data_folder=self.hsln_format_txt_dirpath, verbose=self.__verbose__)
             return task
 
     def __call__(self, data):
@@ -117,10 +119,13 @@ class RhetoricalRolePredictor():
                 pred_labels = labels_dict['docwise_y_predicted']
                 annotations = file['annotations']
                 for i, label in enumerate(annotations[0]['result']):
+                    import uuid
+                    uid = uuid.uuid4()
+                    label_id = uid.hex
                     label['value']['labels'] = [pred_labels[pred_id][i]]
-                    label['value']['id'] = i + 1
+                    label['value']['id'] = label_id
 
-                file['id'] = "RhetoricalRole_"+str(file['id'])
+                file['id'] = "RhetoricalRole_" + str(file['id'])
 
-            shutil.rmtree(self.hsln_format_txt_dirpath) ##### remove the temporary files
+            shutil.rmtree(self.hsln_format_txt_dirpath)  ##### remove the temporary files
             return input

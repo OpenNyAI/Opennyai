@@ -10,8 +10,10 @@ from allennlp.modules import ConditionalRandomField
 import torch
 import math
 
+
 class CRFOutputLayer(torch.nn.Module):
     ''' CRF output layer consisting of a linear layer and a CRF. '''
+
     def __init__(self, in_dim, num_labels):
         super(CRFOutputLayer, self).__init__()
         self.num_labels = num_labels
@@ -39,22 +41,23 @@ class CRFOutputLayer(torch.nn.Module):
             predicted_label = torch.tensor(predicted_label)
             outputs["predicted_label"] = predicted_label
 
-            #log_denominator = self.crf._input_likelihood(logits, mask)
-            #log_numerator = self.crf._joint_likelihood(logits, predicted_label, mask)
-            #log_likelihood = log_numerator - log_denominator
-            #outputs["log_likelihood"] = log_likelihood
+            # log_denominator = self.crf._input_likelihood(logits, mask)
+            # log_numerator = self.crf._joint_likelihood(logits, predicted_label, mask)
+            # log_likelihood = log_numerator - log_denominator
+            # outputs["log_likelihood"] = log_likelihood
 
         return outputs
 
+
 class CRFPerTaskOutputLayer(torch.nn.Module):
     ''' CRF output layer consisting of a linear layer and a CRF. '''
+
     def __init__(self, in_dim, tasks):
         super(CRFPerTaskOutputLayer, self).__init__()
 
         self.per_task_output = torch.nn.ModuleDict()
         for task in tasks:
             self.per_task_output[task.task_name] = CRFOutputLayer(in_dim=in_dim, num_labels=len(task.labels))
-
 
     def forward(self, task, x, mask, labels=None, output_all_tasks=False):
         ''' x: shape: batch, max_sequence, in_dim
@@ -85,7 +88,6 @@ class CRFPerTaskOutputLayer(torch.nn.Module):
         return self.task_to_device[task]
 
 
-
 class AttentionPooling(torch.nn.Module):
     def __init__(self, in_features, dimension_context_vector_u=200, number_context_vectors=5):
         super(AttentionPooling, self).__init__()
@@ -98,7 +100,7 @@ class AttentionPooling(torch.nn.Module):
         self.output_dim = self.number_context_vectors * in_features
 
     def forward(self, tokens, mask):
-        #shape tokens: (batch_size, tokens, in_features)
+        # shape tokens: (batch_size, tokens, in_features)
 
         # compute the weights
         # shape tokens: (batch_size, tokens, dimension_context_vector_u)
@@ -116,7 +118,6 @@ class AttentionPooling(torch.nn.Module):
         return s
 
 
-
 class BertTokenEmbedder(torch.nn.Module):
     def __init__(self, config):
         super(BertTokenEmbedder, self).__init__()
@@ -129,7 +130,7 @@ class BertTokenEmbedder(torch.nn.Module):
         #       if temp_name.replace("bert.", '') == name1:
         #            state_dict_1[name1] = state_dict_2[name2]
 
-        #self.bert.load_state_dict(state_dict_1,strict=False)
+        # self.bert.load_state_dict(state_dict_1,strict=False)
 
         self.bert_trainable = config["bert_trainable"]
         self.bert_hidden_size = self.bert.config.hidden_size
@@ -175,10 +176,12 @@ class BertTokenEmbedder(torch.nn.Module):
 
         return bert_embeddings
 
+
 class BertHSLN(torch.nn.Module):
     '''
     Model for Baseline, Sequential Transfer Learning and Multitask-Learning with all layers shared (except output layer).
     '''
+
     def __init__(self, config, tasks):
         super(BertHSLN, self).__init__()
 
@@ -193,8 +196,8 @@ class BertHSLN(torch.nn.Module):
         self.lstm_hidden_size = config["word_lstm_hs"]
 
         self.word_lstm = PytorchSeq2SeqWrapper(torch.nn.LSTM(input_size=self.bert.bert_hidden_size,
-                                  hidden_size=self.lstm_hidden_size,
-                                  num_layers=1, batch_first=True, bidirectional=True))
+                                                             hidden_size=self.lstm_hidden_size,
+                                                             num_layers=1, batch_first=True, bidirectional=True))
 
         self.attention_pooling = AttentionPooling(2 * self.lstm_hidden_size,
                                                   dimension_context_vector_u=config["att_pooling_dim_ctx"],
@@ -204,13 +207,12 @@ class BertHSLN(torch.nn.Module):
 
         self.reinit_output_layer(tasks, config)
 
-
     def init_sentence_enriching(self, config, tasks):
         input_dim = self.attention_pooling.output_dim
-        #print(f"Attention pooling dim: {input_dim}")
+        # print(f"Attention pooling dim: {input_dim}")
         self.sentence_lstm = PytorchSeq2SeqWrapper(torch.nn.LSTM(input_size=input_dim,
-                                  hidden_size=self.lstm_hidden_size,
-                                  num_layers=1, batch_first=True, bidirectional=True))
+                                                                 hidden_size=self.lstm_hidden_size,
+                                                                 num_layers=1, batch_first=True, bidirectional=True))
 
     def reinit_output_layer(self, tasks, config):
         if config.get("without_context_enriching_transfer"):
@@ -236,7 +238,6 @@ class BertHSLN(torch.nn.Module):
         # shape (documents*sentences, tokens, 2*lstm_hidden_size)
         bert_embeddings_encoded = self.word_lstm(bert_embeddings, tokens_mask)
 
-
         # shape (documents*sentences, pooling_out)
         # sentence_embeddings = torch.mean(bert_embeddings_encoded, dim=1)
         sentence_embeddings = self.attention_pooling(bert_embeddings_encoded, tokens_mask)
@@ -244,7 +245,6 @@ class BertHSLN(torch.nn.Module):
         sentence_embeddings = sentence_embeddings.view(documents, sentences, -1)
         # in Jin et al. only here dropout
         sentence_embeddings = self.dropout(sentence_embeddings)
-
 
         sentence_mask = batch["sentence_mask"]
 
@@ -258,7 +258,6 @@ class BertHSLN(torch.nn.Module):
         else:
             output = self.crf(batch["task"], sentence_embeddings_encoded, sentence_mask, labels, output_all_tasks)
 
-
         return output
 
 
@@ -267,12 +266,11 @@ class BertHSLNMultiSeparateLayers(torch.nn.Module):
     Model Multi-Task Learning, where only certail layers are shared.
     This class is necessary to separate the model on two GPUs.
     '''
+
     def __init__(self, config, tasks):
         super(BertHSLNMultiSeparateLayers, self).__init__()
 
-
         self.bert = BertTokenEmbedder(config)
-
 
         # Jin et al. uses DROPOUT WITH EXPECTATION-LINEAR REGULARIZATION (see Ma et al. 2016),
         # we use instead default dropout
@@ -285,25 +283,23 @@ class BertHSLNMultiSeparateLayers(torch.nn.Module):
                                                              num_layers=1, batch_first=True, bidirectional=True))
 
         self.attention_pooling = PerTaskGroupWrapper(
-                                        task_groups=config["attention_groups"],
-                                        create_module_func=lambda g:
-                                            AttentionPooling(2 * self.lstm_hidden_size,
-                                                  dimension_context_vector_u=config["att_pooling_dim_ctx"],
-                                                  number_context_vectors=config["att_pooling_num_ctx"])
-                                )
+            task_groups=config["attention_groups"],
+            create_module_func=lambda g:
+            AttentionPooling(2 * self.lstm_hidden_size,
+                             dimension_context_vector_u=config["att_pooling_dim_ctx"],
+                             number_context_vectors=config["att_pooling_num_ctx"])
+        )
 
         attention_pooling_output_dim = next(iter(self.attention_pooling.per_task_mod.values())).output_dim
         self.sentence_lstm = PerTaskGroupWrapper(
-                                    task_groups=config["context_enriching_groups"],
-                                    create_module_func=lambda g:
-                                    PytorchSeq2SeqWrapper(torch.nn.LSTM(input_size=attention_pooling_output_dim,
-                                        hidden_size=self.lstm_hidden_size,
-                                        num_layers=1, batch_first=True, bidirectional=True))
-                                    )
+            task_groups=config["context_enriching_groups"],
+            create_module_func=lambda g:
+            PytorchSeq2SeqWrapper(torch.nn.LSTM(input_size=attention_pooling_output_dim,
+                                                hidden_size=self.lstm_hidden_size,
+                                                num_layers=1, batch_first=True, bidirectional=True))
+        )
 
         self.crf = CRFPerTaskGroupOutputLayer(self.lstm_hidden_size * 2, tasks, config["output_groups"])
-
-
 
     def to_device(self, device1, device2):
         self.bert.to(device1)
@@ -331,7 +327,8 @@ class BertHSLNMultiSeparateLayers(torch.nn.Module):
         # shape (documents*sentences, pooling_out)
         # sentence_embeddings = torch.mean(bert_embeddings_encoded, dim=1)
         device = self.attention_pooling.get_device(task_name)
-        sentence_embeddings = self.attention_pooling(task_name, bert_embeddings_encoded.to(device), tokens_mask.to(device))
+        sentence_embeddings = self.attention_pooling(task_name, bert_embeddings_encoded.to(device),
+                                                     tokens_mask.to(device))
         # shape: (documents, sentences, pooling_out)
         sentence_embeddings = sentence_embeddings.view(documents, sentences, -1)
         # in Jin et al. only here dropout
@@ -340,7 +337,8 @@ class BertHSLNMultiSeparateLayers(torch.nn.Module):
         sentence_mask = batch["sentence_mask"]
         # shape: (documents, sentence, 2*lstm_hidden_size)
         device = self.sentence_lstm.get_device(task_name)
-        sentence_embeddings_encoded = self.sentence_lstm(task_name, sentence_embeddings.to(device), sentence_mask.to(device))
+        sentence_embeddings_encoded = self.sentence_lstm(task_name, sentence_embeddings.to(device),
+                                                         sentence_mask.to(device))
         # in Jin et al. only here dropout
         sentence_embeddings_encoded = self.dropout(sentence_embeddings_encoded)
 
@@ -348,12 +346,15 @@ class BertHSLNMultiSeparateLayers(torch.nn.Module):
         if labels is not None:
             labels = labels.to(device)
 
-        output = self.crf(task_name, sentence_embeddings_encoded.to(device), sentence_mask.to(device), labels, output_all_tasks)
+        output = self.crf(task_name, sentence_embeddings_encoded.to(device), sentence_mask.to(device), labels,
+                          output_all_tasks)
 
         return output
 
+
 class CRFPerTaskGroupOutputLayer(torch.nn.Module):
     ''' CRF output layer consisting of a linear layer and a CRF. '''
+
     def __init__(self, in_dim, tasks, task_groups):
         super(CRFPerTaskGroupOutputLayer, self).__init__()
 
@@ -363,13 +364,12 @@ class CRFPerTaskGroupOutputLayer(torch.nn.Module):
                     return t
 
         self.crf = PerTaskGroupWrapper(
-                                        task_groups=task_groups,
-                                        create_module_func=lambda g:
-                                            # we assume same labels per group
-                                            CRFOutputLayer(in_dim=in_dim, num_labels=len(get_task(g[0]).labels))
+            task_groups=task_groups,
+            create_module_func=lambda g:
+            # we assume same labels per group
+            CRFOutputLayer(in_dim=in_dim, num_labels=len(get_task(g[0]).labels))
         )
         self.all_tasks = [t for t in [g for g in task_groups]]
-
 
     def forward(self, task, x, mask, labels=None, output_all_tasks=False):
         ''' x: shape: batch, max_sequence, in_dim
@@ -422,5 +422,3 @@ class PerTaskGroupWrapper(torch.nn.Module):
 
     def get_device(self, task):
         return self.task_to_device[task]
-
-

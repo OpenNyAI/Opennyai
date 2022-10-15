@@ -32,7 +32,6 @@ def tensor_dict_to_device(d, device):
             d[k] = v
 
 
-
 class ResultWriter:
     def __init__(self, results_filename):
         self.results_filename = results_filename
@@ -73,4 +72,3 @@ def print_model_parameters(model):
     print(table)
     print(f"Total Trainable Params: {total_params}")
     return total_params
-

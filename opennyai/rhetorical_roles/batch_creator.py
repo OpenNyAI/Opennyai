@@ -4,13 +4,14 @@ import opennyai.rhetorical_roles.bucketing as bucketing
 import torch
 import numpy as np
 
+
 class BatchCreator:
     def __init__(self, dataset, tokenizer, labels, batch_sentence_size, max_seq_length):
-        #'''dataset: Iterable over documents
+        # '''dataset: Iterable over documents
         #   tokenizer: WordPiece tokenizer of BERT. If None, then it is assumed that sentences are already tokenized.
         #   labels: possible lables of the sentences
         #   max_sequence_length: Max number of tokens for each sentences. Only required if tokenizer is provided.
-        #'''
+        # '''
         self.dataset = dataset
         self.labels = labels
         self.batch_sentence_size = batch_sentence_size
@@ -38,11 +39,9 @@ class BatchCreator:
 
         return len(self.batches)
 
-
     def get_batches_count(self):
         batches_count = self.build_batches()
         return batches_count
-
 
     def batch_to_tensor(self, b):
         # dictionary of arrays
@@ -61,7 +60,7 @@ class BatchCreator:
                 for doc in v:
                     for i, sentence in enumerate(doc):
                         doc[i] = pad_sequence_to_length(sentence, desired_length=max_sentence_len)
-            if k!='doc_name':
+            if k != 'doc_name':
                 result[k] = torch.tensor(v)
             else:
                 result[k] = v
@@ -71,7 +70,6 @@ class BatchCreator:
 
         sentences = list(document.data.sentences)
         labels = list(document.data.labels)
-
 
         # pad number of sentences
         for _ in range(len(document.data.labels), sentence_padding_len):
@@ -109,23 +107,19 @@ class BatchCreator:
         }
 
 
-def merge_records (merged, r):
+def merge_records(merged, r):
     if merged is None:
         merged = dict()
         for k in r:
-            merged[k] = [] 
-    
+            merged[k] = []
+
     for k in r:
         merged[k].append(r[k])
-    
+
     return merged
-    
+
+
 def one_hot(num, v):
     r = np.zeros(num, dtype=int)
     r[v] = 1
     return r
-
-
-
-
-

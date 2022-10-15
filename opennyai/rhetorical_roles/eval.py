@@ -8,8 +8,11 @@ from .utils import tensor_dict_to_gpu, tensor_dict_to_cpu
 def calc_classification_metrics(y_true, y_predicted, labels):
     macro_precision, macro_recall, macro_f1, _ = precision_recall_fscore_support(y_true, y_predicted, average='macro')
     micro_precision, micro_recall, micro_f1, _ = precision_recall_fscore_support(y_true, y_predicted, average='micro')
-    weighted_precision, weighted_recall, weighted_f1, _ = precision_recall_fscore_support(y_true, y_predicted, average='weighted')
-    per_label_precision, per_label_recall, per_label_f1, _ = precision_recall_fscore_support(y_true, y_predicted, average=None, labels=labels)
+    weighted_precision, weighted_recall, weighted_f1, _ = precision_recall_fscore_support(y_true, y_predicted,
+                                                                                          average='weighted')
+    per_label_precision, per_label_recall, per_label_f1, _ = precision_recall_fscore_support(y_true, y_predicted,
+                                                                                             average=None,
+                                                                                             labels=labels)
 
     acc = accuracy_score(y_true, y_predicted)
 
@@ -37,14 +40,12 @@ def calc_classification_metrics(y_true, y_predicted, labels):
            class_report
 
 
-
-
 def eval_model(model, eval_batches, device, task):
     model.eval()
     true_labels = []
-    labels_dict={}
+    labels_dict = {}
     predicted_labels = []
-    docwise_predicted_labels=[]
+    docwise_predicted_labels = []
     docwise_true_labels = []
     doc_name_list = []
     with torch.no_grad():
@@ -58,7 +59,8 @@ def eval_model(model, eval_batches, device, task):
             output = model(batch=batch)
 
             true_labels_batch, predicted_labels_batch = \
-                clear_and_map_padded_values(batch["label_ids"].view(-1), output["predicted_label"].view(-1), task.labels)
+                clear_and_map_padded_values(batch["label_ids"].view(-1), output["predicted_label"].view(-1),
+                                            task.labels)
 
             docwise_true_labels.append(true_labels_batch)
             docwise_predicted_labels.append(predicted_labels_batch)
@@ -68,7 +70,7 @@ def eval_model(model, eval_batches, device, task):
             predicted_labels.extend(predicted_labels_batch)
 
             tensor_dict_to_cpu(batch)
-    labels_dict['y_true']=true_labels
+    labels_dict['y_true'] = true_labels
     labels_dict['y_predicted'] = predicted_labels
     labels_dict['labels'] = task.labels
     labels_dict['docwise_y_true'] = docwise_true_labels
@@ -76,7 +78,7 @@ def eval_model(model, eval_batches, device, task):
     labels_dict['doc_names'] = doc_name_list
     metrics, confusion, class_report = \
         calc_classification_metrics(y_true=true_labels, y_predicted=predicted_labels, labels=task.labels)
-    return metrics, confusion,labels_dict, class_report
+    return metrics, confusion, labels_dict, class_report
 
 
 def clear_and_map_padded_values(true_labels, predicted_labels, labels):
@@ -89,4 +91,3 @@ def clear_and_map_padded_values(true_labels, predicted_labels, labels):
             cleared_true.append(labels[true_label])
             cleared_predicted.append(labels[predicted_label])
     return cleared_true, cleared_predicted
-
