@@ -13,19 +13,20 @@ Instructions for creating a release of the opennyai library.
 
 setup(
     name="opennyai",
-    version="0.0.4",
+    version="0.0.5",
     url="",
     author="Aman Tiwari",
     author_email="aman.tiwari@thoughtworks.com",
     description="A SpaCy pipeline and models for NLP on indian legal text.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    keywords=["law indianlegalner legalner lawtech legaltech nlp spacy SpaCy"],
+    keywords=[
+        "law indianlegalner legalner legal ner lawtech legaltech nlp spacy SpaCy rhetorical role summarizer extractive_summarizer "],
     classifiers=[
         "Intended Audience :: Science/Research",
-        "Development Status :: 1 - Planning",
+        "Development Status :: 2 - Pre-Alpha",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
