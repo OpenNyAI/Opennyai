@@ -17,7 +17,13 @@ We are giving access to three model developed by us which specializes in Indian 
 
 # 🔧 1. Installation
 
-To get started using opennyai simply install it using pip by running the following line in your terminal:
+To get started using opennyai first create a new python virtual environment:
+
+```bash
+python3 -m venv /path/to/new/virtual/environment
+source /path/to/new/virtual/environment/bin/activate
+```
+Install it using pip by running the following line in your terminal
 
 ```bash
 pip install opennyai
