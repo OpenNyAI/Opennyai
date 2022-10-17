@@ -11,11 +11,29 @@ Contents
    :caption: Getting Started:
 
    getting_started/about_opennyai
-    getting_started/installation
-    getting_started/hosted_webapp_
+   getting_started/installation
+   getting_started/hosted_webapp_api
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Preprocessing:
+
+   preprocessing/preprocessing
 
 .. toctree::
    :maxdepth: 1
    :caption: Named Entity Recognition:
 
-   getting_started
+   ner/legal_named_entities
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Judgment Structuring using Sentence Rhetorical Roles:
+
+   rr/rr_structure
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Judgment Summarization:
+
+   summariser/summariser
