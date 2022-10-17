@@ -3,9 +3,6 @@ Welcome to OpenNyAI's documentation!
 
 **OpenNyAI** is a Python library for natural language processing on Indian legal texts.
 
-Contents
---------
-
 .. toctree::
    :maxdepth: 1
    :caption: Getting Started:
@@ -28,7 +25,7 @@ Contents
 
 .. toctree::
    :maxdepth: 1
-   :caption: Judgment Structuring using Sentence Rhetorical Roles:
+   :caption: Judgment Structuring:
 
    rr/rr_structure
 
