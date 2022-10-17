@@ -5,9 +5,11 @@
 [![PyPI version](https://badge.fury.io/py/opennyai.svg)](https://pypi.org/project/opennyai/)
 [![python version](https://img.shields.io/badge/Python-%3E=3.7-blue)](https://github.com/OpenNyAI/Opennyai)
 
-Opennyai is a natural language processing toolkit for Indian legal texts. 
+Opennyai is a natural language preprocessing framework made with SpaCy. Its pipeline has achieved State-of-the-Art
+performance on Named entity recognition on Indian legal NER.
+Try [demo](https://huggingface.co/opennyaiorg/en_legal_ner_trf)
 
-This library provides unified access to following 3 AI models developed by [OpenNyAI](https://opennyai.org/) which focus on Indian court judgments:
+This library provides unified access to three AI models developed by us which focus on Indian court judgments:
 
 * [Named Entity Recognition (NER)](https://github.com/Legal-NLP-EkStep/legal_NER)
 * [Rhetorical Role prediction](https://github.com/Legal-NLP-EkStep/rhetorical-role-baseline)
@@ -62,9 +64,6 @@ results[0]['summary'] ## shows Summary for each of the Rheorical Role for first 
 If you need to more customizations on the output of each of the models then you can also run each of the models individually
 ####  2.1.1 Run NER model only
 For detailed information about the NER model, please refer to [legal_NER git repo](https://github.com/Legal-NLP-EkStep/legal_NER).
-This model is also available on [huggingface](https://huggingface.co/opennyaiorg/en_legal_ner_trf)
-
-
 Use following python to extract entities from single court judgment.
 
 ```python
@@ -106,7 +105,7 @@ Note: You can import generated json to label studio and visualize all the detail
 
 
 #### 2.1.2 Run Rhetorical Role model only
-For detailed information about the Rhetorical Roles model, please refer to the [paper](http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.470.pdf) and [git repo](https://github.com/Legal-NLP-EkStep/rhetorical-role-baseline).
+For detailed information about the Rhetorical Roles model, please refer to [git repo](https://github.com/Legal-NLP-EkStep/rhetorical-role-baseline).
 
 Use following python to get structure of 2 court judgments using sentence rhetorical roles.
 ```python
