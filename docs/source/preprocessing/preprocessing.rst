@@ -9,7 +9,8 @@ Following preprocessing activities are performed using spacy pretrained model
 2. Sentence splitting
 
 The preprocessing is done using Data object.
-.. code-block::
+
+.. code-block:: python
 
     texts_to_process = [text1,text2]
     data = Data(texts_to_process,preprocessing_nlp_model='en_core_web_trf')
