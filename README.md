@@ -26,7 +26,7 @@ source /path/to/new/virtual/environment/bin/activate
 Install it using pip by running the following line in your terminal
 
 ```bash
-pip install opennyai
+pip install -U opennyai
 ```
 
 Note: if you want to utilize spacy with GPU please install [Cupy](https://anaconda.org/conda-forge/cupy)
@@ -35,7 +35,9 @@ cupy refer to [page](https://spacy.io/usage)
 
 Remember you need spacy of 3.2.4 version for models to work perfectly.
 
-# 👩‍💻 2. Usage
+# 📖 2. [Documentation](https://opennyai.readthedocs.io/en/latest/)
+
+# 👩‍💻 3. Usage
 To run the 3 OpenNyAI models on judgment texts of your choice please run following python code
 ```python
 from opennyai import Pipeline
@@ -60,9 +62,9 @@ results[0]['summary'] ## shows Summary for each of the Rheorical Role for first 
 ```
 
 
-### 2.1 Running each of the 3 AI models individually
+### 3.1 Running each of the 3 AI models individually
 If you need to more customizations on the output of each of the models then you can also run each of the models individually
-####  2.1.1 Run NER model only
+####  3.1.1 Run NER model only
 For detailed information about the NER model, please refer to [legal_NER git repo](https://github.com/Legal-NLP-EkStep/legal_NER).
 Use following python to extract entities from single court judgment.
 
@@ -104,7 +106,7 @@ Note: You can import generated json to label studio and visualize all the detail
 
 
 
-#### 2.1.2 Run Rhetorical Role model only
+#### 3.1.2 Run Rhetorical Role model only
 For detailed information about the Rhetorical Roles model, please refer to [git repo](https://github.com/Legal-NLP-EkStep/rhetorical-role-baseline).
 
 Use following python to get structure of 2 court judgments using sentence rhetorical roles.
@@ -121,7 +123,7 @@ rr_model = RhetoricalRolePredictor(use_gpu=True)
 rr_output = rr_model(data)
 ```
 
-#### 2.1.3 Run Summarizer model only
+#### 3.1.3 Run Summarizer model only
 For detailed information about extactive summarization of court judgment , please refer to [git repo](https://github.com/Legal-NLP-EkStep/judgment_extractive_summarizer).
 
 
@@ -158,13 +160,13 @@ Result:
   'PREAMBLE': 'xxxx'}]
  ```
 
-## 2.2 Advanced Usage
-### 2.2.1 Trade off between run time and accuracy for data preprocessing 
+## 3.2 Advanced Usage
+### 3.2.1 Trade off between run time and accuracy for data preprocessing 
 Data Preprocessing performs tasks like sentence splitting , splitting the preamble and judgment. Performance of this preprocessing critically determines the performance of AI models.
 We recommend using 'en_core_web_trf' for preprocessing of the data, but it can be slow.
 Available preprocessing models are 'en_core_web_trf' (slowest but best accuracy), 'en_core_web_md', 'en_core_web_sm'(fastest but less accurate)
 
-### 2.2.2 Trade off between run time and accuracy for NER 
+### 3.2.2 Trade off between run time and accuracy for NER 
 You can choose from following NER models in InLegalNER.load() depending on your accuracy and run time needs
 * en_legal_ner_trf (This model provides the highest accuracy)
 * en_legal_ner_sm (This model provides the highest efficiency)
