@@ -8,7 +8,7 @@ Welcome to OpenNyAI's documentation!
    :caption: Getting Started:
 
    getting_started/about_opennyai
-   getting_started/installation
+   getting_started/Installation
    getting_started/hosted_webapp_api
 
 .. toctree::

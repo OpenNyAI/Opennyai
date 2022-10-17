@@ -14,7 +14,7 @@ Install it using pip by running the following line in your terminal
 
     pip install opennyai
 
-Note: if you want to utilize spacy with GPU please install `Cupy <https://anaconda.org/conda-forge/cupy>`_,
+Note: if you want to utilize spacy with GPU please install `Cupy <https://anaconda.org/conda-forge/cupy>`_ /
 `cudatoolkit <https://anaconda.org/anaconda/cudatoolkit>`_ dependency of appropriate version. For spacy installation with
 cupy refer to `page <https://spacy.io/usage>`_
 
