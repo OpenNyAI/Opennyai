@@ -4,12 +4,14 @@ Installation
 To get started using opennyai first create a new python virtual environment:
 
 .. code-block::
+
     python3 -m venv /path/to/new/virtual/environment
     source /path/to/new/virtual/environment/bin/activate
 
 Install it using pip by running the following line in your terminal
 
 .. code-block::
+
     pip install opennyai
 
 Note: if you want to utilize spacy with GPU please install `Cupy <https://anaconda.org/conda-forge/cupy>`_,
