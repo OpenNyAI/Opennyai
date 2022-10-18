@@ -110,7 +110,7 @@ class _EncoderBase(torch.nn.Module):
 
         packed_sequence_input = pack_padded_sequence(
             sorted_inputs[:num_valid, :, :],
-            sorted_sequence_lengths[:num_valid].data.cpu().tolist(),
+            sorted_sequence_lengths[:num_valid].data.cpu(),
             batch_first=True,
         )
         # Prepare the initial states.
