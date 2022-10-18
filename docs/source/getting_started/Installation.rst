@@ -1,12 +1,12 @@
 Installation
 ============
 
-To get started using opennyai first create a new python virtual environment:
+To get started using opennyai first create a new conda environment:
 
 .. code-block::
 
-    python3 -m venv /path/to/new/virtual/environment
-    source /path/to/new/virtual/environment/bin/activate
+    conda create -n opennyai python=3.8
+    conda activate opennyai
 
 Install it using pip by running the following line in your terminal
 
@@ -14,11 +14,23 @@ Install it using pip by running the following line in your terminal
 
     pip install opennyai
 
-Note: if you want to utilize spacy with GPU please install `Cupy <https://anaconda.org/conda-forge/cupy>`_ /
-`cudatoolkit <https://anaconda.org/anaconda/cudatoolkit>`_ dependency of appropriate version. For spacy installation with
-cupy refer to `page <https://spacy.io/usage>`_
+For GPU support
+---------------
+If you want to utilize spacy with GPU please install `Cupy <https://anaconda.org/conda-forge/cupy>`_ and
+`cudatoolkit <https://anaconda.org/anaconda/cudatoolkit>`_ dependency of appropriate version.
+
+.. code-block::
+
+    conda install cudatoolkit==<your_cuda_version> #### E.g. cudatoolkit==11.2
+    pip install cupy-cuda<your_cuda_version> ##### E.g. cupy-cuda112
+
+
+In case of any issue with installation please refer to `spacy installation with cupy <https://spacy.io/usage>`_
 
 Remember you need spacy of 3.2.4 version for models to work perfectly.
+
+
+
 
 Run All 3 AI models on Input Judgment Texts
 ==============================
