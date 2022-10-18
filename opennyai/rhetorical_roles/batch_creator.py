@@ -1,4 +1,4 @@
-from allennlp.common.util import pad_sequence_to_length
+from opennyai.rhetorical_roles.allennlp_helper.common.util import pad_sequence_to_length
 
 import opennyai.rhetorical_roles.bucketing as bucketing
 import torch

@@ -1,14 +1,10 @@
-from allennlp.common.util import pad_sequence_to_length
-from allennlp.modules.seq2seq_encoders import PytorchSeq2SeqWrapper
-from allennlp.nn.util import masked_mean, masked_softmax
-import copy
-
+from opennyai.rhetorical_roles.allennlp_helper.common.util import pad_sequence_to_length
+from opennyai.rhetorical_roles.allennlp_helper.modules.seq2seq_encoders.pytorch_seq2seq_wrapper import PytorchSeq2SeqWrapper
+from opennyai.rhetorical_roles.allennlp_helper.nn.util import masked_mean, masked_softmax
 from transformers import BertModel
-
-from allennlp.modules import ConditionalRandomField
-
+from opennyai.rhetorical_roles.allennlp_helper.modules.conditional_random_field.conditional_random_field import ConditionalRandomField
 import torch
-import math
+
 
 
 class CRFOutputLayer(torch.nn.Module):
