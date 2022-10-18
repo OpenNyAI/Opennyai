@@ -1,7 +1,7 @@
 Welcome to OpenNyAI's documentation!
 ===================================
 
-**OpenNyAI** is a Python library for natural language processing on Indian legal texts.
+**OpenNyAI** is a framework for natural language processing on Indian legal texts. This python library provides unified access to the following 3 AI models developed by OpenNyAI which focus on Indian court judgments
 
 .. toctree::
    :maxdepth: 1
