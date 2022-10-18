@@ -6,7 +6,9 @@ Preprocessing Activities:
 ------------------------
 Following preprocessing activities are performed using spacy pretrained model
 1. Separating preamble from judgment text
-2. Sentence splitting
+2. Sentence splitting of judgment text
+3. Convert upper case words in preamble to title case
+4. Replace newline characters within a sentence with space in judgment text
 
 The preprocessing is done using Data object.
 
