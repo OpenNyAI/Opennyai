@@ -24,7 +24,7 @@ def update_json_with_clusters(ls_formatted_doc: dict, precedent_clusters: dict, 
     for entity, _, __, val in provision_statute_clusters:
         for result in ls_formatted_doc['annotations'][0]['result']:
             if result['value']['start'] == entity.start_char and result['value']['end'] == entity.end_char:
-                result['meta']['text'].append(val)
+                result['meta']['text'].append(str(val))
 
     for val in statute_clusters.keys():
         for entity in statute_clusters[val]:
