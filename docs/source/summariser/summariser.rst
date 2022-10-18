@@ -33,7 +33,7 @@ Create summary of input judgment text
 ======================
 Summarizer model needs Rhetorical Role model output as input. Hence Rhetorical Role prediction model needs to run before Summarizer model rune.
 
-To use Summarizer model simply execute code below. For running all 3 AI models together on input text, please refer to :ref:`here<Run All 3 AI models on Input Judgment Texts>` .
+To use Summarizer model simply execute code below. For running all 3 AI models together on input text, please refer :ref:`here<Run All 3 AI models on Input Judgment Texts>` .
 
 .. code-block:: python
 

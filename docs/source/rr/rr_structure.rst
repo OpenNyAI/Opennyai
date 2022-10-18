@@ -32,7 +32,7 @@ For more details about how the data was collected and model training , please re
 
 Predict Rhetorical Roles
 ================
-Use following python to get structure of 2 court judgments using sentence rhetorical roles. For running all 3 AI models together on input text, please refer to :ref:`here<Run All 3 AI models on Input Judgment Texts>` .
+Use following python to get structure of 2 court judgments using sentence rhetorical roles. For running all 3 AI models together on input text, please refer :ref:`here<Run All 3 AI models on Input Judgment Texts>` .
 
 .. code-block:: python
 

@@ -33,7 +33,7 @@ For more details about training data and code used for training , please refer t
 
 Extract Named Entities from Judgment Text
 ======================
-Use following python to extract entities from single court judgment. For running all 3 AI models together on input text, please refer to :ref:`here<Run All 3 AI models on Input Judgment Texts>`.
+Use following python to extract entities from single court judgment. For running all 3 AI models together on input text, please refer :ref:`here<Run All 3 AI models on Input Judgment Texts>`.
 
 .. code-block:: python
 
