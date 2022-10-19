@@ -7,7 +7,7 @@ import torch
 import os
 from wasabi import msg
 from transformers import BertTokenizer
-from .eval import eval_model,infer_model
+from .eval import infer_model
 import json
 from pathlib import Path
 import warnings
