@@ -58,6 +58,8 @@ class Pipeline:
         ner_json_results, rr_output, summary_output = None, None, None
         if 'NER' in self.components:
             ner_results = self._ner_extractor(data, verbose=self.__verbose__)
+            if not isinstance(ner_results,list):
+                ner_results = [ner_results]
             ner_json_results = [InLegalNER.get_json_from_spacy_doc(i) for i in ner_results]
 
         if 'Rhetorical_Role' in self.components or 'Summarizer' in self.components:
