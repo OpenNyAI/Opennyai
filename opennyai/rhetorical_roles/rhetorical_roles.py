@@ -7,7 +7,7 @@ import torch
 import os
 from wasabi import msg
 from transformers import BertTokenizer
-from .eval import eval_model
+from .eval import eval_model,infer_model
 import json
 from pathlib import Path
 import warnings
@@ -104,7 +104,8 @@ class RhetoricalRolePredictor():
             task = self.preprocess(data)
             folds = task.get_folds()
             test_batches = folds[0].test
-            metrics, confusion, labels_dict, class_report = eval_model(self.model, test_batches, self.device, task)
+            #metrics, confusion, labels_dict, class_report = eval_model(self.model, test_batches, self.device, task)
+            labels_dict = infer_model(self.model, test_batches, self.device, task)
             filename_sent_boundries = json.load(
                 open(os.path.join(self.hsln_format_txt_dirpath, 'sentece_boundries.json')))
 

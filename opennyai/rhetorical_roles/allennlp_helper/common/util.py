@@ -1,8 +1,7 @@
 """
 Various utilities that don't fit anywhere else.
 """
-import hashlib
-import io
+
 from datetime import timedelta
 import importlib
 import json
@@ -31,14 +30,12 @@ from typing import (
     Set,
 )
 
-import dill
 import numpy
 import spacy
 import torch
 import torch.distributed as dist
 from spacy.cli.download import download as spacy_download
 from spacy.language import Language as SpacyModelType
-import base58
 
 from opennyai.rhetorical_roles.allennlp_helper.common.checks import log_pytorch_version_info
 from opennyai.rhetorical_roles.allennlp_helper.common.params import Params
@@ -736,14 +733,6 @@ def cycle_iterator_function(iterator_function: Callable[[], Iterable[T]]) -> Ite
         except StopIteration:
             iterator = iter(iterator_function())
 
-
-def hash_object(o: Any) -> str:
-    """Returns a character hash code of arbitrary Python objects."""
-    m = hashlib.blake2b()
-    with io.BytesIO() as buffer:
-        dill.dump(o, buffer)
-        m.update(buffer.getbuffer())
-        return base58.b58encode(m.digest()).decode()
 
 
 class SigTermReceived(Exception):
