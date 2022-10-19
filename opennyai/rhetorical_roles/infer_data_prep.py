@@ -4,10 +4,30 @@ import os
 import spacy
 from tqdm import tqdm
 
-from .data_prep import attach_short_sentence_boundries_to_next
-
 spacy.prefer_gpu()
 
+def attach_short_sentence_boundries_to_next(revised_sentence_boundries, doc_txt):
+    ###### this function accepts the list in the format of output of function "extract_relevant_sentences_for_rhetorical_roles" and returns the revised list with shorter sentences attached to next sentence
+    min_char_cnt_per_sentence = 5
+
+    concatenated_sentence_boundries = []
+    sentences_to_attach_to_next = ()
+    for sentence_boundry in revised_sentence_boundries:
+        sentence_txt = doc_txt[sentence_boundry[0]: sentence_boundry[1]]
+        if not sentence_txt.isspace():  ### sentences containing only spaces , newlines are discarded
+            if sentences_to_attach_to_next:
+                sentence_start_char = sentences_to_attach_to_next[0]
+            else:
+                sentence_start_char = sentence_boundry[0]
+            # sentence_length_char = sentence_boundry[1] - sentence_start_char
+            sentence_length_char = len(doc_txt[sentence_start_char: sentence_boundry[1]].strip())
+            if sentence_length_char > min_char_cnt_per_sentence:
+                concatenated_sentence_boundries.append((sentence_start_char, sentence_boundry[1]))
+                sentences_to_attach_to_next = ()
+            else:
+                if not sentences_to_attach_to_next:
+                    sentences_to_attach_to_next = sentence_boundry
+    return concatenated_sentence_boundries
 
 def split_into_sentences_tokenize_write(data, custom_processed_data_path,
                                         hsln_format_txt_dirpath='datasets/pubmed-20k', verbose=False):

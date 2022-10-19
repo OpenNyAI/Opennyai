@@ -30,7 +30,6 @@ except ImportError:
 
 
 from opennyai.rhetorical_roles.allennlp_helper.common.checks import ConfigurationError
-#from opennyai.rhetorical_roles.allennlp_helper.common.file_utils import cached_path
 
 logger = logging.getLogger(__name__)
 
