@@ -52,8 +52,8 @@ from opennyai import Pipeline
 from opennyai.utils import Data,get_text_from_indiankanoon_url
 
 ###### Get court judgment texts on which to run the AI models
-text1 = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/811682/')
-text2 = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/1386912/')
+text1 = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/542273/')
+text2 = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/82089984/')
 texts_to_process = [text1,text2] ### you can also load your text files directly into this
 data = Data(texts_to_process)  #### create Data object for data  preprocessing before running ML models
 
