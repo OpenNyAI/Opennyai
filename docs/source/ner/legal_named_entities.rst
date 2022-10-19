@@ -85,7 +85,7 @@ are  clustered together and an extension 'precedent_clusters' is
 added to the doc which is a dict where the keys are the head of the cluster (longest precedent) and value
 is a list of all the precedents in that cluster. To access the list, use
 
-`doc._.precedent_clusters`
+`doc.user_data['precedent_clusters']`
 
 For example
  [{Madhu Limaye v. State of Mahrashtra: [Madhu Limaye v. State of Mahrashtra, Madhu Limaye v. State of Maharashtra, Madhu Limaye, Madhu Limaye, Madhu Limaye]}]
