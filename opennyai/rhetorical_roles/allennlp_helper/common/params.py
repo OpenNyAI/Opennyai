@@ -30,7 +30,7 @@ except ImportError:
 
 
 from opennyai.rhetorical_roles.allennlp_helper.common.checks import ConfigurationError
-from opennyai.rhetorical_roles.allennlp_helper.common.file_utils import cached_path
+#from opennyai.rhetorical_roles.allennlp_helper.common.file_utils import cached_path
 
 logger = logging.getLogger(__name__)
 
@@ -421,56 +421,56 @@ class Params(MutableMapping):
             value = [self._check_is_dict(f"{new_history}.{i}", v) for i, v in enumerate(value)]
         return value
 
-    @classmethod
-    def from_file(
-        cls,
-        params_file: Union[str, PathLike],
-        params_overrides: Union[str, Dict[str, Any]] = "",
-        ext_vars: dict = None,
-    ) -> "Params":
-        """
-        Load a `Params` object from a configuration file.
-
-        # Parameters
-
-        params_file: `str`
-
-            The path to the configuration file to load.
-
-        params_overrides: `Union[str, Dict[str, Any]]`, optional (default = `""`)
-
-            A dict of overrides that can be applied to final object.
-            e.g. `{"model.embedding_dim": 10}` will change the value of "embedding_dim"
-            within the "model" object of the config to 10. If you wanted to override the entire
-            "model" object of the config, you could do `{"model": {"type": "other_type", ...}}`.
-
-        ext_vars: `dict`, optional
-
-            Our config files are Jsonnet, which allows specifying external variables
-            for later substitution. Typically we substitute these using environment
-            variables; however, you can also specify them here, in which case they
-            take priority over environment variables.
-            e.g. {"HOME_DIR": "/Users/allennlp/home"}
-        """
-        if ext_vars is None:
-            ext_vars = {}
-
-        # redirect to cache, if necessary
-        params_file = cached_path(params_file)
-        ext_vars = {**_environment_variables(), **ext_vars}
-
-        file_dict = json.loads(evaluate_file(params_file, ext_vars=ext_vars))
-
-        if isinstance(params_overrides, dict):
-            params_overrides = json.dumps(params_overrides)
-        overrides_dict = parse_overrides(params_overrides, ext_vars=ext_vars)
-
-        if overrides_dict:
-            param_dict = with_overrides(file_dict, overrides_dict)
-        else:
-            param_dict = file_dict
-
-        return cls(param_dict)
+    # @classmethod
+    # def from_file(
+    #     cls,
+    #     params_file: Union[str, PathLike],
+    #     params_overrides: Union[str, Dict[str, Any]] = "",
+    #     ext_vars: dict = None,
+    # ) -> "Params":
+    #     """
+    #     Load a `Params` object from a configuration file.
+    #
+    #     # Parameters
+    #
+    #     params_file: `str`
+    #
+    #         The path to the configuration file to load.
+    #
+    #     params_overrides: `Union[str, Dict[str, Any]]`, optional (default = `""`)
+    #
+    #         A dict of overrides that can be applied to final object.
+    #         e.g. `{"model.embedding_dim": 10}` will change the value of "embedding_dim"
+    #         within the "model" object of the config to 10. If you wanted to override the entire
+    #         "model" object of the config, you could do `{"model": {"type": "other_type", ...}}`.
+    #
+    #     ext_vars: `dict`, optional
+    #
+    #         Our config files are Jsonnet, which allows specifying external variables
+    #         for later substitution. Typically we substitute these using environment
+    #         variables; however, you can also specify them here, in which case they
+    #         take priority over environment variables.
+    #         e.g. {"HOME_DIR": "/Users/allennlp/home"}
+    #     """
+    #     if ext_vars is None:
+    #         ext_vars = {}
+    #
+    #     # redirect to cache, if necessary
+    #     params_file = cached_path(params_file)
+    #     ext_vars = {**_environment_variables(), **ext_vars}
+    #
+    #     file_dict = json.loads(evaluate_file(params_file, ext_vars=ext_vars))
+    #
+    #     if isinstance(params_overrides, dict):
+    #         params_overrides = json.dumps(params_overrides)
+    #     overrides_dict = parse_overrides(params_overrides, ext_vars=ext_vars)
+    #
+    #     if overrides_dict:
+    #         param_dict = with_overrides(file_dict, overrides_dict)
+    #     else:
+    #         param_dict = file_dict
+    #
+    #     return cls(param_dict)
 
     def to_file(self, params_file: str, preference_orders: List[List[str]] = None) -> None:
         with open(params_file, "w") as handle:
