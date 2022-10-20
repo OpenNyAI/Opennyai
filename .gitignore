@@ -3,3 +3,4 @@ build
 dist
 opennyai.egg-info
 create_pypi_package.sh
+.DS_Store
