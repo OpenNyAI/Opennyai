@@ -669,7 +669,7 @@ def pro_statute_coref_resol(doc):
 
     stat_clusters = create_statute_clusters(doc)
 
-    matching_pro_statute, pro_statut = map_pro_statute_on_heuristics(matching_pro_left,
+    matching_pro_statute, pro_statute = map_pro_statute_on_heuristics(matching_pro_left,
                                                                      matching_pro_statute,
                                                                      pro_statute,
                                                                      total_statutes)
@@ -678,6 +678,7 @@ def pro_statute_coref_resol(doc):
 
     clusters = seperate_provision(doc, clusters)
 
+
     new_entities = remove_unidentified_statutes(doc, new_statutes)
     doc.ents = new_entities
 
@@ -685,6 +686,7 @@ def pro_statute_coref_resol(doc):
         stat_clusters[cluster.text] = new_statutes_clusters[cluster]
 
     new_clusters = add_statute_head(clusters, stat_clusters)
+
 
     return new_clusters, stat_clusters
 
@@ -705,7 +707,7 @@ def seperate_provision(doc, clusters):
         for sec in section:
             sec_text = sec.strip()
             if len(sec_text) > 0:
-                if not sec_text.isalpha() and not sec_text[0].isnumeric():
+                if  not sec_text[0].isalpha() and not sec_text[0].isnumeric():
                     combined = True
                     break
 
