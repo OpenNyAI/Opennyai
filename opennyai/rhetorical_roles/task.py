@@ -75,7 +75,7 @@ def art_task_small(train_batch_size, max_docs):
 def pubmed_task(train_batch_size, max_docs, verbose, data_folder="datasets/"):
     return Task(PUBMED_TASK, PUBMED_LABELS,
                 train_batch_size, 1, max_docs, short_name="PMD", labels_pres=PUBMED_LABELS_PRES,
-                data_folder=data_folder,verbose=verbose)
+                data_folder=data_folder, verbose=verbose)
 
 
 def pubmed_task_small(train_batch_size, max_docs):
@@ -108,7 +108,7 @@ class Task:
         self.short_name = short_name
         self.task_name = task_name
         self.labels = labels
-        #self.data_dir = os.path.join(data_folder, task_name if task_folder_name is None else task_folder_name)
+        # self.data_dir = os.path.join(data_folder, task_name if task_folder_name is None else task_folder_name)
         self.data_dir = data_folder
         self.train_batch_size = train_batch_size
         self.num_folds = num_fols
@@ -167,7 +167,8 @@ class Task:
             train_examples = list(train_examples)
             new_len = int(len(train_examples) * self.portion_training_data)
             if self.__verbose__:
-                msg.info(f"Truncating training examples with factor {self.portion_training_data} from {len(train_examples)} to {new_len}")
+                msg.info(
+                    f"Truncating training examples with factor {self.portion_training_data} from {len(train_examples)} to {new_len}")
             train_examples = train_examples[0: new_len]
         return train_examples
 

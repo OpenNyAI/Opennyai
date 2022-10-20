@@ -66,7 +66,9 @@ class InLegalNER:
                     precedent_clusters = precedent_coref_resol(nlp_doc)
 
                     other_person_entites = other_person_coref_res(nlp_doc)
+
                     pro_sta_clusters,stat_clusters = pro_statute_coref_resol(nlp_doc)
+
 
                     all_entities = remove_overlapping_entities(nlp_doc.ents, pro_sta_clusters)
 
