@@ -727,3 +727,4 @@ def seperate_provision(doc, clusters):
             new_clusters.append((cluster[0], cluster[1], cluster[0].text))
 
     return new_clusters
+
