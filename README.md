@@ -13,6 +13,7 @@ This library provides unified access to the following 3 AI models developed by O
 * [Rhetorical Role prediction](https://github.com/Legal-NLP-EkStep/rhetorical-role-baseline)
 * [Extractive Summarizer](https://github.com/Legal-NLP-EkStep/judgment_extractive_summarizer)
 
+This library is mainly for running the pretrained models on your custom input judgments text. For more details about data and model training, please refer to individual git repo links.
 # 🔧 1. Installation
 
 To get started using opennyai first create a new python virtual environment:
@@ -69,3 +70,14 @@ results[0]['rr_annotations'][0]['result']  ## shows the Rhetorical Roles model o
 results[0]['summary'] ## shows Summary for each of the Rheorical Role for first judgment text 
 ```
 For more details on usage please refer to the [documentation](https://opennyai.readthedocs.io/en/latest/index.html#)
+
+Google Colab Notebook
+----------------------
+
+| Description               | Link  |
+|---------------------------|-------|
+| Run Inference          | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1rNA6XVyD-GCTd0YtosjiKON_p9bGuVwz) |
+
+Visualization of outputs
+-----------------------
+We encourage users to use [our webapp](https://summarizer-fer6v2lowq-uc.a.run.app/) for visualizing the results for a judgment of your choice.
