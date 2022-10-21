@@ -65,8 +65,8 @@ def _postprocess(inference_output,rr_output):
         threshold = sent_scores[sents_to_keep-1]
         return threshold
 
-    def get_summary_sentences(inference_output):
-        ##########
+    def select_summary_sentences(inference_output):
+        ########## selects which sentences should in summary and summary section to summary output
         for file_name, sent_list_all in inference_output.items():
             summary_score_threshold = get_summary_score_threshold(sent_list_all) ### sentences above this threshold are included in summary
             short_rr = get_short_rhetorical_roles(sent_list_all)
@@ -113,7 +113,7 @@ def _postprocess(inference_output,rr_output):
 
         return dict(sectionwise_summary)
 
-    get_summary_sentences(inference_output)
+    select_summary_sentences(inference_output)
     combine_rr_summary_outputs(inference_output, rr_output)
     summary_texts = create_summary_text(rr_output)
 
