@@ -153,8 +153,12 @@ def precedent_coref_resol(doc):
     precedent_supra_clusters = merge_supras_precedents(precedent_supra_matches, precedent_clusters)
 
     final_clusters = set_main_cluster(precedent_supra_clusters)
+    clusters={}
+    for cluster in final_clusters.keys():
+        if len(final_clusters[cluster])>1:
+            clusters[cluster]=final_clusters[cluster]
 
-    return final_clusters
+    return clusters
 
 
 def get_roles(doc):
@@ -349,10 +353,10 @@ def get_exact_match_pro_statute(docs):
 
 def separate_provision_get_pairs_statute(pro_statute):
     matching_pro_statute = []
-
+    to_remove=[]
     sepearte_sec = r'(?i)(section(s)*|article(s)*)'
     remove_braces = r'\('
-    sepearte_sub_sec = r'(?i)((sub|sub-)section(s)*|(clause(s)*))'
+    sepearte_sub_sec = r'(?i)((sub|sub-)section(s)*|clause(s)*|annexure(s)*)'
     for pro in pro_statute:
         sub_section = re.split('of', pro[0].text)
 
@@ -364,6 +368,8 @@ def separate_provision_get_pairs_statute(pro_statute):
         for sec in section:
             match_sub_sec = re.search(sepearte_sub_sec, sec)
             if match_sub_sec:
+                to_remove.append(pro)
+
                 continue
             match_sec = re.search(sepearte_sec, sec)
             match_braces = re.search(remove_braces, sec)
@@ -380,7 +386,7 @@ def separate_provision_get_pairs_statute(pro_statute):
 
                 matching_pro_statute.append([sec.strip(), pro[1]])
 
-    return matching_pro_statute
+    return to_remove,matching_pro_statute
 
 
 def check_validity(provision, statute):
@@ -477,7 +483,7 @@ def separate_provision_get_pairs_pro(pro_left):
 
     sepearte_sec = r'(?i)(section(s)*|article(s)*)'
     remove_braces = r'\('
-    sepearte_sub_sec = r'(?i)(((sub|sub-)\s*section(s)*)|clause(s)*)'
+    sepearte_sub_sec = r'(?i)(((sub|sub-)\s*section(s)*)|clause(s)*|annexure(s)*)'
 
     for pro in pro_left:
         sub_section = re.split('of', pro.text)
@@ -664,10 +670,15 @@ def pro_statute_coref_resol(doc):
 
     pro_statute, pro_left, total_statutes = get_exact_match_pro_statute(doc)
 
-    matching_pro_statute = separate_provision_get_pairs_statute(pro_statute)
+    to_remove,matching_pro_statute = separate_provision_get_pairs_statute(pro_statute)
     matching_pro_left = separate_provision_get_pairs_pro(pro_left)
 
     stat_clusters = create_statute_clusters(doc)
+
+    for pro in to_remove:
+        if pro in pro_statute:
+            pro_statute.remove(pro)
+
 
     matching_pro_statute, pro_statute = map_pro_statute_on_heuristics(matching_pro_left,
                                                                      matching_pro_statute,
@@ -697,7 +708,7 @@ def seperate_provision(doc, clusters):
     for cluster in clusters:
         provision = cluster[0]
         statute = cluster[1]
-        section = re.split(',|and|/|or', provision.text)
+        section = re.split(',|and|/|or|&', provision.text)
         start = provision.start_char
         pro = provision.text
         keyword = section[0].split(' ')[0]
@@ -707,7 +718,7 @@ def seperate_provision(doc, clusters):
         for sec in section:
             sec_text = sec.strip()
             if len(sec_text) > 0:
-                if  not sec_text[0].isalpha() and not sec_text[0].isnumeric():
+                if   sec_text.replace(' ','').isalpha() or (not sec_text[0].isnumeric() and not sec_text[0].isalpha()):
                     combined = True
                     break
 
