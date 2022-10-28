@@ -126,6 +126,18 @@ To visualize the NER result on single judgment text please run
 
 Please click on the link displayed in the console to see the annotated entities.
 
+
+Getting unique statutes and provisions 
+======================
+To get unique provisions and statutes within a judgment
+
+.. code-block:: python
+
+    provision,statutes=InLegalNER.get_unique_provision_and_statutes(ner_output)
+
+
+Please click on the link displayed in the console to see the annotated entities.
+
 Storing extracted Named Entities to a file
 ======================
 1. To get result in json format with span information:
