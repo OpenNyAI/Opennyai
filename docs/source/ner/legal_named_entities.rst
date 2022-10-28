@@ -92,7 +92,7 @@ For example
 
 2. `Statute`: The same statute can be written in multiple ways in a judgment. E.g. 'Indian Penal Code', 'IPC', 'Indian Penal Code, 1860' etc.
 We cluster all such statutes and assign a head of such cluster as the full form of the statute. The statute clusters can be accessed by
-`doc._.provision_statute_clusters`
+`doc.user_data['provision_statute_clusters']`
 
 3. `Provision-Statute`: Every provision should have an associated statute but sometimes the
 corresponding statutes are not mentioned explicitly in the judgment. Postprocessing contains a
@@ -100,7 +100,7 @@ set of rules to identify statute for each provision and the extension 'provision
 is added to the doc which is a list of tuples, each tuple contains provision-statute-normalised provision text eg. (362,IPC,'Section 362') .It can be
 used by:
 
-`doc._.provision_statute_clusters`
+`doc.user_data['provision_statute_clusters']`
 
 For example
 [(Section 369, Crpc, 'Section 369'), (Section 424, Crpc, 'Section 424')]
@@ -138,7 +138,10 @@ Storing extracted Named Entities to a file
 
 Note: You can import generated json to label studio and visualize all the details about the postprocessing
 
-2. To get result in csv file with linked entities (coming soon)
+2. To save result in csv file with linked entities :
+.. code-block:: python
+
+   InLegalNER.get_csv(ner_output,file_name,save_path):
 
 
 
