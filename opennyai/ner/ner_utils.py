@@ -111,9 +111,17 @@ def get_csv(doc,f_name,save_path):
     df['entity']=entity_text
     df['label']=label
     df['normalised_entities']=normalised_entities
+
     df.to_csv(save_path)
 
 
+def get_unique_provision_and_statutes(doc):
+    clusters=doc.user_data['provision_statute_clusters']
+    statutes=[cluster[3] for cluster in clusters]
+    provisions = [cluster[2] for cluster in clusters]
+
+
+    return set(provisions),set(statutes)
 
 ner_displacy_option = {
     'colors': {'COURT': "#bbabf2", 'PETITIONER': "#f570ea", "RESPONDENT": "#cdee81", 'JUDGE': "#fdd8a5",
