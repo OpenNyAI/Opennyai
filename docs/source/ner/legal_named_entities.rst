@@ -139,6 +139,7 @@ Storing extracted Named Entities to a file
 Note: You can import generated json to label studio and visualize all the details about the postprocessing
 
 2. To save result in csv file with linked entities :
+
 .. code-block:: python
 
     InLegalNER.get_csv(ner_output,file_name,save_path):
