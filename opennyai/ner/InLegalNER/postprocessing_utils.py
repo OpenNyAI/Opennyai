@@ -40,6 +40,7 @@ def get_precedent_supras(doc, entities_pn, entities_precedents):
 
     supra_precedent_matches = {}
 
+
     for supra in supras:
         matches = []
 
@@ -54,7 +55,8 @@ def get_precedent_supras(doc, entities_pn, entities_precedents):
                 matches.append(precedent)
         if len(matches) > 0:
             supra_precedent_matches[supra] = matches[-1]
-    return supra_precedent_matches
+
+    return supra_precedent_matches,supras
 
 
 def create_precedent_clusters(precedent_breakup, threshold):
@@ -148,15 +150,24 @@ def precedent_coref_resol(doc):
 
     precedent_clusters = create_precedent_clusters(precedent_breakup, threshold=5)
 
-    precedent_supra_matches = get_precedent_supras(doc, entities_pn, entities_precedents)
+    precedent_supra_matches,supras = get_precedent_supras(doc, entities_pn, entities_precedents)
 
     precedent_supra_clusters = merge_supras_precedents(precedent_supra_matches, precedent_clusters)
 
     final_clusters = set_main_cluster(precedent_supra_clusters)
     clusters={}
+    entities=[]
     for cluster in final_clusters.keys():
         if len(final_clusters[cluster])>1:
             clusters[cluster]=final_clusters[cluster]
+
+    for entitiy in doc.ents:
+        if entitiy in supras:
+            entitiy.label_='PRECEDENT'
+            entities.append(entitiy)
+        else:
+            entities.append(entitiy)
+    doc.ents=entities
 
     return clusters
 
@@ -307,7 +318,11 @@ def remove_overlapping_entities(ents, pro_sta_clusters):
     for cluster in pro_sta_clusters:
         if cluster[0] not in final_ents:
             final_ents.append(cluster[0])
+
+
     final_ents = spacy.util.filter_spans(final_ents)
+
+
 
     return final_ents
 
