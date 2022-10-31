@@ -537,7 +537,7 @@ def separate_provision_get_pairs_pro(pro_left):
     return matching_pro_left
 
 
-def create_statute_clusters(doc):
+def create_statute_clusters(doc,old_statute_clusters,new_statute_clusters):
     clusters = {}
     statutes = []
     not_done = []
@@ -545,6 +545,16 @@ def create_statute_clusters(doc):
     for ent in doc.ents:
         if ent.label_ == 'STATUTE':
             statutes.append(ent)
+    for c in old_statute_clusters.keys():
+        if c not in clusters.keys():
+            clusters[c]=old_statute_clusters[c]
+        else:
+            clusters[c].extend(old_statute_clusters[c])
+    for c in new_statute_clusters.keys():
+        if c not in clusters.keys():
+            clusters[c]=new_statute_clusters[c]
+        else:
+            clusters[c].extend(new_statute_clusters[c])
     for statute in statutes:
         stat = check_stat(statute.text)
         if stat == '':
@@ -599,6 +609,7 @@ def remove_unidentified_statutes(doc, new_statutes):
     new_entities = []
 
     stats.extend(new_statutes)
+
     for ents in entities:
         if ents not in stats:
             new_entities.append(ents)
@@ -658,16 +669,29 @@ def create_unidentified_statutes(doc):
     for sta in new_statutes:
         for s in statutes_start_end:
             if sta.start >= s[0] and sta.end <= s[1]:
-                new_statutes.remove(sta)
+                # new_statutes.remove(sta)
                 discarded_statutes.append(sta)
+    old_statute_clusters={}
+
+    for s in discarded_statutes:
+        if s in new_statutes:
+            new_statutes.remove(s)
 
     for sta in new_statutes_clusters.keys():
         for s in new_statutes_clusters[sta]:
 
             if s in discarded_statutes:
+
                 new_statutes_clusters[sta].remove(s)
 
-    return new_statutes_clusters, new_statutes
+                if sta in old_statute_clusters.keys():
+                    old_statute_clusters[sta].append(s)
+                else:
+                    old_statute_clusters[sta] = []
+                    old_statute_clusters[sta].append(s)
+
+
+    return new_statutes_clusters, new_statutes,old_statute_clusters
 
 
 def add_statute_head(clusters, stat_clusters):
@@ -692,7 +716,7 @@ def add_statute_head(clusters, stat_clusters):
 
 
 def pro_statute_coref_resol(doc):
-    new_statutes_clusters, new_statutes = create_unidentified_statutes(doc)
+    new_statutes_clusters, new_statutes,old_statute_clusters = create_unidentified_statutes(doc)
     old_entities = list(doc.ents)
 
     for ent in new_statutes:
@@ -707,7 +731,7 @@ def pro_statute_coref_resol(doc):
     to_remove,matching_pro_statute = separate_provision_get_pairs_statute(pro_statute)
     matching_pro_left = separate_provision_get_pairs_pro(pro_left)
 
-    stat_clusters = create_statute_clusters(doc)
+    stat_clusters = create_statute_clusters(doc,old_statute_clusters,new_statutes_clusters)
 
     for pro in to_remove:
         if pro in pro_statute:
@@ -727,8 +751,8 @@ def pro_statute_coref_resol(doc):
     new_entities = remove_unidentified_statutes(doc, new_statutes)
     doc.ents = new_entities
 
-    for cluster in new_statutes_clusters.keys():
-        stat_clusters[cluster.text] = new_statutes_clusters[cluster]
+    # for cluster in new_statutes_clusters.keys():
+    #     stat_clusters[cluster.text] = new_statutes_clusters[cluster]
 
     new_clusters = add_statute_head(clusters, stat_clusters)
 
