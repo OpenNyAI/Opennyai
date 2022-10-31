@@ -117,13 +117,15 @@ def get_csv(doc,f_name,save_path):
     df.to_csv(save_path)
 
 
-def get_unique_provision_and_statutes(doc):
-    clusters=doc.user_data['provision_statute_clusters']
-    statutes=[cluster[3] for cluster in clusters]
-    provisions = [cluster[2]+' of '+cluster[3] for cluster in clusters]
+def get_unique_precedent_count(doc):
+    new_clusters={}
+    clusters=doc.user_data['precedent_clusters']
+    for c in clusters.keys():
+
+        new_clusters[c]=len(clusters[c])
 
 
-    return list(set(provisions)),list(set(statutes))
+    return new_clusters
 
 
 

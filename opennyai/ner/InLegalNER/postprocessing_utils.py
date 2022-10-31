@@ -35,10 +35,16 @@ def get_precedent_supras(doc, entities_pn, entities_precedents):
     ends = [ent.end_char for ent in entities_pn]
     supras = []
     for match in re.finditer(r'(\'s\s*case\s*\(supra\)|\s*\(supra\))', text):
-        if match.start() in ends or match.start() - 1 in ends:
-            supras.append(entities_pn[ends.index(match.start())])
+
+            if match.start() in ends :
+
+                supras.append(entities_pn[ends.index(match.start())])
+            elif match.start()-1 in ends:
+                supras.append(entities_pn[ends.index(match.start()-1)])
+
 
     supra_precedent_matches = {}
+
 
 
     for supra in supras:
@@ -157,6 +163,7 @@ def precedent_coref_resol(doc):
     final_clusters = set_main_cluster(precedent_supra_clusters)
     clusters={}
     entities=[]
+
     for cluster in final_clusters.keys():
         if len(final_clusters[cluster])>1:
             clusters[cluster]=final_clusters[cluster]
@@ -556,12 +563,18 @@ def check_stat(text):
     regex_crpc = r'(?i)\b(((criminal|cr)\.*\s*(procedure|p)\.*\s*(c|code)\.*)|(code\s*of\s*criminal\s*procedure))\s*'
     regex_ipc = r'(?i)\b((i|indian)+\.*\s*(penal|p)\.*\s*(c|code))\.*'
     regex_cons = r'(?i)\b((constitution)+\s*(of\s*india\s*)*)\b'
-    regex_itact = r'(?i)\b((i\.*\s*t\.*\s*|income\s*\-+tax\s+)act\s*)\b'
+    regex_itact = r'(?i)\b((i\.*\s*t\.*\s*|income\s*\-*tax\s+)act\s*)\b'
+    regex_mvact = r'(?i)\b((m\.*\s*v\.*\s*)|(motor\s*\-*vehicle(s)*\s+)act\s*)\b'
+    regex_idact = r'(?i)\b((i\.*\s*d\.*\s*)|(industrial\s*\-*dispute(s)*\s+)act\s*)\b'
+    regex_sarfaesi= r'(?i)\b((s\.*\s*a\.*\s*r\.*\s*f\.*\s*a\.*\s*e\.*\s*s\.*\s*i\.*\s*)|(securitisation\s*and\s*reconstruction\s*of\s*financial\s*assets\s*and\s*enforcement\s*of\s*security\s*interest\s+)act\s*)\b'
 
     match_crpc = re.search(regex_crpc, text)
     match_ipc = re.search(regex_ipc, text)
     match_cons = re.search(regex_cons, text)
     match_ita = re.search(regex_itact, text)
+    match_mv = re.search(regex_mvact, text)
+    match_idact = re.search(regex_idact, text)
+    match_sarfaesi=re.search(regex_sarfaesi, text)
     if match_crpc:
         return 'Criminal Procedure Code'
     elif match_ipc:
@@ -570,6 +583,12 @@ def check_stat(text):
         return 'Constitution'
     elif match_ita:
         return 'Income Tax Act'
+    elif match_mv:
+        return 'Motor Vehicle Act'
+    elif match_idact:
+        return 'Industrial Dispute Act'
+    elif match_sarfaesi:
+        return 'Securitisation and Reconstruction of Financial Assets and Enforcement of Securities Interest Act'
     else:
         return ''
 
