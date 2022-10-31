@@ -91,7 +91,8 @@ For example
  [{Madhu Limaye v. State of Mahrashtra: [Madhu Limaye v. State of Mahrashtra, Madhu Limaye v. State of Maharashtra, Madhu Limaye, Madhu Limaye, Madhu Limaye]}]
 
 2. `Statute`: The same statute can be written in multiple ways in a judgment. E.g. 'Indian Penal Code', 'IPC', 'Indian Penal Code, 1860' etc.
-We cluster all such statutes and assign a head of such cluster as the full form of the statute. The statute clusters can be accessed by
+We have incorporated the acronyms for some well known statutes such as IPC,CrPC,Income Tax act,Motor vehicles act,sarfaesi etc.
+We cluster all such statutes and assign a head of such cluster as the full form of that statute. The statute clusters can be accessed by
 `doc.user_data['provision_statute_clusters']`
 
 3. `Provision-Statute`: Every provision should have an associated statute but sometimes the
@@ -127,18 +128,17 @@ To visualize the NER result on single judgment text please run
 Please click on the link displayed in the console to see the annotated entities.
 
 
-Getting unique statutes and provisions 
+Getting unique provisions,statutes and precedents 
 ======================
 
-1. To get a list of unique provisions and statutes within a judgment:
+1. To get a list of unique precedents within a judgment:
 
 .. code-block:: python
 
-    provision,statutes=InLegalNER.get_unique_provision_and_statutes(ner_output)
+    provision,statutes=InLegalNER.get_unique_precedent_count(ner_output)
     
-It will return a list of unqiue provisions and statutes within a judgment
- For eg. provisions would be ['Article 226 of constitution','Section 147 of IPC']
- statutes would be ['Constitution','IPC']
+It will return a dictionary with name of the precedents  as keys and number of times they occured as values.
+ For eg. State of Punjab v. Phil  and Anr: [State of Punjab v. Phil Rani and Anr, Phil ]
     
     
 2. To get frequency count of all the provisions within a judgment:
@@ -154,7 +154,7 @@ It will return a dictionary with name of the provisions as keys and number of ti
 
 .. code-block:: python
 
-    provision=InLegalNER.get_unique_get_unique_statute_count(ner_output)
+    provision=InLegalNER.get_unique_statute_count(ner_output)
 
 
 It will return a dictionary with name of the statutes as keys and number of times they occured as values.
@@ -184,17 +184,17 @@ In the created csv,it will have 4 columns namely:
 
 'file_name': name of the file/judgment
 
-'entity':The entity found in the judgment .For eg.'section 482' ,'constiution','sibbia vs ajay'
+'entity': The entity found in the judgment .For eg.'section 482' ,'constiution','sibbia vs ajay'
 
-'label':The label associated with each entity .For eg. label of 'section 482' would be 'provision'
+'label': The label associated with each entity .For eg. label of 'section 482' would be 'provision'
 
-'normalised entities':Entities including provision,statute and precedents are normalised as follows:
+'normalised entities': Entities including provision,statute and precedents are normalised as follows:
 
-1.'Provision':Each provision is normalised by adding the statute associated with it alongside.For eg.'section 147' is normalised to 'Section 147 of Indian Penal Code'
+1.'Provision': Each provision is normalised by adding the statute associated with it alongside. For eg.'section 147' is normalised to 'Section 147 of Indian Penal Code'
 
-2.'Statute':Each statute is normalised by adding its full form if present .For eg.'IPC' is normalised to 'Indian Penal Code'
+2.'Statute': Each statute is normalised by adding its full form if present .For eg.'IPC' is normalised to 'Indian Penal Code'
 
-3.'Precedent':Each precedent is normalised by checking if the particular precedent is mentioned elsewhere in the judgment and is longer than the current precent(has citations,full names etc.).For eg. normalised entity for 'amber v. State of Haryana' would be 'amber v. State of Haryana R.C.R. (Crl.)2007' 
+3.'Precedent': Each precedent is normalised by checking if the particular precedent is mentioned elsewhere in the judgment and is longer than the current precent(has citations,full names etc.). For eg. normalised entity for 'amber v. State of Haryana' would be 'amber v. State of Haryana R.C.R. (Crl.)2007' 
 
 
 
