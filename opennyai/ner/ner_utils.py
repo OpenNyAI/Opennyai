@@ -1,5 +1,6 @@
 from opennyai.ner.InLegalNER.InLegalNER import InLegalNER
 import copy
+import collections
 from hashlib import sha256
 import pandas as pd
 
@@ -119,10 +120,29 @@ def get_csv(doc,f_name,save_path):
 def get_unique_provision_and_statutes(doc):
     clusters=doc.user_data['provision_statute_clusters']
     statutes=[cluster[3] for cluster in clusters]
-    provisions = [cluster[2] for cluster in clusters]
+    provisions = [cluster[2]+' of '+cluster[3] for cluster in clusters]
 
 
-    return set(provisions),set(statutes)
+    return list(set(provisions)),list(set(statutes))
+
+
+
+def get_unique_provision_count(doc):
+    clusters=doc.user_data['provision_statute_clusters']
+    provisions = [cluster[2]+' of '+cluster[3] for cluster in clusters]
+    frequency=dict(collections.Counter(provisions))
+
+
+
+    return frequency
+
+
+def get_unique_statute_count(doc):
+    clusters = doc.user_data['provision_statute_clusters']
+    statutes = [cluster[3] for cluster in clusters]
+    frequency = dict(collections.Counter(statutes))
+
+    return frequency
 
 ner_displacy_option = {
     'colors': {'COURT': "#bbabf2", 'PETITIONER': "#f570ea", "RESPONDENT": "#cdee81", 'JUDGE': "#fdd8a5",
