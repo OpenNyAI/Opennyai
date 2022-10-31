@@ -129,14 +129,39 @@ Please click on the link displayed in the console to see the annotated entities.
 
 Getting unique statutes and provisions 
 ======================
-To get unique provisions and statutes within a judgment
+
+1. To get a list of unique provisions and statutes within a judgment:
 
 .. code-block:: python
 
     provision,statutes=InLegalNER.get_unique_provision_and_statutes(ner_output)
+    
+It will return a list of unqiue provisions and statutes within a judgment
+ For eg. provisions would be ['Article 226 of constitution','Section 147 of IPC']
+ statutes would be ['Constitution','IPC']
+    
+    
+2. To get frequency count of all the provisions within a judgment:
+
+.. code-block:: python
+
+    provision=InLegalNER.get_unique_provision_count(ner_output)
+    
+It will return a dictionary with name of the provisions as keys and number of times they occured as values.
+ For eg.{'Article 226 of Constitution': 11, 'Article 227 of Constitution': 12}
+ 
+3. To get frequency count of all the statutes within a judgment:
+
+.. code-block:: python
+
+    provision=InLegalNER.get_unique_get_unique_statute_count_count(ner_output)
 
 
-Please click on the link displayed in the console to see the annotated entities.
+It will return a dictionary with name of the statutes as keys and number of times they occured as values.
+ For eg.{'Constitution': 30, 'Criminal Procedure Code': 77, 'Indian Penal Code': 13}
+    
+
+
 
 Storing extracted Named Entities to a file
 ======================
@@ -155,6 +180,22 @@ Note: You can import generated json to label studio and visualize all the detail
 .. code-block:: python
 
     InLegalNER.get_csv(ner_output,file_name,save_path):
+In the created csv,it will have 4 columns namely:
+
+'file_name': name of the file/judgment
+
+'entity':The entity found in the judgment .For eg.'section 482' ,'constiution','sibbia vs ajay'
+
+'label':The label associated with each entity .For eg. label of 'section 482' would be 'provision'
+
+'normalised entities':Entities including provision,statute and precedents are normalised as follows:
+
+1.'Provision':Each provision is normalised by adding the statute associated with it alongside.For eg.'section 147' is normalised to 'Section 147 of Indian Penal Code'
+
+2.'Statute':Each statute is normalised by adding its full form if present .For eg.'IPC' is normalised to 'Indian Penal Code'
+
+3.'Precedent':Each precedent is normalised by checking if the particular precedent is mentioned elsewhere in the judgment and is longer than the current precent(has citations,full names etc.).For eg. normalised entity for 'amber v. State of Haryana' would be 'amber v. State of Haryana R.C.R. (Crl.)2007' 
+
 
 
 
