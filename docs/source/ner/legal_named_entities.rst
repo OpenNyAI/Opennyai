@@ -154,7 +154,7 @@ It will return a dictionary with name of the provisions as keys and number of ti
 
 .. code-block:: python
 
-    provision=InLegalNER.get_unique_get_unique_statute_count_count(ner_output)
+    provision=InLegalNER.get_unique_get_unique_statute_count(ner_output)
 
 
 It will return a dictionary with name of the statutes as keys and number of times they occured as values.
