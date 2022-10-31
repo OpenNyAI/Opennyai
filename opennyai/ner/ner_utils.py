@@ -21,22 +21,23 @@ def load(model_name: str = 'en_legal_ner_trf', use_gpu: bool = True):
 
 def update_json_with_clusters(ls_formatted_doc: dict, precedent_clusters: dict, provision_statute_clusters: list,
                               statute_clusters: dict):
+
     for entity, _, __, val in provision_statute_clusters:
         for result in ls_formatted_doc['annotations'][0]['result']:
             if result['value']['start'] == entity.start_char and result['value']['end'] == entity.end_char:
-                result['statute']['text'].append(str(val))
+                result['meta']['text'].append(str(val))
 
     for val in statute_clusters.keys():
         for entity in statute_clusters[val]:
             for result in ls_formatted_doc['annotations'][0]['result']:
                 if result['value']['start'] == entity.start_char and result['value']['end'] == entity.end_char:
-                    result['full_form']['text'].append(str(val))
+                    result['meta']['text'].append(str(val))
 
     for val in precedent_clusters.keys():
         for entity in precedent_clusters[val]:
             for result in ls_formatted_doc['annotations'][0]['result']:
                 if result['value']['start'] == entity.start_char and result['value']['end'] == entity.end_char:
-                    result['full_name']['text'].append(str(val))
+                    result['meta']['text'].append(str(val))
 
     return ls_formatted_doc
 
@@ -66,7 +67,7 @@ def get_json_from_spacy_doc(doc) -> dict:
 
     final_output = update_json_with_clusters(copy.deepcopy(output), doc.user_data['precedent_clusters'],
 
-                                           ['provision_statute_clusters'], doc.user_data['statute_clusters'])
+                                           doc.user_data['provision_statute_clusters'], doc.user_data['statute_clusters'])
 
     return final_output
 
