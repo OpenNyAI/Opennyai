@@ -68,7 +68,7 @@ def get_json_from_spacy_doc(doc) -> dict:
 
     final_output = update_json_with_clusters(copy.deepcopy(output), doc.user_data['precedent_clusters'],
 
-                                           doc.user_data['provision_statute_clusters'], doc.user_data['statute_clusters'])
+                                           doc.user_data['provision_statute_pairs'], doc.user_data['statute_clusters'])
 
     return final_output
 
@@ -82,7 +82,7 @@ def get_csv(doc,f_name,save_path):
     label=[]
     normalised_entities=[]
 
-    for pro_ent in   doc.user_data['provision_statute_clusters']:
+    for pro_ent in   doc.user_data['provision_statute_pairs']:
         file_name.append(f_name)
         entity.append(pro_ent[0])
         label.append('PROVISION')
@@ -130,7 +130,7 @@ def get_unique_precedent_count(doc):
 
 
 def get_unique_provision_count(doc):
-    clusters=doc.user_data['provision_statute_clusters']
+    clusters=doc.user_data['provision_statute_pairs']
     provisions = [cluster[2]+' of '+cluster[3] for cluster in clusters]
     frequency=dict(collections.Counter(provisions))
 
@@ -140,7 +140,7 @@ def get_unique_provision_count(doc):
 
 
 def get_unique_statute_count(doc):
-    clusters = doc.user_data['provision_statute_clusters']
+    clusters = doc.user_data['provision_statute_pairs']
     statutes = [cluster[3] for cluster in clusters]
     frequency = dict(collections.Counter(statutes))
 

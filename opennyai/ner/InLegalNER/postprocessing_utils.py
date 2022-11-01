@@ -2,6 +2,7 @@ import re
 import nltk
 import spacy
 import copy
+import collections
 
 
 def get_entities(doc, labels):
@@ -547,14 +548,14 @@ def create_statute_clusters(doc,old_statute_clusters,new_statute_clusters):
             statutes.append(ent)
     for c in old_statute_clusters.keys():
         if c not in clusters.keys():
-            clusters[c]=old_statute_clusters[c]
+            clusters[c.text]=old_statute_clusters[c]
         else:
-            clusters[c].extend(old_statute_clusters[c])
+            clusters[c.text].extend(old_statute_clusters[c])
     for c in new_statute_clusters.keys():
         if c not in clusters.keys():
-            clusters[c]=new_statute_clusters[c]
+            clusters[c.text]=new_statute_clusters[c]
         else:
-            clusters[c].extend(new_statute_clusters[c])
+            clusters[c.text].extend(new_statute_clusters[c])
     for statute in statutes:
         stat = check_stat(statute.text)
         if stat == '':
@@ -669,7 +670,7 @@ def create_unidentified_statutes(doc):
     for sta in new_statutes:
         for s in statutes_start_end:
             if sta.start >= s[0] and sta.end <= s[1]:
-                # new_statutes.remove(sta)
+
                 discarded_statutes.append(sta)
     old_statute_clusters={}
 
@@ -697,20 +698,23 @@ def create_unidentified_statutes(doc):
 def add_statute_head(clusters, stat_clusters):
     new_clusters = []
     clusters_done = []
+    provision_statutes = collections.namedtuple('provision_statutes', ['provision_entity', 'statute_entity', 'normalised_provision_text','normalised_statute_text'])
 
     for stat_cluster in stat_clusters.keys():
         acts = stat_clusters[stat_cluster]
 
         for i, cluster in enumerate(clusters):
             if cluster[1] in acts:
-                new_clusters.append((cluster[0], cluster[1], cluster[2], stat_cluster))
+
+                new_clusters.append(provision_statutes(cluster[0], cluster[1], cluster[2], stat_cluster))
+
                 clusters_done.append(cluster)
 
     k = 0
     for cluster in clusters:
         if cluster not in clusters_done:
             k = k + 1
-            new_clusters.append((cluster[0], cluster[1], cluster[2], cluster[1].text))
+            new_clusters.append(provision_statutes(cluster[0], cluster[1], cluster[2], cluster[1].text))
 
     return new_clusters
 
@@ -726,12 +730,13 @@ def pro_statute_coref_resol(doc):
 
     doc.ents = old_entities
 
+    stat_clusters = create_statute_clusters(doc,old_statute_clusters,new_statutes_clusters)
+
     pro_statute, pro_left, total_statutes = get_exact_match_pro_statute(doc)
 
     to_remove,matching_pro_statute = separate_provision_get_pairs_statute(pro_statute)
     matching_pro_left = separate_provision_get_pairs_pro(pro_left)
 
-    stat_clusters = create_statute_clusters(doc,old_statute_clusters,new_statutes_clusters)
 
     for pro in to_remove:
         if pro in pro_statute:
