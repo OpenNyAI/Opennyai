@@ -90,9 +90,11 @@ is a list of all the precedents in that cluster. To access the list, use
 For example
  [{Madhu Limaye v. State of Mahrashtra: [Madhu Limaye v. State of Mahrashtra, Madhu Limaye v. State of Maharashtra, Madhu Limaye, Madhu Limaye, Madhu Limaye]}]
 
-2. `Statute`: The same statute can be written in multiple ways in a judgment. E.g. 'Indian Penal Code', 'IPC', 'Indian Penal Code, 1860' etc.
-We have incorporated the acronyms for some well known statutes such as IPC,CrPC,Income Tax act,Motor vehicles act,sarfaesi etc.
-We cluster all such statutes and assign a head of such cluster as the full form of that statute. The statute clusters can be accessed by
+2. `Statute`: In a judgment,sometimes aconyms are used instead of the complete statute name.For eg.section 147 of  IPC,section 148 of Penal code is mentioned instead of Indian Penal code.We have incorporated the acronyms for some well known statutes such as IPC,CrPC,Income Tax act,Motor vehicles act,sarfaesi etc.All the statutes which are a short form of any of these well known statute belongs to the same cluster.For eg I.P.C,IPC,Penal code will belong to the same cluster with head as "Indian Penal code".
+Many a times,the way a statute is referred within a judgment is explicitly mentioned .For eg. Motor Vehicle Act(herein referred as MV act).
+So,every mention of MV act would belong to the same cluster with head as "Motor Vehicle Act". .It can be
+used by:
+
 `doc.user_data['statute_clusters']`
 
 For example:
