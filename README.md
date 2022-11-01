@@ -4,6 +4,7 @@
 
 [![PyPI version](https://badge.fury.io/py/opennyai.svg)](https://pypi.org/project/opennyai/)
 [![python version](https://img.shields.io/badge/Python-%3E=3.7-blue)](https://github.com/OpenNyAI/Opennyai)
+[![Downloads](https://pepy.tech/badge/opennyai)](https://pepy.tech/project/opennyai)
 
 Opennyai is a python library for natural language preprocessing on Indian legal texts.
 
