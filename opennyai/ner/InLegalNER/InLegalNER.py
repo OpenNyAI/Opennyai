@@ -76,7 +76,7 @@ class InLegalNER:
 
                     nlp_doc.ents = all_entities
                     nlp_doc.user_data['precedent_clusters'] = precedent_clusters
-                    nlp_doc.user_data['provision_statute_clusters'] = pro_sta_clusters
+                    nlp_doc.user_data['provision_statute_pairs'] = pro_sta_clusters
                     nlp_doc.user_data['statute_clusters'] = stat_clusters
             except:
                 msg.warn(
