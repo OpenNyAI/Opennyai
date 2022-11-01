@@ -93,7 +93,11 @@ For example
 2. `Statute`: The same statute can be written in multiple ways in a judgment. E.g. 'Indian Penal Code', 'IPC', 'Indian Penal Code, 1860' etc.
 We have incorporated the acronyms for some well known statutes such as IPC,CrPC,Income Tax act,Motor vehicles act,sarfaesi etc.
 We cluster all such statutes and assign a head of such cluster as the full form of that statute. The statute clusters can be accessed by
-`doc.user_data['provision_statute_pairs']`
+`doc.user_data['statute_clusters']`
+
+For example:
+{ 'Criminal Procedure Code': [Code of Criminal Procedure,Crpc] }
+
 
 3. `Provision-Statute`: Every provision should have an associated statute but sometimes the
 corresponding statutes are not mentioned explicitly in the judgment. Postprocessing contains a
@@ -101,10 +105,10 @@ set of rules to identify statute for each provision and the extension 'provision
 is added to the doc which is a list of tuples, each tuple contains provision-statute-normalised provision text eg. (362,IPC,'Section 362') .It can be
 used by:
 
-`doc.user_data['statute_clusters']`
+`doc.user_data['provision_statute_pairs']`
 
 For example
-[(Section 369, Crpc, 'Section 369'), (Section 424, Crpc, 'Section 424')]
+[(Section 369, Crpc, 'Section 369','Criminal Procedure Code'), (Section 424, Crpc, 'Section 424','Criminal Procedure Code')]
 
 4. `Other person/Org` : Same entities can be tagged with different classes in different sentences of
 the same judgment due to sentence level context. E.g. 'Amit Kumar' can be  a petitioner
