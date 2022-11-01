@@ -135,7 +135,7 @@ Getting unique provisions,statutes and precedents
 
 .. code-block:: python
 
-    provision,statutes=InLegalNER.get_unique_precedent_count(ner_output)
+    precedents=InLegalNER.get_unique_precedent_count(ner_output)
     
 It will return a dictionary with name of the precedents  as keys and number of times they occured as values.
  For eg. State of Punjab v. Phil  and Anr: [State of Punjab v. Phil Rani and Anr, Phil ]
@@ -145,7 +145,7 @@ It will return a dictionary with name of the precedents  as keys and number of t
 
 .. code-block:: python
 
-    provision=InLegalNER.get_unique_provision_count(ner_output)
+    provisions=InLegalNER.get_unique_provision_count(ner_output)
     
 It will return a dictionary with name of the provisions as keys and number of times they occured as values.
  For eg.{'Article 226 of Constitution': 11, 'Article 227 of Constitution': 12}
@@ -154,7 +154,7 @@ It will return a dictionary with name of the provisions as keys and number of ti
 
 .. code-block:: python
 
-    provision=InLegalNER.get_unique_statute_count(ner_output)
+    statutes=InLegalNER.get_unique_statute_count(ner_output)
 
 
 It will return a dictionary with name of the statutes as keys and number of times they occured as values.
