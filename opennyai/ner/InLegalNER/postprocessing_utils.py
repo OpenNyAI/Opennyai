@@ -76,6 +76,7 @@ def create_precedent_clusters(precedent_breakup, threshold):
             continue
         pet = precedent_breakup[pre][0]
         res = precedent_breakup[pre][1]
+        cit=precedent_breakup[pre][2]
 
         cluster = []
         cluster.append(pre)
@@ -85,26 +86,42 @@ def create_precedent_clusters(precedent_breakup, threshold):
 
                 pet_1 = list(precedent_breakup.values())[j][0]
                 res_1 = list(precedent_breakup.values())[j][1]
-                if pet_1 == None or res_1 == None:
-                    exclude.append(j)
-                    continue
+                cit_1 = list(precedent_breakup.values())[j][2]
+                if (pet_1 == None or res_1 == None) :
+                    if cit_1==None:
+                        exclude.append(j)
 
-                dis_pet = nltk.edit_distance(pet, pet_1)
-                dis_res = nltk.edit_distance(res, res_1)
+                    else:
+                        if cit_1==cit:
+                            exclude.append(j)
+                            cluster.append(list(precedent_breakup.keys())[j])
+                else:
 
-                if dis_pet < threshold and dis_res < threshold:
-                    exclude.append(j)
-                    cluster.append(list(precedent_breakup.keys())[j])
+                    dis_pet = nltk.edit_distance(pet, pet_1)
+                    dis_res = nltk.edit_distance(res, res_1)
+
+                    if dis_pet < threshold and dis_res < threshold:
+                        exclude.append(j)
+                        cluster.append(list(precedent_breakup.keys())[j])
 
             precedent_clusters[cluster_num] = cluster
             cluster_num = cluster_num + 1
+        elif cit != None:
+            for j in range(i + 1, len(precedent_breakup)):
+                cit_1=list(precedent_breakup.values())[j][2]
+                if  cit_1 !=None and  cit_1==cit:
+                        exclude.append(j)
+                        cluster.append(list(precedent_breakup.keys())[j])
+            precedent_clusters[cluster_num] = cluster
+            cluster_num = cluster_num + 1
+
     return precedent_clusters
 
 
 def split_precedents(precedents):
     precedent_breakup = {}
     regex_vs = r'\b(?i)((v(\.|/)*s*\.*)|versus)\s+'
-    regex_cit = '(\(\d+\)|\d+|\[\d+\])\s*(\(\d+\)|\d+|\[\d+\])*\s*[A-Z]+\s*(\(\d+\)|\d+|\[\d+\])+\s*(\(\d+\)|\d+|\[\d+\])*\s*'
+    regex_cit = '(\(\d+\)|\d+|\[\d+\])\s*(\(\d+\)|\d+|\[\d+\])*\s*[A-Z\.]+\s*(\(\d+\)|\d+|\[\d+\])*\s*'
 
     for entity in precedents:
         citation = re.search(regex_cit, entity.text)
@@ -121,7 +138,8 @@ def split_precedents(precedents):
             precedent_breakup[entity] = [pet, res, cit]
         else:
 
-            precedent_breakup[entity] = [None, None, None]
+            precedent_breakup[entity] = [None, None, cit]
+
     return precedent_breakup
 
 
