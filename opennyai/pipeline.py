@@ -2,6 +2,7 @@ import opennyai.ner as InLegalNER
 from opennyai import RhetoricalRolePredictor
 from opennyai import ExtractiveSummarizer
 from wasabi import msg
+import copy
 
 
 class Pipeline:
@@ -55,13 +56,40 @@ class Pipeline:
 
         return [result for doc_id, result in combined_results.items()]
 
+    @staticmethod
+    def __postprocess_ner_to_sentence_level__(doc):
+        id = "LegalNER_" + doc.user_data['doc_id']
+        final_output = InLegalNER.get_json_from_spacy_doc(doc)
+        output = {'id': id, 'annotations': [{'result': []}],
+                  'data': {'text': doc.text, 'original_text': doc.user_data['original_text']}}
+        for sent in doc.sents:
+            import uuid
+            uid = uuid.uuid4()
+            id = uid.hex
+            temp = copy.deepcopy({"id": id,
+                                  "type": "labels",
+                                  "value": {
+                                      "start": sent.start_char,
+                                      "end": sent.end_char,
+                                      "text": sent.text,
+                                      "entities": [],
+                                  }, "to_name": "text",
+                                  "from_name": "label"
+                                  })
+            for entity in final_output['annotations'][0]['result']:
+                if entity['value']['start'] >= temp['value']['start'] and entity['value']['end'] <= temp['value'][
+                    'end']:
+                    temp['value']['entities'].append(entity)
+            output['annotations'][0]['result'].append(temp)
+        return output
+
     def __call__(self, data):
         ner_json_results, self._ner_model_output, self._rr_model_output, self._summarizer_model_output = None, None, None, None
         if 'NER' in self.components:
             self._ner_model_output = self.__ner_extractor__(data, verbose=self.__verbose__)
             if not isinstance(self._ner_model_output, list):
                 self._ner_model_output = [self._ner_model_output]
-            ner_json_results = [InLegalNER.get_json_from_spacy_doc(i) for i in self._ner_model_output]
+            ner_json_results = [self.__postprocess_ner_to_sentence_level__(doc) for doc in self._ner_model_output]
 
         if 'Rhetorical_Role' in self.components or 'Summarizer' in self.components:
             self._rr_model_output = self.__rr_model__(data)
