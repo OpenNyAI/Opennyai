@@ -103,7 +103,11 @@ class Data:
                 preamble_doc, judgement_doc = split_main_judgement_to_preamble_and_judgement(text=text,
                                                                                              sentence_splitting_nlp=self.__preprocessing_nlp__,
                                                                                              mini_batch_size=self.__mini_batch_size__)
-                _processed_data = {'file_id': file_id, "preamble_doc": preamble_doc, "judgement_doc": judgement_doc,
+                preamble_doc = spacy.tokens.Doc.from_docs([i.as_doc() for i in preamble_doc.sents])
+                judgement_doc = spacy.tokens.Doc.from_docs([i.as_doc() for i in judgement_doc.sents])
+                _processed_data = {'file_id': file_id,
+                                   "preamble_doc": preamble_doc,
+                                   "judgement_doc": judgement_doc,
                                    "original_text": text}
                 if self.__use_cache__:
                     self.__cache__[file_id] = _processed_data
