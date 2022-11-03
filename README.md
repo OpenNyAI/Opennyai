@@ -66,8 +66,7 @@ results = pipeline(data)
 ```
 The output of each model is present in following keys of each element of the output
 ```python
-results[0]['ner_annotations'][0]['result'] ## shows the NER model output for the first judgment text
-results[0]['rr_annotations'][0]['result']  ## shows the Rhetorical Roles model output for the first judgment text
+results[0]['annotations'][0]['result'] ## shows the result of model at sentence level, each entry will have entities, rhetorical role, and other details
 results[0]['summary'] ## shows Summary for each of the Rheorical Role for first judgment text 
 ```
 For more details on usage please refer to the [documentation](https://opennyai.readthedocs.io/en/latest/index.html#)
