@@ -37,7 +37,7 @@ class Pipeline:
                 if combined_results.get(doc_id) is None:
                     combined_results[doc_id] = {'id': doc_id, 'data': {'text': doc_ner['data']['text']}}
 
-                combined_results[doc_id]['ner_annotations'] = doc_ner['annotations']
+                combined_results[doc_id]['annotations'] = doc_ner['annotations']
 
         ####### Add RR results
         if rr_output:
@@ -46,13 +46,28 @@ class Pipeline:
                 if combined_results.get(doc_id) is None:
                     combined_results[doc_id] = {'id': doc_id, 'data': {'text': doc_rr['data']['text']}}
 
-                combined_results[doc_id]['rr_annotations'] = doc_rr['annotations']
+                combined_results[doc_id]['annotations'] = doc_rr['annotations']
 
         ####### Add summary results
         if summary_output:
             for doc_summary in summary_output:
                 doc_id = doc_summary['id'].split('_')[1]
                 combined_results[doc_id]['summary'] = doc_summary['summaries']
+
+        if ner_json_results and rr_output:
+            for doc_ner in ner_json_results:
+                entities = [entity for annotation in doc_ner['annotations'][0]['result'] for entity in
+                            annotation['value']['entities']]
+                doc_id = doc_ner['id'].split('_')[1]
+                for entity in entities:
+                    for sent in combined_results[doc_id]['annotations'][0]['result']:
+                        if sent['value'].get('entities') is None:
+                            sent['value']['entities'] = []
+                        if entity['value']['start'] >= sent['value']['start'] and entity['value']['end'] <= \
+                                sent['value']['end']:
+                            sent['value']['entities'].append(entity)
+                            break
+                combined_results[doc_id]['annotations'] = copy.deepcopy(combined_results[doc_id]['annotations'])
 
         return [result for doc_id, result in combined_results.items()]
 
