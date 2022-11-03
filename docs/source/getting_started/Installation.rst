@@ -56,7 +56,6 @@ The output of each model is present in following keys of each element of the out
 
 .. code-block:: python
 
-    results[0]['ner_annotations'][0]['result'] ## shows the NER model output for the first judgment text
-    results[0]['rr_annotations'][0]['result']  ## shows the Rhetorical Roles model output for the first judgment text
+    results[0]['annotations'][0]['result'] ## shows the result of model at sentence level, each entry will have entries, rhetorical role, and other details
     results[0]['summary'] ## shows Summary for each of the Rheorical Role for first judgment text
 
