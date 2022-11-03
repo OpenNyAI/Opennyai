@@ -5,7 +5,6 @@ from opennyai.rhetorical_roles.allennlp_helper.common.checks import Configuratio
 from opennyai.rhetorical_roles.allennlp_helper.modules.seq2seq_encoders.seq2seq_encoder import Seq2SeqEncoder
 
 
-
 class PytorchSeq2SeqWrapper(Seq2SeqEncoder):
     """
     Pytorch's RNNs have two outputs: the hidden state for every time step, and the hidden state at
@@ -62,7 +61,7 @@ class PytorchSeq2SeqWrapper(Seq2SeqEncoder):
         return self._is_bidirectional
 
     def forward(
-        self, inputs: torch.Tensor, mask: torch.BoolTensor, hidden_state: torch.Tensor = None
+            self, inputs: torch.Tensor, mask: torch.BoolTensor, hidden_state: torch.Tensor = None
     ) -> torch.Tensor:
 
         if self.stateful and mask is None:
@@ -120,7 +119,6 @@ class PytorchSeq2SeqWrapper(Seq2SeqEncoder):
         return unpacked_sequence_tensor.index_select(0, restoration_indices)
 
 
-
 @Seq2SeqEncoder.register("lstm")
 class LstmSeq2SeqEncoder(PytorchSeq2SeqWrapper):
     """
@@ -128,14 +126,14 @@ class LstmSeq2SeqEncoder(PytorchSeq2SeqWrapper):
     """
 
     def __init__(
-        self,
-        input_size: int,
-        hidden_size: int,
-        num_layers: int = 1,
-        bias: bool = True,
-        dropout: float = 0.0,
-        bidirectional: bool = False,
-        stateful: bool = False,
+            self,
+            input_size: int,
+            hidden_size: int,
+            num_layers: int = 1,
+            bias: bool = True,
+            dropout: float = 0.0,
+            bidirectional: bool = False,
+            stateful: bool = False,
     ):
         module = torch.nn.LSTM(
             input_size=input_size,
@@ -147,5 +145,3 @@ class LstmSeq2SeqEncoder(PytorchSeq2SeqWrapper):
             bidirectional=bidirectional,
         )
         super().__init__(module=module, stateful=stateful)
-
-

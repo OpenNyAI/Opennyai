@@ -1,8 +1,8 @@
+import collections
 import re
+
 import nltk
 import spacy
-import copy
-import collections
 
 
 def get_entities(doc, labels):
@@ -37,16 +37,13 @@ def get_precedent_supras(doc, entities_pn, entities_precedents):
     supras = []
     for match in re.finditer(r'(\'s\s*case\s*\(supra\)|\s*\(supra\))', text):
 
-            if match.start() in ends :
+        if match.start() in ends:
 
-                supras.append(entities_pn[ends.index(match.start())])
-            elif match.start()-1 in ends:
-                supras.append(entities_pn[ends.index(match.start()-1)])
-
+            supras.append(entities_pn[ends.index(match.start())])
+        elif match.start() - 1 in ends:
+            supras.append(entities_pn[ends.index(match.start() - 1)])
 
     supra_precedent_matches = {}
-
-
 
     for supra in supras:
         matches = []
@@ -63,7 +60,7 @@ def get_precedent_supras(doc, entities_pn, entities_precedents):
         if len(matches) > 0:
             supra_precedent_matches[supra] = matches[-1]
 
-    return supra_precedent_matches,supras
+    return supra_precedent_matches, supras
 
 
 def create_precedent_clusters(precedent_breakup, threshold):
@@ -76,7 +73,7 @@ def create_precedent_clusters(precedent_breakup, threshold):
             continue
         pet = precedent_breakup[pre][0]
         res = precedent_breakup[pre][1]
-        cit=precedent_breakup[pre][2]
+        cit = precedent_breakup[pre][2]
 
         cluster = []
         cluster.append(pre)
@@ -87,12 +84,12 @@ def create_precedent_clusters(precedent_breakup, threshold):
                 pet_1 = list(precedent_breakup.values())[j][0]
                 res_1 = list(precedent_breakup.values())[j][1]
                 cit_1 = list(precedent_breakup.values())[j][2]
-                if (pet_1 == None or res_1 == None) :
-                    if cit_1==None:
+                if (pet_1 == None or res_1 == None):
+                    if cit_1 == None:
                         exclude.append(j)
 
                     else:
-                        if cit_1==cit:
+                        if cit_1 == cit:
                             exclude.append(j)
                             cluster.append(list(precedent_breakup.keys())[j])
                 else:
@@ -108,10 +105,10 @@ def create_precedent_clusters(precedent_breakup, threshold):
             cluster_num = cluster_num + 1
         elif cit != None:
             for j in range(i + 1, len(precedent_breakup)):
-                cit_1=list(precedent_breakup.values())[j][2]
-                if  cit_1 !=None and  cit_1==cit:
-                        exclude.append(j)
-                        cluster.append(list(precedent_breakup.keys())[j])
+                cit_1 = list(precedent_breakup.values())[j][2]
+                if cit_1 != None and cit_1 == cit:
+                    exclude.append(j)
+                    cluster.append(list(precedent_breakup.keys())[j])
             precedent_clusters[cluster_num] = cluster
             cluster_num = cluster_num + 1
 
@@ -175,25 +172,25 @@ def precedent_coref_resol(doc):
 
     precedent_clusters = create_precedent_clusters(precedent_breakup, threshold=5)
 
-    precedent_supra_matches,supras = get_precedent_supras(doc, entities_pn, entities_precedents)
+    precedent_supra_matches, supras = get_precedent_supras(doc, entities_pn, entities_precedents)
 
     precedent_supra_clusters = merge_supras_precedents(precedent_supra_matches, precedent_clusters)
 
     final_clusters = set_main_cluster(precedent_supra_clusters)
-    clusters={}
-    entities=[]
+    clusters = {}
+    entities = []
 
     for cluster in final_clusters.keys():
-        if len(final_clusters[cluster])>1:
-            clusters[cluster]=final_clusters[cluster]
+        if len(final_clusters[cluster]) > 1:
+            clusters[cluster] = final_clusters[cluster]
 
     for entitiy in doc.ents:
         if entitiy in supras:
-            entitiy.label_='PRECEDENT'
+            entitiy.label_ = 'PRECEDENT'
             entities.append(entitiy)
         else:
             entities.append(entitiy)
-    doc.ents=entities
+    doc.ents = entities
 
     return clusters
 
@@ -345,10 +342,7 @@ def remove_overlapping_entities(ents, pro_sta_clusters):
         if cluster[0] not in final_ents:
             final_ents.append(cluster[0])
 
-
     final_ents = spacy.util.filter_spans(final_ents)
-
-
 
     return final_ents
 
@@ -394,7 +388,7 @@ def get_exact_match_pro_statute(docs):
 
 def separate_provision_get_pairs_statute(pro_statute):
     matching_pro_statute = []
-    to_remove=[]
+    to_remove = []
     sepearte_sec = r'(?i)(section(s)*|article(s)*)'
     remove_braces = r'\('
     sepearte_sub_sec = r'(?i)((sub|sub-)section(s)*|clause(s)*|annexure(s)*)'
@@ -427,7 +421,7 @@ def separate_provision_get_pairs_statute(pro_statute):
 
                 matching_pro_statute.append([sec.strip(), pro[1]])
 
-    return to_remove,matching_pro_statute
+    return to_remove, matching_pro_statute
 
 
 def check_validity(provision, statute):
@@ -556,7 +550,7 @@ def separate_provision_get_pairs_pro(pro_left):
     return matching_pro_left
 
 
-def create_statute_clusters(doc,old_statute_clusters,new_statute_clusters):
+def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters):
     clusters = {}
     statutes = []
     not_done = []
@@ -566,12 +560,12 @@ def create_statute_clusters(doc,old_statute_clusters,new_statute_clusters):
             statutes.append(ent)
     for c in old_statute_clusters.keys():
         if c not in clusters.keys():
-            clusters[c.text]=old_statute_clusters[c]
+            clusters[c.text] = old_statute_clusters[c]
         else:
             clusters[c.text].extend(old_statute_clusters[c])
     for c in new_statute_clusters.keys():
         if c not in clusters.keys():
-            clusters[c.text]=new_statute_clusters[c]
+            clusters[c.text] = new_statute_clusters[c]
         else:
             clusters[c.text].extend(new_statute_clusters[c])
     for statute in statutes:
@@ -595,7 +589,7 @@ def check_stat(text):
     regex_itact = r'(?i)\b((i\.*\s*t\.*\s*|income\s*\-*tax\s+)act\s*)\b'
     regex_mvact = r'(?i)\b((m\.*\s*v\.*\s*)|(motor\s*\-*vehicle(s)*\s+)act\s*)\b'
     regex_idact = r'(?i)\b((i\.*\s*d\.*\s*)|(industrial\s*\-*dispute(s)*\s+)act\s*)\b'
-    regex_sarfaesi= r'(?i)\b((s\.*\s*a\.*\s*r\.*\s*f\.*\s*a\.*\s*e\.*\s*s\.*\s*i\.*\s*)|(securitisation\s*and\s*reconstruction\s*of\s*financial\s*assets\s*and\s*enforcement\s*of\s*security\s*interest\s+)act\s*)\b'
+    regex_sarfaesi = r'(?i)\b((s\.*\s*a\.*\s*r\.*\s*f\.*\s*a\.*\s*e\.*\s*s\.*\s*i\.*\s*)|(securitisation\s*and\s*reconstruction\s*of\s*financial\s*assets\s*and\s*enforcement\s*of\s*security\s*interest\s+)act\s*)\b'
 
     match_crpc = re.search(regex_crpc, text)
     match_ipc = re.search(regex_ipc, text)
@@ -603,7 +597,7 @@ def check_stat(text):
     match_ita = re.search(regex_itact, text)
     match_mv = re.search(regex_mvact, text)
     match_idact = re.search(regex_idact, text)
-    match_sarfaesi=re.search(regex_sarfaesi, text)
+    match_sarfaesi = re.search(regex_sarfaesi, text)
     if match_crpc:
         return 'Criminal Procedure Code'
     elif match_ipc:
@@ -688,9 +682,8 @@ def create_unidentified_statutes(doc):
     for sta in new_statutes:
         for s in statutes_start_end:
             if sta.start >= s[0] and sta.end <= s[1]:
-
                 discarded_statutes.append(sta)
-    old_statute_clusters={}
+    old_statute_clusters = {}
 
     for s in discarded_statutes:
         if s in new_statutes:
@@ -709,21 +702,21 @@ def create_unidentified_statutes(doc):
                     old_statute_clusters[sta] = []
                     old_statute_clusters[sta].append(s)
 
-
-    return new_statutes_clusters, new_statutes,old_statute_clusters
+    return new_statutes_clusters, new_statutes, old_statute_clusters
 
 
 def add_statute_head(clusters, stat_clusters):
     new_clusters = []
     clusters_done = []
-    provision_statutes = collections.namedtuple('provision_statutes', ['provision_entity', 'statute_entity', 'normalised_provision_text','normalised_statute_text'])
+    provision_statutes = collections.namedtuple('provision_statutes',
+                                                ['provision_entity', 'statute_entity', 'normalised_provision_text',
+                                                 'normalised_statute_text'])
 
     for stat_cluster in stat_clusters.keys():
         acts = stat_clusters[stat_cluster]
 
         for i, cluster in enumerate(clusters):
             if cluster[1] in acts:
-
                 new_clusters.append(provision_statutes(cluster[0], cluster[1], cluster[2], stat_cluster))
 
                 clusters_done.append(cluster)
@@ -738,7 +731,7 @@ def add_statute_head(clusters, stat_clusters):
 
 
 def pro_statute_coref_resol(doc):
-    new_statutes_clusters, new_statutes,old_statute_clusters = create_unidentified_statutes(doc)
+    new_statutes_clusters, new_statutes, old_statute_clusters = create_unidentified_statutes(doc)
     old_entities = list(doc.ents)
 
     for ent in new_statutes:
@@ -748,28 +741,25 @@ def pro_statute_coref_resol(doc):
 
     doc.ents = old_entities
 
-    stat_clusters = create_statute_clusters(doc,old_statute_clusters,new_statutes_clusters)
+    stat_clusters = create_statute_clusters(doc, old_statute_clusters, new_statutes_clusters)
 
     pro_statute, pro_left, total_statutes = get_exact_match_pro_statute(doc)
 
-    to_remove,matching_pro_statute = separate_provision_get_pairs_statute(pro_statute)
+    to_remove, matching_pro_statute = separate_provision_get_pairs_statute(pro_statute)
     matching_pro_left = separate_provision_get_pairs_pro(pro_left)
-
 
     for pro in to_remove:
         if pro in pro_statute:
             pro_statute.remove(pro)
 
-
     matching_pro_statute, pro_statute = map_pro_statute_on_heuristics(matching_pro_left,
-                                                                     matching_pro_statute,
-                                                                     pro_statute,
-                                                                     total_statutes)
+                                                                      matching_pro_statute,
+                                                                      pro_statute,
+                                                                      total_statutes)
 
     clusters = get_clusters(pro_statute, total_statutes)
 
     clusters = seperate_provision(doc, clusters)
-
 
     new_entities = remove_unidentified_statutes(doc, new_statutes)
     doc.ents = new_entities
@@ -778,7 +768,6 @@ def pro_statute_coref_resol(doc):
     #     stat_clusters[cluster.text] = new_statutes_clusters[cluster]
 
     new_clusters = add_statute_head(clusters, stat_clusters)
-
 
     return new_clusters, stat_clusters
 
@@ -799,7 +788,7 @@ def seperate_provision(doc, clusters):
         for sec in section:
             sec_text = sec.strip()
             if len(sec_text) > 0:
-                if   sec_text.replace(' ','').isalpha() or (not sec_text[0].isnumeric() and not sec_text[0].isalpha()):
+                if sec_text.replace(' ', '').isalpha() or (not sec_text[0].isnumeric() and not sec_text[0].isalpha()):
                     combined = True
                     break
 
@@ -819,4 +808,3 @@ def seperate_provision(doc, clusters):
             new_clusters.append((cluster[0], cluster[1], cluster[0].text))
 
     return new_clusters
-

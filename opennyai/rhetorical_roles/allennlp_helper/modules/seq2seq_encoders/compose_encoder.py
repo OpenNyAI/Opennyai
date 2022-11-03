@@ -6,7 +6,6 @@ from opennyai.rhetorical_roles.allennlp_helper.modules.seq2seq_encoders.seq2seq_
 
 @Seq2SeqEncoder.register("compose")
 class ComposeEncoder(Seq2SeqEncoder):
-
     """This class can be used to compose several encoders in sequence.
 
     Among other things, this can be used to add a "pre-contextualizer" before a Seq2SeqEncoder.

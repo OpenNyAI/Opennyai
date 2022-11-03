@@ -58,7 +58,6 @@ JsonDict = Dict[str, Any]
 START_SYMBOL = "@start@"
 END_SYMBOL = "@end@"
 
-
 PathType = Union[os.PathLike, str]
 T = TypeVar("T")
 ContextManagerFunctionReturnType = Generator[T, None, None]
@@ -144,10 +143,10 @@ def lazy_groups_of(iterable: Iterable[A], group_size: int) -> Iterator[List[A]]:
 
 
 def pad_sequence_to_length(
-    sequence: Sequence,
-    desired_length: int,
-    default_value: Callable[[], Any] = lambda: 0,
-    padding_on_right: bool = True,
+        sequence: Sequence,
+        desired_length: int,
+        default_value: Callable[[], Any] = lambda: 0,
+        padding_on_right: bool = True,
 ) -> List:
     """
     Take a list of objects and pads it to the desired length, returning the padded list.  The
@@ -256,7 +255,7 @@ LOADED_SPACY_MODELS: Dict[Tuple[str, bool, bool, bool], SpacyModelType] = {}
 
 
 def get_spacy_model(
-    spacy_model_name: str, pos_tags: bool = True, parse: bool = False, ner: bool = False
+        spacy_model_name: str, pos_tags: bool = True, parse: bool = False, ner: bool = False
 ) -> SpacyModelType:
     """
     In order to avoid loading spacy models a whole bunch of times, we'll save references to them,
@@ -499,7 +498,7 @@ def log_frozen_and_tunable_parameter_names(model: torch.nn.Module) -> None:
 
 
 def get_frozen_and_tunable_parameter_names(
-    model: torch.nn.Module,
+        model: torch.nn.Module,
 ) -> Tuple[Iterable[str], Iterable[str]]:
     frozen_parameter_names = (
         name for name, parameter in model.named_parameters() if not parameter.requires_grad
@@ -603,15 +602,15 @@ def sanitize_ptb_tokenized_string(text: str) -> str:
         # Special cases for `` and '', those tells us if " is the start or end of a quotation.
         # Also always merge tokens starting with ' backward and don't merge back if we just merged forward
         merge_bckwd = not merge_fwd and (
-            orig_token == "''"
-            or new_token in em_backward
-            or new_token.startswith("'")
-            or all(c in punct_backward for c in new_token)
+                orig_token == "''"
+                or new_token in em_backward
+                or new_token.startswith("'")
+                or all(c in punct_backward for c in new_token)
         )
         merge_fwd = (
-            orig_token == "``"
-            or new_token in em_forward
-            or all(c in punct_forward for c in new_token)
+                orig_token == "``"
+                or new_token in em_forward
+                or all(c in punct_forward for c in new_token)
         )
 
         if merge_bckwd and new_tokens:
@@ -732,7 +731,6 @@ def cycle_iterator_function(iterator_function: Callable[[], Iterable[T]]) -> Ite
             yield next(iterator)
         except StopIteration:
             iterator = iter(iterator_function())
-
 
 
 class SigTermReceived(Exception):

@@ -1,10 +1,11 @@
 import spacy
-from wasabi import msg
 from tqdm import tqdm
+from wasabi import msg
+
+from opennyai.utils.download import install, PIP_INSTALLER_URLS
 from .entity_recognizer_utils import extract_entities_from_judgment_text
 from .postprocessing_utils import precedent_coref_resol, other_person_coref_res, pro_statute_coref_resol, \
     remove_overlapping_entities
-from opennyai.utils.download import install, PIP_INSTALLER_URLS
 
 
 class InLegalNER:
@@ -67,8 +68,7 @@ class InLegalNER:
 
                     other_person_entites = other_person_coref_res(nlp_doc)
 
-                    pro_sta_clusters,stat_clusters = pro_statute_coref_resol(nlp_doc)
-
+                    pro_sta_clusters, stat_clusters = pro_statute_coref_resol(nlp_doc)
 
                     all_entities = remove_overlapping_entities(nlp_doc.ents, pro_sta_clusters)
 

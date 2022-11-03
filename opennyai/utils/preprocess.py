@@ -1,9 +1,10 @@
+from hashlib import sha256
 from typing import Union
 
 import spacy
-from hashlib import sha256
-from wasabi import msg
 from tqdm import tqdm
+from wasabi import msg
+
 from .download import PIP_INSTALLER_URLS, install
 from .sentencizer import split_main_judgement_to_preamble_and_judgement
 

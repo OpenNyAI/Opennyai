@@ -1,8 +1,10 @@
-from opennyai.ner.InLegalNER.InLegalNER import InLegalNER
-import copy
 import collections
-from hashlib import sha256
+import copy
+
 import pandas as pd
+
+from opennyai.ner.InLegalNER.InLegalNER import InLegalNER
+
 
 def load(model_name: str = 'en_legal_ner_trf', use_gpu: bool = True):
     """Returns object of InLegalNER class.
@@ -22,7 +24,6 @@ def load(model_name: str = 'en_legal_ner_trf', use_gpu: bool = True):
 
 def update_json_with_clusters(ls_formatted_doc: dict, precedent_clusters: dict, provision_statute_clusters: list,
                               statute_clusters: dict):
-
     for entity, _, __, val in provision_statute_clusters:
         for result in ls_formatted_doc['annotations'][0]['result']:
             if result['value']['start'] == entity.start_char and result['value']['end'] == entity.end_char:
@@ -68,25 +69,24 @@ def get_json_from_spacy_doc(doc) -> dict:
 
     final_output = update_json_with_clusters(copy.deepcopy(output), doc.user_data['precedent_clusters'],
 
-                                           doc.user_data['provision_statute_pairs'], doc.user_data['statute_clusters'])
+                                             doc.user_data['provision_statute_pairs'],
+                                             doc.user_data['statute_clusters'])
 
     return final_output
 
 
-
-
-def get_csv(doc,f_name,save_path):
+def get_csv(doc, f_name, save_path):
     df = pd.DataFrame(columns=['file_name', 'entity', 'label', 'normalised_entities'])
-    file_name=[]
-    entity=[]
-    label=[]
-    normalised_entities=[]
+    file_name = []
+    entity = []
+    label = []
+    normalised_entities = []
 
-    for pro_ent in   doc.user_data['provision_statute_pairs']:
+    for pro_ent in doc.user_data['provision_statute_pairs']:
         file_name.append(f_name)
         entity.append(pro_ent[0])
         label.append('PROVISION')
-        normalised_entities.append(pro_ent[2]+' of '+pro_ent[3])
+        normalised_entities.append(pro_ent[2] + ' of ' + pro_ent[3])
     for pre_head in doc.user_data['precedent_clusters'].keys():
 
         for ent in doc.user_data['precedent_clusters'][pre_head]:
@@ -103,38 +103,33 @@ def get_csv(doc,f_name,save_path):
             normalised_entities.append(pre_head)
 
     for ent in doc.ents:
-        if ent not in  entity:
+        if ent not in entity:
             file_name.append(f_name)
             entity.append(ent)
             label.append(ent.label_)
             normalised_entities.append('')
-    entity_text=[ent.text for ent in entity]
-    df['file_name']=file_name
-    df['entity']=entity_text
-    df['label']=label
-    df['normalised_entities']=normalised_entities
+    entity_text = [ent.text for ent in entity]
+    df['file_name'] = file_name
+    df['entity'] = entity_text
+    df['label'] = label
+    df['normalised_entities'] = normalised_entities
 
     df.to_csv(save_path)
 
 
 def get_unique_precedent_count(doc):
-    new_clusters={}
-    clusters=doc.user_data['precedent_clusters']
+    new_clusters = {}
+    clusters = doc.user_data['precedent_clusters']
     for c in clusters.keys():
-
-        new_clusters[c]=len(clusters[c])
-
+        new_clusters[c] = len(clusters[c])
 
     return new_clusters
 
 
-
 def get_unique_provision_count(doc):
-    clusters=doc.user_data['provision_statute_pairs']
-    provisions = [cluster[2]+' of '+cluster[3] for cluster in clusters]
-    frequency=dict(collections.Counter(provisions))
-
-
+    clusters = doc.user_data['provision_statute_pairs']
+    provisions = [cluster[2] + ' of ' + cluster[3] for cluster in clusters]
+    frequency = dict(collections.Counter(provisions))
 
     return frequency
 
@@ -145,6 +140,7 @@ def get_unique_statute_count(doc):
     frequency = dict(collections.Counter(statutes))
 
     return frequency
+
 
 ner_displacy_option = {
     'colors': {'COURT': "#bbabf2", 'PETITIONER': "#f570ea", "RESPONDENT": "#cdee81", 'JUDGE': "#fdd8a5",

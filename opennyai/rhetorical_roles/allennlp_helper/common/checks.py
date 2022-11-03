@@ -46,7 +46,7 @@ def log_pytorch_version_info():
 
 
 def check_dimensions_match(
-    dimension_1: int, dimension_2: int, dim_1_name: str, dim_2_name: str
+        dimension_1: int, dimension_2: int, dim_1_name: str, dim_2_name: str
 ) -> None:
     if dimension_1 != dimension_2:
         raise ConfigurationError(

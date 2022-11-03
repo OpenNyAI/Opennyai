@@ -18,4 +18,3 @@ The available Seq2Seq encoders are
 - `"gated-cnn-encoder"` : allennlp.momdules.seq2seq_encoders.GatedCnnEncoder
 - `"stacked_bidirectional_lstm"`: allennlp.modules.seq2seq_encoders.StackedBidirectionalLstmSeq2SeqEncoder
 """
-

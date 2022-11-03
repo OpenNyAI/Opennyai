@@ -4,7 +4,6 @@ from typing import Callable, Generic, TypeVar, Type, Union, Optional, Dict, Any
 
 from opennyai.rhetorical_roles.allennlp_helper.common.params import Params
 
-
 T = TypeVar("T")
 
 
@@ -47,11 +46,11 @@ class Lazy(Generic[T]):
     """
 
     def __init__(
-        self,
-        constructor: Union[Type[T], Callable[..., T]],
-        params: Optional[Params] = None,
-        constructor_extras: Optional[Dict[str, Any]] = None,
-        **kwargs,
+            self,
+            constructor: Union[Type[T], Callable[..., T]],
+            params: Optional[Params] = None,
+            constructor_extras: Optional[Dict[str, Any]] = None,
+            **kwargs,
     ) -> None:
         self._constructor = constructor
         self._params = params or Params({})

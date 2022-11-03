@@ -72,7 +72,7 @@ def clamp_tensor(tensor, minimum, maximum):
 
 
 def batch_tensor_dicts(
-    tensor_dicts: List[Dict[str, torch.Tensor]], remove_trailing_dimension: bool = False
+        tensor_dicts: List[Dict[str, torch.Tensor]], remove_trailing_dimension: bool = False
 ) -> Dict[str, torch.Tensor]:
     """
     Takes a list of tensor dictionaries, where each dictionary is assumed to have matching keys,
@@ -120,7 +120,7 @@ def get_lengths_from_binary_sequence_mask(mask: torch.BoolTensor) -> torch.LongT
 
 
 def get_mask_from_sequence_lengths(
-    sequence_lengths: torch.Tensor, max_length: int
+        sequence_lengths: torch.Tensor, max_length: int
 ) -> torch.BoolTensor:
     """
     Given a variable of shape `(batch_size,)` that represents the sequence lengths of each batch
@@ -179,7 +179,7 @@ def sort_batch_by_length(tensor: torch.Tensor, sequence_lengths: torch.Tensor):
 
 
 def get_final_encoder_states(
-    encoder_outputs: torch.Tensor, mask: torch.BoolTensor, bidirectional: bool = False
+        encoder_outputs: torch.Tensor, mask: torch.BoolTensor, bidirectional: bool = False
 ) -> torch.Tensor:
     """
     Given the output from a `Seq2SeqEncoder`, with shape `(batch_size, sequence_length,
@@ -206,7 +206,7 @@ def get_final_encoder_states(
     final_encoder_output = final_encoder_output.squeeze(1)  # (batch_size, encoder_output_dim)
     if bidirectional:
         final_forward_output = final_encoder_output[:, : (encoder_output_dim // 2)]
-        final_backward_output = encoder_outputs[:, 0, (encoder_output_dim // 2) :]
+        final_backward_output = encoder_outputs[:, 0, (encoder_output_dim // 2):]
         final_encoder_output = torch.cat([final_forward_output, final_backward_output], dim=-1)
     return final_encoder_output
 
@@ -241,10 +241,10 @@ def get_dropout_mask(dropout_probability: float, tensor_for_masking: torch.Tenso
 
 
 def masked_softmax(
-    vector: torch.Tensor,
-    mask: torch.BoolTensor,
-    dim: int = -1,
-    memory_efficient: bool = False,
+        vector: torch.Tensor,
+        mask: torch.BoolTensor,
+        dim: int = -1,
+        memory_efficient: bool = False,
 ) -> torch.Tensor:
     """
     `torch.nn.functional.softmax(vector)` does not work if some elements of `vector` should be
@@ -275,7 +275,7 @@ def masked_softmax(
             result = torch.nn.functional.softmax(vector * mask, dim=dim)
             result = result * mask
             result = result / (
-                result.sum(dim=dim, keepdim=True) + tiny_value_of_dtype(result.dtype)
+                    result.sum(dim=dim, keepdim=True) + tiny_value_of_dtype(result.dtype)
             )
         else:
             masked_vector = vector.masked_fill(~mask, min_value_of_dtype(vector.dtype))
@@ -315,10 +315,10 @@ def masked_log_softmax(vector: torch.Tensor, mask: torch.BoolTensor, dim: int = 
 
 
 def masked_max(
-    vector: torch.Tensor,
-    mask: torch.BoolTensor,
-    dim: int,
-    keepdim: bool = False,
+        vector: torch.Tensor,
+        mask: torch.BoolTensor,
+        dim: int,
+        keepdim: bool = False,
 ) -> torch.Tensor:
     """
     To calculate max along certain dimensions on masked values
@@ -345,7 +345,7 @@ def masked_max(
 
 
 def masked_mean(
-    vector: torch.Tensor, mask: torch.BoolTensor, dim: int, keepdim: bool = False
+        vector: torch.Tensor, mask: torch.BoolTensor, dim: int, keepdim: bool = False
 ) -> torch.Tensor:
     """
     To calculate mean along certain dimensions on masked values
@@ -396,19 +396,19 @@ def masked_flip(padded_sequence: torch.Tensor, sequence_lengths: List[int]) -> t
     num_timesteps = padded_sequence.size(1)
     flipped_padded_sequence = torch.flip(padded_sequence, [1])
     sequences = [
-        flipped_padded_sequence[i, num_timesteps - length :]
+        flipped_padded_sequence[i, num_timesteps - length:]
         for i, length in enumerate(sequence_lengths)
     ]
     return torch.nn.utils.rnn.pad_sequence(sequences, batch_first=True)
 
 
 def viterbi_decode(
-    tag_sequence: torch.Tensor,
-    transition_matrix: torch.Tensor,
-    tag_observations: Optional[List[int]] = None,
-    allowed_start_transitions: torch.Tensor = None,
-    allowed_end_transitions: torch.Tensor = None,
-    top_k: int = None,
+        tag_sequence: torch.Tensor,
+        transition_matrix: torch.Tensor,
+        tag_observations: Optional[List[int]] = None,
+        allowed_start_transitions: torch.Tensor = None,
+        allowed_end_transitions: torch.Tensor = None,
+        top_k: int = None,
 ):
     """
     Perform Viterbi decoding in log space over a sequence given a transition matrix
@@ -463,7 +463,7 @@ def viterbi_decode(
     sequence_length, num_tags = list(tag_sequence.size())
 
     has_start_end_restrictions = (
-        allowed_end_transitions is not None or allowed_start_transitions is not None
+            allowed_end_transitions is not None or allowed_start_transitions is not None
     )
 
     if has_start_end_restrictions:
@@ -582,9 +582,9 @@ def viterbi_decode(
 
 
 def get_text_field_mask(
-    text_field_tensors: Dict[str, Dict[str, torch.Tensor]],
-    num_wrapping_dims: int = 0,
-    padding_id: int = 0,
+        text_field_tensors: Dict[str, Dict[str, torch.Tensor]],
+        num_wrapping_dims: int = 0,
+        padding_id: int = 0,
 ) -> torch.BoolTensor:
     """
     Takes the dictionary of tensors produced by a `TextField` and returns a mask
@@ -638,7 +638,7 @@ def get_text_field_mask(
 
 
 def get_token_ids_from_text_field_tensors(
-    text_field_tensors: Dict[str, Dict[str, torch.Tensor]],
+        text_field_tensors: Dict[str, Dict[str, torch.Tensor]],
 ) -> torch.Tensor:
     """
     Our `TextFieldTensors` are complex output structures, because they try to handle a lot of
@@ -698,13 +698,13 @@ def weighted_sum(matrix: torch.Tensor, attention: torch.Tensor) -> torch.Tensor:
 
 
 def sequence_cross_entropy_with_logits(
-    logits: torch.FloatTensor,
-    targets: torch.LongTensor,
-    weights: Union[torch.FloatTensor, torch.BoolTensor],
-    average: str = "batch",
-    label_smoothing: float = None,
-    gamma: float = None,
-    alpha: Union[float, List[float], torch.FloatTensor] = None,
+        logits: torch.FloatTensor,
+        targets: torch.LongTensor,
+        weights: Union[torch.FloatTensor, torch.BoolTensor],
+        average: str = "batch",
+        label_smoothing: float = None,
+        gamma: float = None,
+        alpha: Union[float, List[float], torch.FloatTensor] = None,
 ) -> torch.FloatTensor:
     """
     Computes the cross entropy loss of a sequence, weighted with respect to
@@ -835,7 +835,7 @@ def sequence_cross_entropy_with_logits(
     if average == "batch":
         # shape : (batch_size,)
         per_batch_loss = negative_log_likelihood.sum(non_batch_dims) / (
-            weights_batch_sum + tiny_value_of_dtype(negative_log_likelihood.dtype)
+                weights_batch_sum + tiny_value_of_dtype(negative_log_likelihood.dtype)
         )
         num_non_empty_sequences = (weights_batch_sum > 0).sum() + tiny_value_of_dtype(
             negative_log_likelihood.dtype
@@ -843,18 +843,18 @@ def sequence_cross_entropy_with_logits(
         return per_batch_loss.sum() / num_non_empty_sequences
     elif average == "token":
         return negative_log_likelihood.sum() / (
-            weights_batch_sum.sum() + tiny_value_of_dtype(negative_log_likelihood.dtype)
+                weights_batch_sum.sum() + tiny_value_of_dtype(negative_log_likelihood.dtype)
         )
     else:
         # shape : (batch_size,)
         per_batch_loss = negative_log_likelihood.sum(non_batch_dims) / (
-            weights_batch_sum + tiny_value_of_dtype(negative_log_likelihood.dtype)
+                weights_batch_sum + tiny_value_of_dtype(negative_log_likelihood.dtype)
         )
         return per_batch_loss
 
 
 def replace_masked_values(
-    tensor: torch.Tensor, mask: torch.BoolTensor, replace_with: float
+        tensor: torch.Tensor, mask: torch.BoolTensor, replace_with: float
 ) -> torch.Tensor:
     """
     Replaces all masked values in `tensor` with `replace_with`.  `mask` must be broadcastable
@@ -928,11 +928,11 @@ def device_mapping(cuda_device: int):
 
 
 def read_state_dict(
-    path: Union[PathLike, str],
-    strip_prefix: Optional[str] = None,
-    ignore: Optional[List[str]] = None,
-    strict: bool = True,
-    cuda_device: int = -1,
+        path: Union[PathLike, str],
+        strip_prefix: Optional[str] = None,
+        ignore: Optional[List[str]] = None,
+        strict: bool = True,
+        cuda_device: int = -1,
 ) -> Dict[str, torch.Tensor]:
     """
     Read a PyTorch model state dictionary from a checkpoint at the given `path`.
@@ -1000,7 +1000,7 @@ def read_state_dict(
 
         if strip_prefix and key.startswith(strip_prefix):
             strip_prefix_used = True
-            new_key = key[len(strip_prefix) :]
+            new_key = key[len(strip_prefix):]
             if not new_key:
                 raise ValueError("'strip_prefix' resulted in an empty string for a key")
 
@@ -1092,7 +1092,7 @@ def _get_combination(combination: str, tensors: List[torch.Tensor]) -> torch.Ten
 
 
 def combine_tensors_and_multiply(
-    combination: str, tensors: List[torch.Tensor], weights: torch.nn.Parameter
+        combination: str, tensors: List[torch.Tensor], weights: torch.nn.Parameter
 ) -> torch.Tensor:
     """
     Like [`combine_tensors`](./util.md#combine_tensors), but does a weighted (linear)
@@ -1122,7 +1122,7 @@ def combine_tensors_and_multiply(
     dims_so_far = 0
     to_sum = []
     for piece, combination_dim in zip(pieces, combination_dims):
-        weight = weights[dims_so_far : (dims_so_far + combination_dim)]
+        weight = weights[dims_so_far: (dims_so_far + combination_dim)]
         dims_so_far += combination_dim
         to_sum.append(_get_combination_and_multiply(piece, tensors, weight))
     result = to_sum[0]
@@ -1132,7 +1132,7 @@ def combine_tensors_and_multiply(
 
 
 def _get_combination_and_multiply(
-    combination: str, tensors: List[torch.Tensor], weight: torch.nn.Parameter
+        combination: str, tensors: List[torch.Tensor], weight: torch.nn.Parameter
 ) -> torch.Tensor:
     if combination.isdigit():
         index = int(combination) - 1
@@ -1299,9 +1299,9 @@ def flatten_and_batch_shift_indices(indices: torch.Tensor, sequence_length: int)
 
 
 def batched_index_select(
-    target: torch.Tensor,
-    indices: torch.LongTensor,
-    flattened_indices: Optional[torch.LongTensor] = None,
+        target: torch.Tensor,
+        indices: torch.LongTensor,
+        flattened_indices: Optional[torch.LongTensor] = None,
 ) -> torch.Tensor:
     """
     The given `indices` of size `(batch_size, d_1, ..., d_n)` indexes into the sequence
@@ -1357,7 +1357,7 @@ def batched_index_select(
 
 
 def masked_index_fill(
-    target: torch.Tensor, indices: torch.LongTensor, mask: torch.BoolTensor, fill_value: int = 1
+        target: torch.Tensor, indices: torch.LongTensor, mask: torch.BoolTensor, fill_value: int = 1
 ) -> torch.Tensor:
     """
     The given `indices` in `target` will be will be filled with `fill_value` given a `mask`.
@@ -1400,10 +1400,10 @@ def masked_index_fill(
 
 
 def masked_index_replace(
-    target: torch.Tensor,
-    indices: torch.LongTensor,
-    mask: torch.BoolTensor,
-    replace: torch.Tensor,
+        target: torch.Tensor,
+        indices: torch.LongTensor,
+        mask: torch.BoolTensor,
+        replace: torch.Tensor,
 ) -> torch.Tensor:
     """
     The given `indices` in `target` will be will be replaced with corresponding index
@@ -1556,7 +1556,7 @@ def get_range_vector(size: int, device: int) -> torch.Tensor:
 
 
 def bucket_values(
-    distances: torch.Tensor, num_identity_buckets: int = 4, num_total_buckets: int = 10
+        distances: torch.Tensor, num_identity_buckets: int = 4, num_total_buckets: int = 10
 ) -> torch.Tensor:
     """
     Places the given values (designed for distances) into `num_total_buckets`semi-logscale
@@ -1586,7 +1586,7 @@ def bucket_values(
     # most values to fall. We then add (num_identity_buckets - 1) because we want these indices
     # to start _after_ the fixed number of buckets which we specified would only hold single values.
     logspace_index = (distances.float().log() / math.log(2)).floor().long() + (
-        num_identity_buckets - 1
+            num_identity_buckets - 1
     )
     # create a mask for values which will go into single number buckets (i.e not a range).
     use_identity_mask = (distances <= num_identity_buckets).long()
@@ -1599,7 +1599,7 @@ def bucket_values(
 
 
 def add_sentence_boundary_token_ids(
-    tensor: torch.Tensor, mask: torch.BoolTensor, sentence_begin_token: Any, sentence_end_token: Any
+        tensor: torch.Tensor, mask: torch.BoolTensor, sentence_begin_token: Any, sentence_end_token: Any
 ) -> Tuple[torch.Tensor, torch.BoolTensor]:
     """
     Add begin/end of sentence tokens to the batch of sentences.
@@ -1658,7 +1658,7 @@ def add_sentence_boundary_token_ids(
 
 
 def remove_sentence_boundaries(
-    tensor: torch.Tensor, mask: torch.BoolTensor
+        tensor: torch.Tensor, mask: torch.BoolTensor
 ) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Remove begin/end of sentence embeddings from the batch of sentences.
@@ -1694,16 +1694,15 @@ def remove_sentence_boundaries(
     new_mask = tensor.new_zeros((new_shape[0], new_shape[1]), dtype=torch.bool)
     for i, j in enumerate(sequence_lengths):
         if j > 2:
-            tensor_without_boundary_tokens[i, : (j - 2), :] = tensor[i, 1 : (j - 1), :]
+            tensor_without_boundary_tokens[i, : (j - 2), :] = tensor[i, 1: (j - 1), :]
             new_mask[i, : (j - 2)] = True
 
     return tensor_without_boundary_tokens, new_mask
 
 
 def add_positional_features(
-    tensor: torch.Tensor, min_timescale: float = 1.0, max_timescale: float = 1.0e4
+        tensor: torch.Tensor, min_timescale: float = 1.0, max_timescale: float = 1.0e4
 ):
-
     """
     Implements the frequency-based positional encoding described
     in [Attention is All you Need][0].
@@ -1891,7 +1890,7 @@ def find_embedding_layer(model: torch.nn.Module) -> torch.nn.Module:
 
 
 def get_token_offsets_from_text_field_inputs(
-    text_field_inputs: List[Any],
+        text_field_inputs: List[Any],
 ) -> Optional[torch.Tensor]:
     """
     Given a list of inputs to a TextFieldEmbedder, tries to find token offsets from those inputs, if
@@ -1948,10 +1947,10 @@ def extend_layer(layer: torch.nn.Module, new_dim: int) -> None:
 
 
 def masked_topk(
-    input_: torch.FloatTensor,
-    mask: torch.BoolTensor,
-    k: Union[int, torch.LongTensor],
-    dim: int = -1,
+        input_: torch.FloatTensor,
+        mask: torch.BoolTensor,
+        k: Union[int, torch.LongTensor],
+        dim: int = -1,
 ) -> Tuple[torch.LongTensor, torch.LongTensor, torch.FloatTensor]:
     """
     Extracts the top-k items along a certain dimension. This is similar to `torch.topk` except:
@@ -2175,10 +2174,10 @@ def dist_reduce_sum(value: _V) -> _V:
 
 
 def _collect_state_dict(
-    module: torch.nn.Module,
-    state_dict: Optional[StateDictType],
-    recurse: bool = True,
-    prefix: str = "",
+        module: torch.nn.Module,
+        state_dict: Optional[StateDictType],
+        recurse: bool = True,
+        prefix: str = "",
 ) -> Tuple[StateDictType, List[str], List[str]]:
     """
     Collect a module's state dict across distributed processes.
@@ -2255,7 +2254,7 @@ class _IncompatibleKeys(NamedTuple):
 
 
 def _check_incompatible_keys(
-    module, missing_keys: List[str], unexpected_keys: List[str], strict: bool
+        module, missing_keys: List[str], unexpected_keys: List[str], strict: bool
 ):
     error_msgs: List[str] = []
     if missing_keys:
@@ -2277,10 +2276,10 @@ def _check_incompatible_keys(
 
 
 def load_state_dict_distributed(
-    module: torch.nn.Module,
-    state_dict: Optional[StateDictType],
-    strict: bool = True,
-    prefix: str = "",
+        module: torch.nn.Module,
+        state_dict: Optional[StateDictType],
+        strict: bool = True,
+        prefix: str = "",
 ) -> _IncompatibleKeys:
     """
     Load a `state_dict` to the `module` within a distributed process. Only the global

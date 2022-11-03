@@ -2,7 +2,8 @@ from typing import Tuple, Union, Optional, Callable, Any
 import torch
 from torch.nn.utils.rnn import pack_padded_sequence, PackedSequence
 
-from opennyai.rhetorical_roles.allennlp_helper.nn.util import get_lengths_from_binary_sequence_mask, sort_batch_by_length
+from opennyai.rhetorical_roles.allennlp_helper.nn.util import get_lengths_from_binary_sequence_mask, \
+    sort_batch_by_length
 
 # We have two types here for the state, because storing the state in something
 # which is Iterable (like a tuple, below), is helpful for internal manipulation
@@ -13,7 +14,6 @@ RnnStateStorage = Tuple[torch.Tensor, ...]
 
 
 class _EncoderBase(torch.nn.Module):
-
     """
     This abstract class serves as a base for the 3 `Encoder` abstractions in AllenNLP.
     - [`Seq2SeqEncoders`](./seq2seq_encoders/seq2seq_encoder.md)
@@ -31,14 +31,14 @@ class _EncoderBase(torch.nn.Module):
         self._states: Optional[RnnStateStorage] = None
 
     def sort_and_run_forward(
-        self,
-        module: Callable[
-            [PackedSequence, Optional[RnnState]],
-            Tuple[Union[PackedSequence, torch.Tensor], RnnState],
-        ],
-        inputs: torch.Tensor,
-        mask: torch.BoolTensor,
-        hidden_state: Optional[RnnState] = None,
+            self,
+            module: Callable[
+                [PackedSequence, Optional[RnnState]],
+                Tuple[Union[PackedSequence, torch.Tensor], RnnState],
+            ],
+            inputs: torch.Tensor,
+            mask: torch.BoolTensor,
+            hidden_state: Optional[RnnState] = None,
     ):
         """
         This function exists because Pytorch RNNs require that their inputs be sorted
@@ -124,8 +124,8 @@ class _EncoderBase(torch.nn.Module):
                 ]
             else:
                 initial_states = hidden_state.index_select(1, sorting_indices)[
-                    :, :num_valid, :
-                ].contiguous()
+                                 :, :num_valid, :
+                                 ].contiguous()
 
         else:
             initial_states = self._get_initial_states(batch_size, num_valid, sorting_indices)
@@ -136,7 +136,7 @@ class _EncoderBase(torch.nn.Module):
         return module_output, final_states, restoration_indices
 
     def _get_initial_states(
-        self, batch_size: int, num_valid: int, sorting_indices: torch.LongTensor
+            self, batch_size: int, num_valid: int, sorting_indices: torch.LongTensor
     ) -> Optional[RnnState]:
         """
         Returns an initial state for use in an RNN. Additionally, this method handles
@@ -221,7 +221,7 @@ class _EncoderBase(torch.nn.Module):
             return tuple(state[:, :num_valid, :].contiguous() for state in sorted_states)
 
     def _update_states(
-        self, final_states: RnnStateStorage, restoration_indices: torch.LongTensor
+            self, final_states: RnnStateStorage, restoration_indices: torch.LongTensor
     ) -> None:
         """
         After the RNN has run forward, the states need to be updated.
@@ -268,7 +268,7 @@ class _EncoderBase(torch.nn.Module):
                 # The new state is smaller than the old one,
                 # so just update the indices which we used.
                 for old_state, new_state, used_mask in zip(
-                    self._states, new_unsorted_states, used_new_rows_mask
+                        self._states, new_unsorted_states, used_new_rows_mask
                 ):
                     # zero out all rows in the previous state
                     # which _were_ used in the current state.
@@ -281,7 +281,7 @@ class _EncoderBase(torch.nn.Module):
                 # deal with the possibility that some rows weren't used.
                 new_states = []
                 for old_state, new_state, used_mask in zip(
-                    self._states, new_unsorted_states, used_new_rows_mask
+                        self._states, new_unsorted_states, used_new_rows_mask
                 ):
                     # zero out all rows which _were_ used in the current state.
                     masked_old_state = old_state * (1 - used_mask)

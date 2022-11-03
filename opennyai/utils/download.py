@@ -1,8 +1,9 @@
 import os
 import subprocess
 import sys
-import torch
 from pathlib import Path
+
+import torch
 
 """Functions for downloading opennyai ner models."""
 PIP_INSTALLER_URLS = {

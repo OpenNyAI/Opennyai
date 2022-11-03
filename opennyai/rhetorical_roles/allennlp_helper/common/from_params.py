@@ -114,7 +114,7 @@ def remove_optional(annotation: type):
 
 
 def infer_constructor_params(
-    cls: Type[T], constructor: Union[Callable[..., T], Callable[[T], None]] = None
+        cls: Type[T], constructor: Union[Callable[..., T], Callable[[T], None]] = None
 ) -> Dict[str, inspect.Parameter]:
     if constructor is None:
         constructor = cls.__init__
@@ -159,7 +159,7 @@ def infer_method_params(cls: Type[T], method: Callable) -> Dict[str, inspect.Par
 
 
 def create_kwargs(
-    constructor: Callable[..., T], cls: Type[T], params: Params, **extras
+        constructor: Callable[..., T], cls: Type[T], params: Params, **extras
 ) -> Dict[str, Any]:
     """
     Given some class, a `Params` object, and potentially other keyword arguments,
@@ -252,7 +252,7 @@ def create_extras(cls: Type[T], extras: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def pop_and_construct_arg(
-    class_name: str, argument_name: str, annotation: Type, default: Any, params: Params, **extras
+        class_name: str, argument_name: str, annotation: Type, default: Any, params: Params, **extras
 ) -> Any:
     """
     Does the work of actually constructing an individual argument for
@@ -290,9 +290,9 @@ def pop_and_construct_arg(
             )
     # Next case is when argument should be loaded from pretrained archive.
     elif (
-        name in params
-        and isinstance(params.get(name), Params)
-        and "_pretrained" in params.get(name)
+            name in params
+            and isinstance(params.get(name), Params)
+            and "_pretrained" in params.get(name)
     ):
         load_module_params = params.pop(name).pop("_pretrained")
         archive_file = load_module_params.pop("archive_file")
@@ -315,12 +315,12 @@ def pop_and_construct_arg(
 
 
 def construct_arg(
-    class_name: str,
-    argument_name: str,
-    popped_params: Params,
-    annotation: Type,
-    default: Any,
-    **extras,
+        class_name: str,
+        argument_name: str,
+        popped_params: Params,
+        annotation: Type,
+        default: Any,
+        **extras,
 ) -> Any:
     """
     The first two parameters here are only used for logging if we encounter an error.
@@ -379,9 +379,9 @@ def construct_arg(
     # List[TokenIndexer], Tuple[TokenIndexer, Tokenizer], and Set[TokenIndexer],
     # which it creates by instantiating each value from_params and returning the resulting structure.
     elif (
-        origin in {collections.abc.Mapping, Mapping, Dict, dict}
-        and len(args) == 2
-        and can_construct_from_params(args[-1])
+            origin in {collections.abc.Mapping, Mapping, Dict, dict}
+            and len(args) == 2
+            and can_construct_from_params(args[-1])
     ):
         value_cls = annotation.__args__[-1]
         value_dict = {}
@@ -479,9 +479,9 @@ def construct_arg(
     # it the same as List. This condition needs to be at the end, so we don't catch other kinds
     # of Iterables with this branch.
     elif (
-        origin in {collections.abc.Iterable, Iterable, List, list}
-        and len(args) == 1
-        and can_construct_from_params(args[0])
+            origin in {collections.abc.Iterable, Iterable, List, list}
+            and len(args) == 1
+            and can_construct_from_params(args[0])
     ):
         value_cls = annotation.__args__[0]
 
@@ -515,11 +515,11 @@ class FromParams:
 
     @classmethod
     def from_params(
-        cls: Type[T],
-        params: Params,
-        constructor_to_call: Callable[..., T] = None,
-        constructor_to_inspect: Union[Callable[..., T], Callable[[T], None]] = None,
-        **extras,
+            cls: Type[T],
+            params: Params,
+            constructor_to_call: Callable[..., T] = None,
+            constructor_to_inspect: Union[Callable[..., T], Callable[[T], None]] = None,
+            **extras,
     ) -> T:
         """
         This is the automatic implementation of `from_params`. Any class that subclasses

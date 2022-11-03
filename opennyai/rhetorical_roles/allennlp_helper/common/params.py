@@ -9,7 +9,6 @@ from collections.abc import MutableMapping
 from os import PathLike
 from typing import Any, Dict, List, Union, Optional, TypeVar, Iterable, Set
 
-
 # _jsonnet doesn't work on Windows, so we have to use fakes.
 try:
     from _jsonnet import evaluate_file, evaluate_snippet
@@ -22,12 +21,12 @@ except ImportError:
         with open(filename, "r") as evaluation_file:
             return evaluation_file.read()
 
+
     def evaluate_snippet(_filename: str, expr: str, **_kwargs) -> str:
         logger.warning(
             "error loading _jsonnet (this is expected on Windows), treating snippet as plain json"
         )
         return expr
-
 
 from opennyai.rhetorical_roles.allennlp_helper.common.checks import ConfigurationError
 
@@ -124,7 +123,7 @@ def with_overrides(original: T, overrides_dict: Dict[str, Any], prefix: str = ""
             overrides_subdict = {}
             for o_key in overrides_dict:
                 if o_key.startswith(f"{key}."):
-                    overrides_subdict[o_key[len(f"{key}.") :]] = overrides_dict[o_key]
+                    overrides_subdict[o_key[len(f"{key}."):]] = overrides_dict[o_key]
                     used_override_keys.add(o_key)
             if overrides_subdict:
                 merged[key] = with_overrides(
@@ -141,7 +140,7 @@ def with_overrides(original: T, overrides_dict: Dict[str, Any], prefix: str = ""
 
 
 def parse_overrides(
-    serialized_overrides: str, ext_vars: Optional[Dict[str, Any]] = None
+        serialized_overrides: str, ext_vars: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     if serialized_overrides:
         ext_vars = {**_environment_variables(), **(ext_vars or {})}
@@ -268,11 +267,11 @@ class Params(MutableMapping):
         return self._check_is_dict(key, value)
 
     def pop_choice(
-        self,
-        key: str,
-        choices: List[Any],
-        default_to_first_choice: bool = False,
-        allow_class_names: bool = True,
+            self,
+            key: str,
+            choices: List[Any],
+            default_to_first_choice: bool = False,
+            allow_class_names: bool = True,
     ) -> Any:
         """
         Gets the value of `key` in the `params` dictionary, ensuring that the value is one of
@@ -542,12 +541,12 @@ class Params(MutableMapping):
 
 
 def pop_choice(
-    params: Dict[str, Any],
-    key: str,
-    choices: List[Any],
-    default_to_first_choice: bool = False,
-    history: str = "?.",
-    allow_class_names: bool = True,
+        params: Dict[str, Any],
+        key: str,
+        choices: List[Any],
+        default_to_first_choice: bool = False,
+        history: str = "?.",
+        allow_class_names: bool = True,
 ) -> Any:
     """
     Performs the same function as `Params.pop_choice`, but is required in order to deal with

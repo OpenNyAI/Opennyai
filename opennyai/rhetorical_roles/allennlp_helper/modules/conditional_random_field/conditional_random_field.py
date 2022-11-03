@@ -57,7 +57,7 @@ def allowed_transitions(constraint_type: str, labels: Dict[int, str]) -> List[Tu
 
 
 def is_transition_allowed(
-    constraint_type: str, from_tag: str, from_entity: str, to_tag: str, to_entity: str
+        constraint_type: str, from_tag: str, from_entity: str, to_tag: str, to_entity: str
 ):
     """
     Given a constraint type and strings `from_tag` and `to_tag` that
@@ -177,10 +177,10 @@ class ConditionalRandomField(torch.nn.Module):
     """
 
     def __init__(
-        self,
-        num_tags: int,
-        constraints: List[Tuple[int, int]] = None,
-        include_start_end_transitions: bool = True,
+            self,
+            num_tags: int,
+            constraints: List[Tuple[int, int]] = None,
+            include_start_end_transitions: bool = True,
     ) -> None:
         super().__init__()
         self.num_tags = num_tags
@@ -215,7 +215,7 @@ class ConditionalRandomField(torch.nn.Module):
             torch.nn.init.normal_(self.end_transitions)
 
     def _input_likelihood(
-        self, logits: torch.Tensor, transitions: torch.Tensor, mask: torch.BoolTensor
+            self, logits: torch.Tensor, transitions: torch.Tensor, mask: torch.BoolTensor
     ) -> torch.Tensor:
         """Computes the (batch_size,) denominator term $Z(x)$, per example, for the log-likelihood
 
@@ -273,11 +273,11 @@ class ConditionalRandomField(torch.nn.Module):
         return util.logsumexp(stops)
 
     def _joint_likelihood(
-        self,
-        logits: torch.Tensor,
-        transitions: torch.Tensor,
-        tags: torch.Tensor,
-        mask: torch.BoolTensor,
+            self,
+            logits: torch.Tensor,
+            transitions: torch.Tensor,
+            tags: torch.Tensor,
+            mask: torch.BoolTensor,
     ) -> torch.Tensor:
         """Computes the numerator term for the log-likelihood, which is just score(inputs, tags)
 
@@ -340,7 +340,7 @@ class ConditionalRandomField(torch.nn.Module):
         return score
 
     def forward(
-        self, inputs: torch.Tensor, tags: torch.Tensor, mask: torch.BoolTensor = None
+            self, inputs: torch.Tensor, tags: torch.Tensor, mask: torch.BoolTensor = None
     ) -> torch.Tensor:
         """Computes the log likelihood for the given batch of input sequences $(x,y)$
 
@@ -365,7 +365,7 @@ class ConditionalRandomField(torch.nn.Module):
         return torch.sum(log_numerator - log_denominator)
 
     def viterbi_tags(
-        self, logits: torch.Tensor, mask: torch.BoolTensor = None, top_k: int = None
+            self, logits: torch.Tensor, mask: torch.BoolTensor = None, top_k: int = None
     ) -> Union[List[VITERBI_DECODING], List[List[VITERBI_DECODING]]]:
         """
         Uses viterbi algorithm to find most likely tags for the given inputs.
@@ -399,27 +399,28 @@ class ConditionalRandomField(torch.nn.Module):
 
         # Apply transition constraints
         constrained_transitions = self.transitions * self._constraint_mask[
-            :num_tags, :num_tags
-        ] + -10000.0 * (1 - self._constraint_mask[:num_tags, :num_tags])
+                                                     :num_tags, :num_tags
+                                                     ] + -10000.0 * (1 - self._constraint_mask[:num_tags, :num_tags])
         transitions[:num_tags, :num_tags] = constrained_transitions.data
 
         if self.include_start_end_transitions:
             transitions[
-                start_tag, :num_tags
+            start_tag, :num_tags
             ] = self.start_transitions.detach() * self._constraint_mask[
-                start_tag, :num_tags
-            ].data + -10000.0 * (
-                1 - self._constraint_mask[start_tag, :num_tags].detach()
-            )
+                                                  start_tag, :num_tags
+                                                  ].data + -10000.0 * (
+                        1 - self._constraint_mask[start_tag, :num_tags].detach()
+                )
             transitions[:num_tags, end_tag] = self.end_transitions.detach() * self._constraint_mask[
-                :num_tags, end_tag
-            ].data + -10000.0 * (1 - self._constraint_mask[:num_tags, end_tag].detach())
+                                                                              :num_tags, end_tag
+                                                                              ].data + -10000.0 * (
+                                                          1 - self._constraint_mask[:num_tags, end_tag].detach())
         else:
             transitions[start_tag, :num_tags] = -10000.0 * (
-                1 - self._constraint_mask[start_tag, :num_tags].detach()
+                    1 - self._constraint_mask[start_tag, :num_tags].detach()
             )
             transitions[:num_tags, end_tag] = -10000.0 * (
-                1 - self._constraint_mask[:num_tags, end_tag].detach()
+                    1 - self._constraint_mask[:num_tags, end_tag].detach()
             )
 
         best_paths = []
@@ -436,7 +437,7 @@ class ConditionalRandomField(torch.nn.Module):
             # At timestep 0 we must have the START_TAG
             tag_sequence[0, start_tag] = 0.0
             # At steps 1, ..., sequence_length we just use the incoming prediction
-            tag_sequence[1 : (sequence_length + 1), :num_tags] = masked_prediction
+            tag_sequence[1: (sequence_length + 1), :num_tags] = masked_prediction
             # And at the last timestep we must have the END_TAG
             tag_sequence[sequence_length + 1, end_tag] = 0.0
 

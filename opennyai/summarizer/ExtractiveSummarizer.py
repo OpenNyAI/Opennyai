@@ -127,6 +127,6 @@ class ExtractiveSummarizer:
                                                self.model_args.test_batch_size, self.device,
                                                shuffle=False, is_test=True)
             inference_output = self._inference(data_iter)
-            summary_texts = _postprocess(inference_output,data['annotations'])
+            summary_texts = _postprocess(inference_output, data['annotations'])
             result.append(copy.deepcopy({"id": 'ExtractiveSummarizer_' + task_id, "summaries": summary_texts}))
         return result

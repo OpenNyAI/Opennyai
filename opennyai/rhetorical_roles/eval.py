@@ -35,6 +35,7 @@ def infer_model(model, eval_batches, device, task):
 
     return labels_dict
 
+
 def clear_and_map_padded_values(true_labels, predicted_labels, labels):
     assert len(true_labels) == len(predicted_labels)
     cleared_predicted = []

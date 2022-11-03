@@ -9,12 +9,12 @@ from opennyai.rhetorical_roles.allennlp_helper.modules.seq2seq_encoders.seq2seq_
 
 class ResidualBlock(torch.nn.Module):
     def __init__(
-        self,
-        input_dim: int,
-        layers: Sequence[Sequence[int]],
-        direction: str,
-        do_weight_norm: bool = True,
-        dropout: float = 0.0,
+            self,
+            input_dim: int,
+            layers: Sequence[Sequence[int]],
+            direction: str,
+            do_weight_norm: bool = True,
+            dropout: float = 0.0,
     ) -> None:
         super().__init__()
 
@@ -153,11 +153,11 @@ class GatedCnnEncoder(Seq2SeqEncoder):
     """
 
     def __init__(
-        self,
-        input_dim: int,
-        layers: Sequence[Sequence[Sequence[int]]],
-        dropout: float = 0.0,
-        return_all_layers: bool = False,
+            self,
+            input_dim: int,
+            layers: Sequence[Sequence[Sequence[int]]],
+            dropout: float = 0.0,
+            return_all_layers: bool = False,
     ) -> None:
         super().__init__()
 

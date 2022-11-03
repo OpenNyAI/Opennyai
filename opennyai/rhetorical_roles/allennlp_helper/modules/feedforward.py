@@ -55,12 +55,12 @@ class FeedForward(torch.nn.Module, FromParams):
     """
 
     def __init__(
-        self,
-        input_dim: int,
-        num_layers: int,
-        hidden_dims: Union[int, List[int]],
-        activations: Union[Activation, List[Activation]],
-        dropout: Union[float, List[float]] = 0.0,
+            self,
+            input_dim: int,
+            num_layers: int,
+            hidden_dims: Union[int, List[int]],
+            activations: Union[Activation, List[Activation]],
+            dropout: Union[float, List[float]] = 0.0,
     ) -> None:
 
         super().__init__()
@@ -103,7 +103,7 @@ class FeedForward(torch.nn.Module, FromParams):
 
         output = inputs
         for layer, activation, dropout in zip(
-            self._linear_layers, self._activations, self._dropout
+                self._linear_layers, self._activations, self._dropout
         ):
             output = dropout(activation(layer(output)))
         return output

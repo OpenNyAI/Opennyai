@@ -50,11 +50,11 @@ class ConditionalRandomFieldWeightLannoy(ConditionalRandomField):
     """
 
     def __init__(
-        self,
-        num_tags: int,
-        label_weights: List[float],
-        constraints: List[Tuple[int, int]] = None,
-        include_start_end_transitions: bool = True,
+            self,
+            num_tags: int,
+            label_weights: List[float],
+            constraints: List[Tuple[int, int]] = None,
+            include_start_end_transitions: bool = True,
     ) -> None:
         super().__init__(num_tags, constraints, include_start_end_transitions)
 
@@ -64,7 +64,7 @@ class ConditionalRandomFieldWeightLannoy(ConditionalRandomField):
         self.register_buffer("label_weights", torch.Tensor(label_weights))
 
     def forward(
-        self, inputs: torch.Tensor, tags: torch.Tensor, mask: torch.BoolTensor = None
+            self, inputs: torch.Tensor, tags: torch.Tensor, mask: torch.BoolTensor = None
     ) -> torch.Tensor:
         """Computes the log likelihood for the given batch of input sequences $(x,y)$
 
@@ -89,7 +89,7 @@ class ConditionalRandomFieldWeightLannoy(ConditionalRandomField):
         return torch.sum(log_numerator - log_denominator)
 
     def _input_likelihood_lannoy(
-        self, logits: torch.Tensor, tags: torch.Tensor, mask: torch.BoolTensor
+            self, logits: torch.Tensor, tags: torch.Tensor, mask: torch.BoolTensor
     ) -> torch.Tensor:
         """
         Computes the (batch_size,) denominator term for the log-likelihood, which is the
@@ -165,7 +165,7 @@ class ConditionalRandomFieldWeightLannoy(ConditionalRandomField):
         return sum_log_z.squeeze(1)
 
     def _joint_likelihood_lannoy(
-        self, logits: torch.Tensor, tags: torch.Tensor, mask: torch.BoolTensor
+            self, logits: torch.Tensor, tags: torch.Tensor, mask: torch.BoolTensor
     ) -> torch.Tensor:
         """
         Computes the numerator term for the log-likelihood, which is just score(inputs, tags)
