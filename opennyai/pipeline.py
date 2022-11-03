@@ -13,19 +13,20 @@ class Pipeline:
         if 'NER' in components:
             if self.__verbose__:
                 msg.info('Loading NER...')
-            self._ner_extractor = InLegalNER.load(use_gpu=use_gpu)
+            self.__ner_extractor__ = InLegalNER.load(use_gpu=use_gpu)
 
         if 'Rhetorical_Role' in components or 'Summarizer' in components:
             if self.__verbose__:
                 msg.info('Loading Rhetorical Role...')
-            self._rr = RhetoricalRolePredictor(use_gpu=use_gpu, verbose=verbose)
+            self.__rr_model__ = RhetoricalRolePredictor(use_gpu=use_gpu, verbose=verbose)
 
         if 'Summarizer' in components:
             if self.__verbose__:
                 msg.info('Loading Extractive summarizer...')
-            self._summarizer = ExtractiveSummarizer(use_gpu=use_gpu, verbose=verbose)
+            self.__summarizer__ = ExtractiveSummarizer(use_gpu=use_gpu, verbose=verbose)
 
-    def combine_model_outputs(self, ner_json_results=None, rr_output=None, summary_output=None):
+    @staticmethod
+    def __combine_model_outputs__(ner_json_results=None, rr_output=None, summary_output=None):
         '''combines the outputs of 3 models into single list'''
         combined_results = {}
         ####### Add NER results
@@ -55,17 +56,17 @@ class Pipeline:
         return [result for doc_id, result in combined_results.items()]
 
     def __call__(self, data):
-        ner_json_results, rr_output, summary_output = None, None, None
+        ner_json_results, self._ner_model_output, self._rr_model_output, self._summarizer_model_output = None, None, None, None
         if 'NER' in self.components:
-            ner_results = self._ner_extractor(data, verbose=self.__verbose__)
-            if not isinstance(ner_results,list):
-                ner_results = [ner_results]
-            ner_json_results = [InLegalNER.get_json_from_spacy_doc(i) for i in ner_results]
+            self._ner_model_output = self.__ner_extractor__(data, verbose=self.__verbose__)
+            if not isinstance(self._ner_model_output, list):
+                self._ner_model_output = [self._ner_model_output]
+            ner_json_results = [InLegalNER.get_json_from_spacy_doc(i) for i in self._ner_model_output]
 
         if 'Rhetorical_Role' in self.components or 'Summarizer' in self.components:
-            rr_output = self._rr(data)
+            self._rr_model_output = self.__rr_model__(data)
 
         if 'Summarizer' in self.components:
-            summary_output = self._summarizer(rr_output)
+            self._summarizer_model_output = self.__summarizer__(self._rr_model_output)
 
-        return self.combine_model_outputs(ner_json_results, rr_output, summary_output)
+        return self.__combine_model_outputs__(ner_json_results, self._rr_model_output, self._summarizer_model_output)

@@ -27,14 +27,14 @@ class InLegalNER:
         if use_gpu:
             try:
                 if spacy.prefer_gpu():
-                    msg.info(title='NER will run on GPU')
+                    msg.info(title='NER will run on GPU!')
                 else:
-                    msg.info(title='NER will run on CPU')
+                    msg.info(title='NER will run on CPU!')
                 spacy.prefer_gpu()
             except:
-                msg.info(title='NER will run on CPU')
+                msg.info(title='NER will run on CPU!')
         else:
-            msg.info(title='NER will run on CPU')
+            msg.info(title='NER will run on CPU!')
         self.model_name = model_name
         self.nlp = spacy.load(self.model_name)
 

@@ -64,14 +64,14 @@ class Data:
         if use_gpu:
             try:
                 if spacy.prefer_gpu():
-                    msg.info(title='Pre-processing will happen on GPU')
+                    msg.info(title='Pre-processing will happen on GPU!')
                 else:
-                    msg.info(title='Pre-processing will happen on CPU')
+                    msg.info(title='Pre-processing will happen on CPU!')
                 spacy.prefer_gpu()
             except:
-                msg.info(title='Pre-processing will happen on CPU')
+                msg.info(title='Pre-processing will happen on CPU!')
         else:
-            msg.info(title='Pre-processing will happen on CPU')
+            msg.info(title='Pre-processing will happen on CPU!')
 
         try:
             self.__preprocessing_nlp__ = spacy.load(preprocessing_nlp_model,
