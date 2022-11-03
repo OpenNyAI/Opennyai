@@ -1,8 +1,8 @@
-from opennyai.rhetorical_roles.allennlp_helper.common.util import pad_sequence_to_length
+import numpy as np
+import torch
 
 import opennyai.rhetorical_roles.bucketing as bucketing
-import torch
-import numpy as np
+from opennyai.rhetorical_roles.allennlp_helper.common.util import pad_sequence_to_length
 
 
 class BatchCreator:

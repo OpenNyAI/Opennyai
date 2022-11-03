@@ -1,12 +1,11 @@
 import copy
-from itertools import chain
 import json
 import logging
 import os
 import zlib
 from collections import OrderedDict
 from collections.abc import MutableMapping
-from os import PathLike
+from itertools import chain
 from typing import Any, Dict, List, Union, Optional, TypeVar, Iterable, Set
 
 # _jsonnet doesn't work on Windows, so we have to use fakes.

@@ -3,15 +3,15 @@ Assorted utilities for working with neural networks in AllenNLP.
 """
 
 import copy
-from collections import defaultdict, OrderedDict
-from itertools import chain
 import json
 import logging
-from os import PathLike
+import math
 import re
+from collections import defaultdict, OrderedDict
+from itertools import chain
+from os import PathLike
 from typing import Any, Dict, List, Optional, Sequence, Tuple, TypeVar, Union, NamedTuple
 
-import math
 import numpy
 import torch
 import torch.distributed as dist

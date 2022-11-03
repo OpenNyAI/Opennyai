@@ -1,5 +1,6 @@
-import torch
 from typing import List
+
+import torch
 
 from opennyai.rhetorical_roles.allennlp_helper.modules.seq2seq_encoders.seq2seq_encoder import Seq2SeqEncoder
 

@@ -3,15 +3,15 @@ import copy
 
 import numpy as np
 import torch
+from spacy.lang.en import English
 from tqdm import tqdm
+from transformers import BertTokenizer
 from wasabi import msg
 
-from .models import data_loader
-from .others.args import __setargs__
-from spacy.lang.en import English
-from .models.model_builder import ExtSummarizer
-from transformers import BertTokenizer
 from opennyai.utils.download import load_model_from_cache
+from .models import data_loader
+from .models.model_builder import ExtSummarizer
+from .others.args import __setargs__
 from .others.postprocessing_utils import _postprocess
 from .others.utils import preprocess_for_summarization, format_to_bert
 

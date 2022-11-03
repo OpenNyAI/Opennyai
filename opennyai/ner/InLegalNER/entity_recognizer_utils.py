@@ -1,5 +1,6 @@
-import spacy
 import warnings
+
+import spacy
 
 from opennyai.utils.sentencizer import process_nlp_in_chunks
 

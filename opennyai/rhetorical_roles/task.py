@@ -2,10 +2,10 @@ import os
 
 import numpy as np
 from sklearn.model_selection import KFold, train_test_split
+from wasabi import msg
 
 from .batch_creator import BatchCreator
 from .dataset_reader import DocumentsDataset
-from wasabi import msg
 
 PUBMED_LABELS = ["DEFAULT", 'mask', "NONE", "PREAMBLE", "FAC", "ISSUE", "ARG_RESPONDENT", "ARG_PETITIONER", "ANALYSIS",
                  "PRE_RELIED", "PRE_NOT_RELIED", "STA", "RLC", "RPC", "RATIO"]

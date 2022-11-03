@@ -1,7 +1,3 @@
-import json
-import os
-
-
 class InputDocument:
     """Represents a document that consists of sentences and a label for each sentence"""
 

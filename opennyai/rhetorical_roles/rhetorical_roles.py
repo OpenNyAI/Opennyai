@@ -1,17 +1,19 @@
+import json
+import os
+import shutil
+import warnings
+from pathlib import Path
+
+import torch
+from transformers import BertTokenizer
+from wasabi import msg
+
 import opennyai.rhetorical_roles.models as models
-from .models import BertHSLN
 from opennyai.rhetorical_roles.infer_data_prep import split_into_sentences_tokenize_write, write_in_hsln_format
 from opennyai.utils.download import load_model_from_cache
-from .task import pubmed_task
-import torch
-import os
-from wasabi import msg
-from transformers import BertTokenizer
 from .eval import infer_model
-import json
-from pathlib import Path
-import warnings
-import shutil
+from .models import BertHSLN
+from .task import pubmed_task
 
 
 class RhetoricalRolePredictor():

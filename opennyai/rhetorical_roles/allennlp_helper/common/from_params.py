@@ -1,4 +1,6 @@
 import collections.abc
+import inspect
+import logging
 from copy import deepcopy
 from pathlib import Path
 from typing import (
@@ -16,8 +18,6 @@ from typing import (
     Union,
     Optional,
 )
-import inspect
-import logging
 
 from opennyai.rhetorical_roles.allennlp_helper.common.checks import ConfigurationError
 from opennyai.rhetorical_roles.allennlp_helper.common.lazy import Lazy

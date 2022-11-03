@@ -4,8 +4,8 @@ any base class with a named registry for its subclasses and a decorator
 for registering them.
 """
 import importlib
-import logging
 import inspect
+import logging
 from collections import defaultdict
 from typing import (
     Callable,

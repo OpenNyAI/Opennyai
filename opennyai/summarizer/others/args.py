@@ -1,5 +1,6 @@
-from opennyai.utils.download import CACHE_DIR
 import os
+
+from opennyai.utils.download import CACHE_DIR
 
 EXTRACTIVE_SUMMARIZER_CACHE_PATH = os.path.join(CACHE_DIR, 'ExtractiveSummarizer'.lower())
 

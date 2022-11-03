@@ -1,8 +1,8 @@
-import sys
-import torch
 import datetime
+import sys
 from threading import Lock
 
+import torch
 from prettytable import PrettyTable
 
 

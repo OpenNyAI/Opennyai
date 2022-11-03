@@ -5,16 +5,14 @@ import json
 import os
 import re
 import subprocess
+import xml.etree.ElementTree as ET
 from os.path import join as pjoin
-from wasabi import msg
+
 import torch
 from multiprocess import Pool
 
-from ..others.tokenization import BertTokenizer
-
 from .utils import _get_word_ngrams
-
-import xml.etree.ElementTree as ET
+from ..others.tokenization import BertTokenizer
 
 nyt_remove_words = ["photo", "graph", "chart", "map", "table", "drawing"]
 

@@ -2,16 +2,16 @@
 Various utilities that don't fit anywhere else.
 """
 
-from datetime import timedelta
 import importlib
 import json
 import logging
 import os
 import pkgutil
 import random
-import sys
 import signal
+import sys
 from contextlib import contextmanager
+from datetime import timedelta
 from itertools import islice, zip_longest
 from pathlib import Path
 from typing import (

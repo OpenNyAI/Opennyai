@@ -5,8 +5,8 @@ from typing import List, Tuple, Dict, Union
 
 import torch
 
-from opennyai.rhetorical_roles.allennlp_helper.common.checks import ConfigurationError
 import opennyai.rhetorical_roles.allennlp_helper.nn.util as util
+from opennyai.rhetorical_roles.allennlp_helper.common.checks import ConfigurationError
 
 VITERBI_DECODING = Tuple[List[int], float]  # a list of tags, and a viterbi score
 

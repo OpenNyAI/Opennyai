@@ -5,8 +5,8 @@ from typing import List, Union
 
 import torch
 
-from opennyai.rhetorical_roles.allennlp_helper.common.from_params import FromParams
 from opennyai.rhetorical_roles.allennlp_helper.common.checks import ConfigurationError
+from opennyai.rhetorical_roles.allennlp_helper.common.from_params import FromParams
 from opennyai.rhetorical_roles.allennlp_helper.nn.activations import Activation
 
 

@@ -1,4 +1,5 @@
 from typing import Tuple, Union, Optional, Callable, Any
+
 import torch
 from torch.nn.utils.rnn import pack_padded_sequence, PackedSequence
 

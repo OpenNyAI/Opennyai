@@ -1,5 +1,5 @@
-from opennyai.rhetorical_roles.allennlp_helper.modules.encoder_base import _EncoderBase
 from opennyai.rhetorical_roles.allennlp_helper.common.registrable import Registrable
+from opennyai.rhetorical_roles.allennlp_helper.modules.encoder_base import _EncoderBase
 
 
 class Seq2SeqEncoder(_EncoderBase, Registrable):

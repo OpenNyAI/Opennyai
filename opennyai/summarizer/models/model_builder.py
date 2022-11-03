@@ -1,15 +1,15 @@
 import copy
+import os
 
 import torch
 import torch.nn as nn
 from pytorch_transformers import BertModel, BertConfig
 from torch.nn.init import xavier_uniform_
 
+from opennyai.utils.download import CACHE_DIR
 from .decoder import TransformerDecoder
 from .encoder import Classifier, ExtTransformerEncoder
 from .optimizers import Optimizer
-from opennyai.utils.download import CACHE_DIR
-import os
 
 EXTRACTIVE_SUMMARIZER_CACHE_PATH = os.path.join(CACHE_DIR, 'ExtractiveSummarizer'.lower())
 

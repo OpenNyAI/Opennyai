@@ -20,9 +20,11 @@ import collections
 import os
 import unicodedata
 from io import open
-from wasabi import msg
-from opennyai.utils.download import CACHE_DIR
+
 from pytorch_transformers import cached_path
+from wasabi import msg
+
+from opennyai.utils.download import CACHE_DIR
 
 EXTRACTIVE_SUMMARIZER_CACHE_PATH = os.path.join(CACHE_DIR, 'ExtractiveSummarizer'.lower())
 

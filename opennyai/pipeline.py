@@ -1,8 +1,10 @@
-import opennyai.ner as InLegalNER
-from opennyai import RhetoricalRolePredictor
-from opennyai import ExtractiveSummarizer
-from wasabi import msg
 import copy
+
+from wasabi import msg
+
+import opennyai.ner as InLegalNER
+from opennyai import ExtractiveSummarizer
+from opennyai import RhetoricalRolePredictor
 
 
 class Pipeline:
