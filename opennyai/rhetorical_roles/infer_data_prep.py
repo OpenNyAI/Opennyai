@@ -61,7 +61,7 @@ def split_into_sentences_tokenize_write(data, custom_processed_data_path,
 
             adjudicated_doc['annotations'] = []
             adjudicated_doc['annotations'].append({})
-            adjudicated_doc['annotations'][0]['result'] = []
+            adjudicated_doc['annotations'] = []
 
             filename_sent_boundries[doc_id] = {"sentence_span": []}
             for sentence_boundry in revised_sentence_boundries:
@@ -70,12 +70,11 @@ def split_into_sentences_tokenize_write(data, custom_processed_data_path,
                 if sentence_txt.strip() != "":
                     sentence_txt = sentence_txt.replace("\r", "")
                     sent_data = {}
-                    sent_data['value'] = {}
-                    sent_data['value']['start'] = sentence_boundry[0]
-                    sent_data['value']['end'] = sentence_boundry[1]
-                    sent_data['value']['text'] = sentence_txt
-                    sent_data['value']['labels'] = []
-                    adjudicated_doc['annotations'][0]['result'].append(sent_data)
+                    sent_data['start'] = sentence_boundry[0]
+                    sent_data['end'] = sentence_boundry[1]
+                    sent_data['text'] = sentence_txt
+                    sent_data['labels'] = []
+                    adjudicated_doc['annotations'].append(sent_data)
 
         output_json.append(adjudicated_doc)
     with open(custom_processed_data_path, 'w+') as f:
@@ -91,11 +90,11 @@ def write_in_hsln_format(input_json, hsln_format_txt_dirpath, tokenizer):
         file_name = file['id']
         final_string = final_string + '###' + str(file_name) + "\n"
         filename_sent_boundries[file_name] = {"sentence_span": []}
-        for annotation in file['annotations'][0]['result']:
+        for annotation in file['annotations']:
             filename_sent_boundries[file_name]['sentence_span'].append(
-                [annotation['value']['start'], annotation['value']['end']])
+                [annotation['start'], annotation['end']])
 
-            sentence_txt = annotation['value']['text']
+            sentence_txt = annotation['text']
             sentence_txt = sentence_txt.replace("\r", "")
             if sentence_txt.strip() != "":
                 sent_tokens = tokenizer.encode(sentence_txt, add_special_tokens=True, max_length=128)

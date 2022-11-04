@@ -94,21 +94,21 @@ def _postprocess(inference_output, rr_output):
                                                 }
 
         ##### add the details to rr output
-        for sent in rr_output[0]['result']:
-            if summary_details.get(sent['value']['id']) is not None:
-                sent['value'].update(summary_details[sent['value']['id']])
+        for sent in rr_output:
+            if summary_details.get(sent['id']) is not None:
+                sent.update(summary_details[sent['id']])
             else:
-                if sent['value']['labels'][0] == 'PREAMBLE':
-                    sent['value']['in_summary'] = True
-                    sent['value']['summary_section'] = "PREAMBLE"
+                if sent['labels'][0] == 'PREAMBLE':
+                    sent['in_summary'] = True
+                    sent['summary_section'] = "PREAMBLE"
                 else:
-                    sent['value']['in_summary'] = False
+                    sent['in_summary'] = False
 
     def create_summary_text(rr_output):
         sectionwise_summary = collections.defaultdict(str)
-        for sent in rr_output[0]['result']:
-            if sent['value']['in_summary']:
-                sectionwise_summary[sent['value']['summary_section']] += sent['value']['text'] + '\n'
+        for sent in rr_output:
+            if sent['in_summary']:
+                sectionwise_summary[sent['summary_section']] += sent['text'] + '\n'
 
         return dict(sectionwise_summary)
 

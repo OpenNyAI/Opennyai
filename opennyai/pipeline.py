@@ -58,16 +58,15 @@ class Pipeline:
 
         if ner_json_results and rr_output:
             for doc_ner in ner_json_results:
-                entities = [entity for annotation in doc_ner['annotations'][0]['result'] for entity in
-                            annotation['value']['entities']]
+                entities = [entity for annotation in doc_ner['annotations'] for entity in
+                            annotation['entities']]
                 doc_id = doc_ner['id'].split('_')[1]
                 for entity in entities:
-                    for sent in combined_results[doc_id]['annotations'][0]['result']:
-                        if sent['value'].get('entities') is None:
-                            sent['value']['entities'] = []
-                        if entity['value']['start'] >= sent['value']['start'] and entity['value']['end'] <= \
-                                sent['value']['end']:
-                            sent['value']['entities'].append(entity)
+                    for sent in combined_results[doc_id]['annotations']:
+                        if sent.get('entities') is None:
+                            sent['entities'] = []
+                        if entity['start'] >= sent['start'] and entity['end'] <= sent['end']:
+                            sent['entities'].append(entity)
                             break
                 combined_results[doc_id]['annotations'] = copy.deepcopy(combined_results[doc_id]['annotations'])
 
@@ -77,27 +76,21 @@ class Pipeline:
     def __postprocess_ner_to_sentence_level__(doc):
         id = "LegalNER_" + doc.user_data['doc_id']
         final_output = InLegalNER.get_json_from_spacy_doc(doc)
-        output = {'id': id, 'annotations': [{'result': []}],
+        output = {'id': id, 'annotations': [],
                   'data': {'text': doc.text, 'original_text': doc.user_data['original_text']}}
         for sent in doc.sents:
             import uuid
             uid = uuid.uuid4()
             id = uid.hex
             temp = copy.deepcopy({"id": id,
-                                  "type": "labels",
-                                  "value": {
-                                      "start": sent.start_char,
-                                      "end": sent.end_char,
-                                      "text": sent.text,
-                                      "entities": [],
-                                  }, "to_name": "text",
-                                  "from_name": "label"
-                                  })
-            for entity in final_output['annotations'][0]['result']:
-                if entity['value']['start'] >= temp['value']['start'] and entity['value']['end'] <= temp['value'][
-                    'end']:
-                    temp['value']['entities'].append(entity)
-            output['annotations'][0]['result'].append(temp)
+                                  "start": sent.start_char,
+                                  "end": sent.end_char,
+                                  "text": sent.text,
+                                  "entities": []})
+            for entity in final_output['annotations']:
+                if entity['start'] >= temp['start'] and entity['end'] <= temp['end']:
+                    temp['entities'].append(entity)
+            output['annotations'].append(temp)
         return output
 
     def __call__(self, data):

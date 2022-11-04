@@ -53,7 +53,7 @@ class ExtractiveSummarizer:
 
     def _preprocess(self, input_data):
         try:
-            if not input_data['annotations'][0]['result']:
+            if not input_data['annotations']:
                 raise TypeError("Missing data in input for processing")
         except:
             raise TypeError("Invalid data format")

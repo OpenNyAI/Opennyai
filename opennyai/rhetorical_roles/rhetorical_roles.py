@@ -121,12 +121,12 @@ class RhetoricalRolePredictor():
                 pred_id = labels_dict['doc_names'].index(id)
                 pred_labels = labels_dict['docwise_y_predicted']
                 annotations = file['annotations']
-                for i, label in enumerate(annotations[0]['result']):
+                for i, label in enumerate(annotations):
                     import uuid
                     uid = uuid.uuid4()
                     label_id = uid.hex
-                    label['value']['labels'] = [pred_labels[pred_id][i]]
-                    label['value']['id'] = label_id
+                    label['labels'] = [pred_labels[pred_id][i]]
+                    label['id'] = label_id
 
                 file['id'] = "RhetoricalRole_" + str(file['id'])
 

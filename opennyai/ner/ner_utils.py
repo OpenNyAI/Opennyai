@@ -24,22 +24,22 @@ def load(model_name: str = 'en_legal_ner_trf', use_gpu: bool = True):
 
 def update_json_with_clusters(ls_formatted_doc: dict, precedent_clusters: dict, provision_statute_clusters: list,
                               statute_clusters: dict):
-    for entity, _, __, val in provision_statute_clusters:
-        for result in ls_formatted_doc['annotations'][0]['result']:
-            if result['value']['start'] == entity.start_char and result['value']['end'] == entity.end_char:
-                result['meta']['text'].append(str(val))
+    for entity, statute, normalized_provision, normalized_statute in provision_statute_clusters:
+        for result in ls_formatted_doc['annotations']:
+            if result['start'] == entity.start_char and result['end'] == entity.end_char:
+                result['normalized_name'] = str(normalized_provision) + ' of ' + str(normalized_statute)
 
-    for val in statute_clusters.keys():
-        for entity in statute_clusters[val]:
-            for result in ls_formatted_doc['annotations'][0]['result']:
-                if result['value']['start'] == entity.start_char and result['value']['end'] == entity.end_char:
-                    result['meta']['text'].append(str(val))
+    for statute_head in statute_clusters.keys():
+        for entity in statute_clusters[statute_head]:
+            for result in ls_formatted_doc['annotations']:
+                if result['start'] == entity.start_char and result['end'] == entity.end_char:
+                    result['normalized_name'] = str(statute_head)
 
-    for val in precedent_clusters.keys():
-        for entity in precedent_clusters[val]:
-            for result in ls_formatted_doc['annotations'][0]['result']:
-                if result['value']['start'] == entity.start_char and result['value']['end'] == entity.end_char:
-                    result['meta']['text'].append(str(val))
+    for precedent_head in precedent_clusters.keys():
+        for entity in precedent_clusters[precedent_head]:
+            for result in ls_formatted_doc['annotations']:
+                if result['start'] == entity.start_char and result['end'] == entity.end_char:
+                    result['normalized_name'] = str(precedent_head)
 
     return ls_formatted_doc
 
@@ -50,22 +50,18 @@ def get_json_from_spacy_doc(doc) -> dict:
         doc: InLegalNER doc
     """
     id = "LegalNER_" + doc.user_data['doc_id']
-    output = {'id': id, 'annotations': [{'result': []}],
+    output = {'id': id, 'annotations': [],
               'data': {'text': doc.text, 'original_text': doc.user_data['original_text']}}
     for ent in doc.ents:
         import uuid
         uid = uuid.uuid4()
         id = uid.hex
-        output['annotations'][0]['result'].append(copy.deepcopy({"id": id, "meta": {"text": []},
-                                                                 "type": "labels",
-                                                                 "value": {
-                                                                     "start": ent.start_char,
-                                                                     "end": ent.end_char,
-                                                                     "text": ent.text,
-                                                                     "labels": [ent.label_],
-                                                                 }, "to_name": "text",
-                                                                 "from_name": "label"
-                                                                 }))
+        output['annotations'].append(copy.deepcopy({"id": id,
+                                                    "normalized_name": ent.text,
+                                                    "start": ent.start_char,
+                                                    "end": ent.end_char,
+                                                    "text": ent.text,
+                                                    "labels": [ent.label_]}))
 
     final_output = update_json_with_clusters(copy.deepcopy(output), doc.user_data['precedent_clusters'],
 

@@ -18,8 +18,8 @@ def preprocess_for_summarization(input_data: dict, bert_tokenizer, tokenizer):
                 'sentence_id': [], 'src_chunk_id': source_chunk_id}
     doc_data_list = []
 
-    for index, value in enumerate(input_data['annotations'][0]['result']):
-        value = value['value']
+    for index, value in enumerate(input_data['annotations']):
+        value = value
         if not value['labels'][0] in ['NONE', 'PREAMBLE']:
             tokenized = bert_tokenizer.tokenize(value['text'])
             sent_tokens = [token.text for token in tokenizer(value['text'])]
