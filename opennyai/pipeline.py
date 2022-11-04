@@ -3,8 +3,8 @@ import copy
 from wasabi import msg
 
 import opennyai.ner as InLegalNER
-from opennyai import ExtractiveSummarizer
-from opennyai import RhetoricalRolePredictor
+from opennyai.rhetorical_roles.rhetorical_roles import RhetoricalRolePredictor
+from opennyai.summarizer.ExtractiveSummarizer import ExtractiveSummarizer
 
 
 class Pipeline:
