@@ -106,6 +106,10 @@ class Data:
                                                                                              mini_batch_size=self.__mini_batch_size__)
                 preamble_doc = spacy.tokens.Doc.from_docs([i.as_doc() for i in preamble_doc.sents])
                 judgement_doc = spacy.tokens.Doc.from_docs([i.as_doc() for i in judgement_doc.sents])
+                if preamble_doc is None:
+                    preamble_doc = self.__preprocessing_nlp__('')
+                if judgement_doc is None:
+                    judgement_doc = self.__preprocessing_nlp__('')
                 _processed_data = {'file_id': file_id,
                                    "preamble_doc": preamble_doc,
                                    "judgement_doc": judgement_doc,
