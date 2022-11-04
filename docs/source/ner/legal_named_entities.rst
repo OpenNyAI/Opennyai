@@ -80,9 +80,8 @@ To perform postprocessing on the extracted entities specify `do_postprocessing=T
 The postprocessing is done on these entities:
 
 1. `Precedents`: Same precedent can be written in multiple forms in a judgment. E.g. with citation,without
-citation,only petitioner's name supra etc. After postprocessing,all the precedents referring to the same case
-are  clustered together and an extension 'precedent_clusters' is
-added to the doc which is a dict where the keys are the head of the cluster (longest precedent) and value
+citation,only petitioner's name supra etc.For eg. 'darambir vs state of maharashtra 2016 AIR 54','darambir vs state of maharashtra 'and'darambir's case(supra)' all refer to the same case.All the precedents referring to the same case
+are  clustered together and the longest precedent in the cluster is the head of the cluster.The output is a dict where the keys are the head of the cluster (longest precedent) and value
 is a list of all the precedents in that cluster. To access the list, use
 
 `doc.user_data['precedent_clusters']`
@@ -101,10 +100,9 @@ For example:
 { 'Criminal Procedure Code': [Code of Criminal Procedure,Crpc] }
 
 
-3. `Provision-Statute`: Every provision should have an associated statute but sometimes the
-corresponding statutes are not mentioned explicitly in the judgment. Postprocessing contains a
-set of rules to identify statute for each provision and the extension 'provision_statute_clusters'
-is added to the doc which is a list of tuples, each tuple contains provision-statute-normalised provision text eg. (362,IPC,'Section 362') .It can be
+3. `Provision-Statute`: Every provision should have an associated statute.Sometimes the provision is followed by the statute it belongs to and   sometimes the
+corresponding statutes are not mentioned explicitly .To find statutes for these implicit provisions,we search the judgment if the same provision is mentioned elsewhere along with the statute,if present we assign the same statute to the implicit provision.If not,the nearest statute prior to the provision is assigned to that provision after some validations.The statutes assogned are then normalised using the statute clusters
+The output is a list of named tuples, each tuple contains provision-statute-normalised provision-normalised statutes text eg. (362,IPC,'Section 362','Indian Penal Code') .It can be
 used by:
 
 `doc.user_data['provision_statute_pairs']`
