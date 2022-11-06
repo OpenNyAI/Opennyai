@@ -57,7 +57,7 @@ def _postprocess(inference_output, rr_output):
         summary_sent_precent = get_adaptive_summary_sent_percent(len(filtered_sent_list))
         sents_to_keep = math.ceil(summary_sent_precent * len(filtered_sent_list) / 100)
 
-        sent_scores = [i['sent_score'] for i in filtered_sent_list]
+        sent_scores = [float(i['sent_score']) for i in filtered_sent_list]
         sent_scores.sort(reverse=True)
 
         threshold = sent_scores[sents_to_keep - 1]
@@ -89,7 +89,7 @@ def _postprocess(inference_output, rr_output):
         for sent in summary_output:
             in_summary_flag = sent['in_summary']
             summary_details[sent['sent_id']] = {'in_summary': in_summary_flag,
-                                                'sent_score': sent['sent_score'],
+                                                'sent_score': float(sent['sent_score']),
                                                 'summary_section': sent['summary_section']
                                                 }
 
