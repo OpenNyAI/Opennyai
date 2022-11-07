@@ -35,3 +35,11 @@ pipeline_output_text1 = reset_ids(
 pipeline_output_text2 = reset_ids(
     json.load(open(os.path.join(saved_data_path, 'examples/pipeline_output_files/811682.json'))))
 
+
+def test_ner_output():
+    ner_output_valid = True
+    output1 = reset_ids(get_json_from_spacy_doc(pipeline._ner_model_output[0]))
+    output2 = reset_ids(get_json_from_spacy_doc(pipeline._ner_model_output[1]))
+    if output1 != ner_model_output_text1 or output2 != ner_model_output_text2:
+        ner_output_valid = False
+    assert ner_output_valid
