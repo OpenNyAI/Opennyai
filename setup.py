@@ -13,7 +13,7 @@ Instructions for creating a release of the opennyai library.
 
 setup(
     name="opennyai",
-    version="0.0.6",
+    version="0.0.8",
     url="",
     author="Aman Tiwari",
     author_email="aman.tiwari@thoughtworks.com",
@@ -46,7 +46,7 @@ setup(
         "nltk<3.6.6,>=3.6",
         "tqdm>=4.63.0,<4.64.1",
         "prettytable>=3.1.1,<3.4.1",
-        "scikit-learn"],
+        "scikit-learn", "pytest"],
     tests_require=["pytest", "pytest-cov"],
     python_requires=">=3.7.0",
 )
