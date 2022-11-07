@@ -9,8 +9,14 @@ from opennyai.summarizer.ExtractiveSummarizer import ExtractiveSummarizer
 
 class Pipeline:
     def __init__(self, components=None, use_gpu=True, verbose=False):
+        default_component_values = ['NER', 'Rhetorical_Role', 'Summarizer']
         if components is None:
-            components = ['NER', 'Rhetorical_Role', 'Summarizer']
+            components = default_component_values
+        if 'Summarizer' in components:
+            if 'Rhetorical_Role' not in components:
+                components.append('Rhetorical_Role')
+        assert all(
+            [i in default_component_values for i in components]), f"Invalid component value given in {components}"
         self.components = components
         self.__verbose__ = verbose
         if 'NER' in components:
