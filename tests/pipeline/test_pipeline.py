@@ -4,7 +4,7 @@ import os
 from opennyai import Pipeline
 from opennyai.ner import get_json_from_spacy_doc
 from opennyai.utils import Data
-from ..utils import reset_ids
+from ..utils import reset_ids, reset_sent_scores
 
 # Execute pipeline on the text
 saved_data_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -18,22 +18,22 @@ results = pipeline(data)
 # load saved results
 ner_model_output_text1 = reset_ids(
     json.load(open(os.path.join(saved_data_path, 'examples/ner_output_files/72703592.json'))))
-rr_model_output_text1 = reset_ids(
-    json.load(open(os.path.join(saved_data_path, 'examples/rr_output_files/72703592.json'))))
+rr_model_output_text1 = reset_sent_scores(reset_ids(
+    json.load(open(os.path.join(saved_data_path, 'examples/rr_output_files/72703592.json')))))
 summarizer_model_output_text1 = json.load(
     open(os.path.join(saved_data_path, 'examples/summarizer_output_files/72703592.json')))
 
 ner_model_output_text2 = reset_ids(
     json.load(open(os.path.join(saved_data_path, 'examples/ner_output_files/811682.json'))))
-rr_model_output_text2 = reset_ids(
-    json.load(open(os.path.join(saved_data_path, 'examples/rr_output_files/811682.json'))))
+rr_model_output_text2 = reset_sent_scores(reset_ids(
+    json.load(open(os.path.join(saved_data_path, 'examples/rr_output_files/811682.json')))))
 summarizer_model_output_text2 = json.load(
     open(os.path.join(saved_data_path, 'examples/summarizer_output_files/811682.json')))
 
-pipeline_output_text1 = reset_ids(
-    json.load(open(os.path.join(saved_data_path, 'examples/pipeline_output_files/72703592.json'))))
-pipeline_output_text2 = reset_ids(
-    json.load(open(os.path.join(saved_data_path, 'examples/pipeline_output_files/811682.json'))))
+pipeline_output_text1 = reset_sent_scores(reset_ids(
+    json.load(open(os.path.join(saved_data_path, 'examples/pipeline_output_files/72703592.json')))))
+pipeline_output_text2 = reset_sent_scores(reset_ids(
+    json.load(open(os.path.join(saved_data_path, 'examples/pipeline_output_files/811682.json')))))
 
 
 def test_ner_output():
@@ -47,8 +47,8 @@ def test_ner_output():
 
 def test_rr_output():
     rr_output_valid = True
-    output1 = reset_ids(pipeline._rr_model_output[0])
-    output2 = reset_ids(pipeline._rr_model_output[1])
+    output1 = reset_sent_scores(reset_ids(pipeline._rr_model_output[0]))
+    output2 = reset_sent_scores(reset_ids(pipeline._rr_model_output[1]))
     if output1 != rr_model_output_text1 or output2 != rr_model_output_text2:
         rr_output_valid = False
     assert rr_output_valid
@@ -65,8 +65,8 @@ def test_summarizer_output():
 
 def test_pipeline_output():
     pipeline_output_valid = True
-    output1 = reset_ids(results[0])
-    output2 = reset_ids(results[1])
+    output1 = reset_sent_scores(reset_ids(results[0]))
+    output2 = reset_sent_scores(reset_ids(results[1]))
     if output1 != pipeline_output_text1 or output2 != pipeline_output_text2:
         pipeline_output_valid = False
     assert pipeline_output_valid
