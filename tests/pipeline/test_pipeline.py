@@ -61,3 +61,12 @@ def test_summarizer_output():
     if output1 != summarizer_model_output_text1 or output2 != summarizer_model_output_text2:
         summarizer_output_valid = False
     assert summarizer_output_valid
+
+
+def test_pipeline_output():
+    pipeline_output_valid = True
+    output1 = reset_ids(results[0])
+    output2 = reset_ids(results[1])
+    if output1 != pipeline_output_text1 or output2 != pipeline_output_text2:
+        pipeline_output_valid = False
+    assert pipeline_output_valid
