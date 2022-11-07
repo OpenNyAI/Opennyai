@@ -12,7 +12,7 @@ text1 = open(os.path.join(saved_data_path, 'examples/judgement_texts/72703592.tx
 text2 = open(os.path.join(saved_data_path, 'examples/judgement_texts/811682.txt')).read()
 texts_to_process = [text1, text2]
 data = Data(texts_to_process)
-pipeline = Pipeline(components=['NER', 'Rhetorical_Role', 'Summarizer'], use_gpu=False)
+pipeline = Pipeline(components=['NER', 'Rhetorical_Role', 'Summarizer'], use_gpu=True)
 results = pipeline(data)
 
 # load saved results
