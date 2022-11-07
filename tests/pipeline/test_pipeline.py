@@ -43,3 +43,12 @@ def test_ner_output():
     if output1 != ner_model_output_text1 or output2 != ner_model_output_text2:
         ner_output_valid = False
     assert ner_output_valid
+
+
+def test_rr_output():
+    rr_output_valid = True
+    output1 = reset_ids(pipeline._rr_model_output[0])
+    output2 = reset_ids(pipeline._rr_model_output[1])
+    if output1 != rr_model_output_text1 or output2 != rr_model_output_text2:
+        rr_output_valid = False
+    assert rr_output_valid
