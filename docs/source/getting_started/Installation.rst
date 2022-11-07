@@ -52,10 +52,28 @@ To run the 3 OpenNyAI models on judgment texts of your choice please run followi
     pipeline = Pipeline(components = ['NER', 'Rhetorical_Role','Summarizer'],use_gpu=use_gpu) #E.g. If just Named Entity is of interest then just select 'NER'
     results = pipeline(data)
 
-The output of each model is present in following keys of each element of the output
+
+The predictions of each of the models is added at the sentence level.
+
+For each of the sentence in an output ,
+* 'labels' provide predicted rhetorical role.
+* 'in_summary' denoted if this sentence is selected in the summary.
+* 'entities' provide the list of extracted named entities in that sentence.
 
 .. code-block:: python
 
-    results[0]['annotations'][0]['result'] ## shows the result of model at sentence level, each entry will have entities, rhetorical role, and other details
-    results[0]['summary'] ## shows Summary for each of the Rheorical Role for first judgment text
+    results[0]['annotations']
 
+The AI generated summary by rhetorical roles can be accessed via
+
+.. code-block:: python
+
+    results[0]['summary']
+
+The extracted named entities can be visualized using
+
+.. code-block:: python
+
+    from spacy import displacy
+    from opennyai.ner.ner_utils import ner_displacy_option
+    displacy.render(pipeline._ner_model_output[0], style='ent',jupyter = True, options=ner_displacy_option)
