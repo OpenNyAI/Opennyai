@@ -79,4 +79,4 @@ The extracted named entities can be visualized using
 
     from spacy import displacy
     from opennyai.ner.ner_utils import ner_displacy_option
-    displacy.serve(pipeline._ner_model_output[0], style='ent',, options=ner_displacy_option)
+    displacy.serve(pipeline._ner_model_output[0], style='ent', port=8080, options=ner_displacy_option)
