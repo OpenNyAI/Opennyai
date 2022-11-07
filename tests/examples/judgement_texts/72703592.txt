@@ -1,0 +1,86 @@
+BEFORE THE SECURITIES APPELLATE TRIBUNAL
+               MUMBAI
+
+                         Order Reserved on: 12.06.2019
+
+                         Date of Decision      : 28.06.2019
+
+                  Appeal No. 102 of 2018
+
+
+ Capetown Trading Company Private Limited
+ Boomerang, Ground Floor, B-1-04/05,
+ Chandivali Farm Road, Andheri (East),
+ Mumbai - 400 072.                                 ...Appellant
+
+ Versus
+
+ Securities and Exchange Board of India.
+ SEBI Bhavan, Plot No. C-4A, G-Block,
+ Bandra-Kurla Complex, Bandra (East),
+ Mumbai - 400 051.                               ...Respondent
+
+
+Mr. Vinay Chauhan, Advocate with Mr. K.C. Jacob, Advocate i/b
+Corporate Law Chambers India for the Appellant.
+
+Mr. Anubhav Ghosh, Advocate with Ms. Rashi Dalmia, Advocate
+i/b The Law Point for the Respondent.
+
+
+CORAM : Justice Tarun Agarwala, Presiding Officer Dr. C.K.G. Nair, Member Justice M.T. Joshi, Judicial Member Per : Dr. C.K.G. Nair, Member
+
+1. This appeal has been filed challenging the order of the Adjudicating Officer ('AO' for short) of Securities and Exchange Board of India ('SEBI' for short) dated September 29, 2017. By that order a penalty of Rs. 50 Lakh has been imposed on the appellant under Section 15H(ii) of the SEBI Act, 1992 for violation of Regulation 12 read with Regulation 14 of the SEBI (Substantial Acquisition of Shares and Takeovers) Regulations, 1997 ('Takeover Regulations, 1997' for short) for failure to make an open offer in the year 2006. 
+
+
+2. Learned counsel Shri Vinay Chauhan appearing on behalf of the appellant fairly submitted that the appellant admits the failure and therefore seeks only mitigation of the amount of penalty imposed in view of the specific facts and circumstances of the matter. Accordingly, we do not propose to go into the details of the matter. However, for facility the relevant background of the matter in brief is as follows: Certain entities filed an offer letter with SEBI for acquiring 20% of the equity capital of Innoventive Venture Limited (formerly known as Platinum Ocean Energy Ltd. 
+
+- Target Company) in terms of Regulation 10 and 12 of the Takeover Regulations, 1997 in the year 2011. A public announcement for the same was made on August 9, 2011. While examining this letter of offer SEBI noticed that M/s. Capetown Trading Company Ltd., the appellant herein, had acquired 30,000 shares constituting 4.08% of the shares of the target company on March 31, 2006. The appellant was also shown as the promoter of the target company in the offer letter. By the said acquisition of 4.08% of the equity share capital, the appellant came to control the target company. Despite this, the appellant failed to make necessary public announcement and open offer for acquiring minimum of 20% of the shares of the target company. 
+
+3. Learned counsel for the appellant also submitted that though the appellant did in fact come to control the target company in March 2006 this was under special circumstances. There was no identified promoter of the company at that point in time. The share capital of the company was rather limited: only 7,35,000 equity shares and the appellant was holding only 30,000 shares constituting 4.08%. There were a number of other shareholders, two of which had holding of 14.29% each. The appellant bought 30,000 shares at Rs. 5.50 per share on March 31, 2006 at a total investment of Rs. 1,65,000/-. The appellant sold these shares in the open offer made on August 9, 2011 at a price of Rs. 10 per share and made a gain of only about Rs. 1,35,000/-. Even if the appellant had to make an open offer in the year 2006 soon after acquiring 4.08% share capital the total cost of the same would have been only about Rs. 12.67 Lakh at a price of Rs. 8.62 per share. Therefore, even if the most demanding direction relating to violation of Takeover Regulations, that is, direction to make an open offer was made by SEBI in this matter would have cost the appellant only Rs. 12.67 Lakh. However, penalty of Rs. 50 Lakhs has been imposed. Accordingly, the counsel for the appellant submitted that the penalty imposed is too harsh and disproportionate considering the facts of the matter. 
+
+4. For convenience the relevant provisions of the Takeover Regulations, 1997 are reproduced as under:-
+
+ "Acquisition of control over a company. 
+
+ 12. Irrespective of whether or not there has been any acquisition of shares or voting rights in a company, no acquirer shall acquire control over the target company, unless such person makes a public announcement to acquire shares and acquires such shares in accordance with the regulations:
+ Provided that nothing contained herein shall apply to any change in control which takes place in pursuance to a [special resolution] passed by the shareholders in a general meeting:
+ Provided further that for passing of the special resolution facility of voting through postal ballot as specified under the Companies (Passing of the Resolutions by Postal Ballot) Rules, 2001 shall also be provided. 
+
+ Explanation.--For the purposes of this regulation, acquisition shall include direct or indirect acquisition of control of target company by virtue of acquisition of companies, whether listed or unlisted and whether in India or abroad. 
+
+ Timing of the public announcement of offer. 
+
+ 14. (1) .................. 
+
+ (2) .................. 
+
+ (3) The public announcement referred to in regulation 12 shall be made by the merchant banker not later than four working days after any such change or changes are decided to be made as would result in the acquisition of control over the target company by the acquirer." 
+
+5. Since violation of the aforesaid Regulations is admitted the only relevant question to be considered by us is whether the penalty of Rs. 50 Lakhs imposed on the appellant under Section 15H(ii) i.e. failure to make a public announcement to acquire shares at a minimum price is proportionate or not. We note that penalty imposable for violation of Regulation 15H(ii) at the relevant time was Rs. 25 Crore or three times the amount of profits made out of such failure, whichever is higher. In the instant matter, this provision would imply a penalty of Rs. 25 Crore. We also note that this provision has been amended with effect from September 8, 2014 which reads as follows:-
+
+ "The penalty shall not be less than 10 Lakh rupees but which may extend to 25 Crore rupees or 3 times the amount of profits made out of such violation, whichever is higher." 
+
+6. Though the penalty provisions in the Takeover Regulations state the aforesaid it is not that the maximum penalty is always imposed, mitigating factors as provided under Section 15J of the SEBI Act 1992 as well as any other mitigating factors have to be considered while imposing the penalty. Further, since SEBI Act, Rules and Regulations are basically for protecting the interests of investors and enable orderly development of the securities market, the impact of a violation in terms of its implications on the market and investors need to be factored in. Impact of a particular action / violation on the securities market needs to be interpreted in two ways because every violation of securities laws need not have a market-wide impact meaning a visible impact on a large number of investors or in terms of moving the securities market indices, such as NIFTY or SENSEX. At the same time we cannot take the view that violations that do not lead to a visible impact or impact on NIFTY / SENSEX are not violations punishable with penalty. Therefore, a violation needs to be analyzed in terms of its market- wide implications or in terms of its implications on the security of the company concerned and the investors therein, such as in the present matter. In short, there can be a market-wide impact or impact on a particular company and its securities and therefore only its investors. The penalty provisions are incorporated to address all these situations: micro impact as well as a macro or market-wide impact of violations. Otherwise if such a distinction is not made penalty provisions under Section 15H(ii) of SEBI Act would invariably lead to a minimum penalty of Rs. 25 Crore as it existed prior to September 8, 2014. Amendment made on this date itself clearly shows that was not the intention of law. It is also clear from the penalty imposed in the instant matter at Rs. 50 Lakhs that even under the earlier provisions the penalty provision was not interpreted purely in terms of the letters but also by taking mitigating factors into account. 
+
+
+7. Given the aforesaid state of the law, the question before us is whether there is ground for reducing the penalty from Rs. 50 Lakhs imposed by the AO of SEBI through the impugned order in the facts of the matter. Here we are told that the profit made by the appellant in terms of the impugned acquisition of 4.08% of the equity share capital of the target company was only Rs. 1.35 Lakh; the total investment was only Rs. 1.65 Lakh; the total amount saved (or profits made) through avoiding an open offer to minimum of 20% of the equity shareholders was only Rs. 12.67 Lakh. These calculations are not disputed. Further, we note that for takeover violations by substantial acquisition of shares or through acquisition of control different directions are provided under Regulation 44 of the Takeover Regulations, 1997, the most demanding of which is that of directing an open offer at a minimum price, along with interest. In the instant matter by taking control of the company in March 2006 in terms of the impugned acquisition directing an open offer could have been the normal direction. Such a direction is, however, dispensed with because by the time SEBI came to know the violations in 2011 ownership and control of the company had moved hands and the appellant herein also sold off the shares acquired in 2006. Hence, only the monetary penalty of Rs. 50 Lakh has been imposed. 
+
+8. On the question of reduction of the amount of penalty the learned counsel for the appellant sought a substantial reduction, to a maximum of Rs. 12.67 Lakh, the amount that was required for making the open offer for a minimum of 20% of the equity capital of the target company in 2006. 
+
+
+9. However, learned counsel Shri Anubhav Ghosh appearing on behalf of the respondent SEBI submitted that the amount of Rs. 50 Lakh imposed is fully justified in view of the fact that the penalty provision at the relevant time was three times the profit made or Rs. 25 Crore whichever is higher. He further submitted that more than 95% of the equity share capital was held by others, about 30 shareholders, who were denied an exit option at the relevant point of time which was also a factor leading to no trading in the shares of the company and the company potentially becoming sick consequently. 
+
+
+10. While we agree that the AO had factored in some mitigating aspects while deciding the penalty, given the aforesaid calculations of the investment, profits made or loss avoided and in terms of the magnitude of the variables such as number of shares acquired by the appellant, total share capital of the company etc. there is still ground for some more mitigation. We are also of the view that the amount of penalty imposed should have some co- relation with the most penalizing of the directions on takeover violations i.e. cost of making an open offer. In the instant case that cost is estimated to be Rs. 12.67 Lakh at the relevant time. Further considering interest / time factor into account this amount should be adjusted. Accordingly, taking all factors into account we are of the considered view that an amount of Rs. 20 Lakh would serve the interests of justice. 
+
+
+11. Accordingly, while upholding the impugned order on merit we reduce the amount of penalty from Rs. 50 Lakh to Rs. 20 Lakh. Appellant is directed to pay this amount to SEBI within a period of 30 days from the date of this order. 
+
+
+12. Appeal is partly allowed in above terms. No orders on costs. 
+
+ Sd/-
+ Justice Tarun Agarwala Presiding Officer Sd/-
+ Dr. C.K.G. Nair Member Sd/-
+ Justice M.T. Joshi Judicial Member 28.06.2019 Prepared and compared by:msb
