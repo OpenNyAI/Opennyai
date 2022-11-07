@@ -52,3 +52,12 @@ def test_rr_output():
     if output1 != rr_model_output_text1 or output2 != rr_model_output_text2:
         rr_output_valid = False
     assert rr_output_valid
+
+
+def test_summarizer_output():
+    summarizer_output_valid = True
+    output1 = pipeline._summarizer_model_output[0]
+    output2 = pipeline._summarizer_model_output[1]
+    if output1 != summarizer_model_output_text1 or output2 != summarizer_model_output_text2:
+        summarizer_output_valid = False
+    assert summarizer_output_valid
