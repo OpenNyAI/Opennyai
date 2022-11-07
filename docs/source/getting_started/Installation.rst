@@ -55,10 +55,13 @@ To run the 3 OpenNyAI models on judgment texts of your choice please run followi
 
 The predictions of each of the models is added at the sentence level.
 
-For each of the sentence in an output ,
-* 'labels' provide predicted rhetorical role.
-* 'in_summary' denoted if this sentence is selected in the summary.
-* 'entities' provide the list of extracted named entities in that sentence.
+For each of the sentence in an output,
+
+'labels' provide predicted rhetorical role.
+
+'in_summary' denoted if this sentence is selected in the summary.
+
+'entities' provide the list of extracted named entities in that sentence
 
 .. code-block:: python
 
@@ -76,4 +79,4 @@ The extracted named entities can be visualized using
 
     from spacy import displacy
     from opennyai.ner.ner_utils import ner_displacy_option
-    displacy.render(pipeline._ner_model_output[0], style='ent',jupyter = True, options=ner_displacy_option)
+    displacy.serve(pipeline._ner_model_output[0], style='ent',, options=ner_displacy_option)
