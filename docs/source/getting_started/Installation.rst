@@ -57,11 +57,11 @@ The predictions of each of the models is added at the sentence level.
 
 For each of the sentence in an output,
 
-'labels' provide predicted rhetorical role.
+* 'labels' provide predicted rhetorical role.
 
-'in_summary' denoted if this sentence is selected in the summary.
+* 'in_summary' denoted if this sentence is selected in the summary.
 
-'entities' provide the list of extracted named entities in that sentence
+* 'entities' provide the list of extracted named entities in that sentence
 
 .. code-block:: python
 

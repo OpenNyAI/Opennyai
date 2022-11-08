@@ -1,6 +1,6 @@
 Preprocessing Judgment Text
 ===========================
-Before passing input judgment texts through the AI models, one needs to run preprocessing on them.
+Judgment texts need to be preprocessed before running the AI models
 
 Preprocessing Activities:
 ------------------------
@@ -22,7 +22,7 @@ The preprocessing is done using Data object.
     data = Data(texts_to_process,preprocessing_nlp_model='en_core_web_trf')
 
 
-The preprocessing is lazy evaluated. This means that when some action is taken on the Data object then the actual processing happens.
+The preprocessing is lazy evaluated.
 
 Trade-Off between Preprocessing Accuracy and Run Time
 -----------
@@ -33,8 +33,8 @@ Additional Parameters while creating Data object
 -----------
 mini_batch_size (int): This accepts an int as batch size for processing of a document, if length of document is bigger that given batch size it will be chunked and then processed.
 
-use_gpu (bool): Functionality to give a choice whether to use GPU for processing or not Setting it True doesn't ensure GPU will be utilized it need proper support libraries as mentioned in documentation
+* use_gpu (bool): Functionality to give a choice whether to use GPU for processing or not Setting it True doesn't ensure GPU will be utilized it need proper support libraries as mentioned in documentation
 
-use_cache (bool): Set it to true if you want to enable caching while preprocessing. Always set this to True.
+* use_cache (bool): Set it to true if you want to enable caching while preprocessing. Always set this to True.
 
-verbose (bool): Set it to if you want to see progress bar while processing happens
+* verbose (bool): Set it to if you want to see progress bar while processing happens

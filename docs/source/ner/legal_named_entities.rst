@@ -57,19 +57,19 @@ Output of NER model is a spacy doc and identified_entities is list of entities e
 
 Important parameters while loading NER model
 --------------------
-model_name (string): Accepts a model name of spacy as InLegalNER that will be used for NER inference available models are 'en_legal_ner_trf', 'en_legal_ner_sm'. 'en_legal_ner_trf' has best accuracy but can be slow, on the other hand 'en_legal_ner_sm' is fast but less accurate.
+* model_name (string): Accepts a model name of spacy as InLegalNER that will be used for NER inference available models are 'en_legal_ner_trf', 'en_legal_ner_sm'. 'en_legal_ner_trf' has best accuracy but can be slow, on the other hand 'en_legal_ner_sm' is fast but less accurate.
 
-use_gpu (bool): Functionality to give a choice whether to use GPU for inference or not. Setting it True doesn't ensure GPU will be utilized it need proper support libraries as mentioned in documentation
+* use_gpu (bool): Functionality to give a choice whether to use GPU for inference or not. Setting it True doesn't ensure GPU will be utilized it need proper support libraries as mentioned in documentation
 
 Important parameters while inferring NER model
 --------------------
-do_sentence_level (bool): To perform inference at sentence level or not, at sentence level it better accuracy. We recommend setting this to True.
+* do_sentence_level (bool): To perform inference at sentence level or not, at sentence level it better accuracy. We recommend setting this to True.
 
-do_postprocess (bool): To perform post-processing over processed doc. We recommend to set this to True.
+* do_postprocess (bool): To perform post-processing over processed doc. We recommend to set this to True.
 
-mini_batch_size (int): This accepts an int as batch size for processing of a document, if length of document is bigger that given batch size it will be chunked and then processed.
+* mini_batch_size (int): This accepts an int as batch size for processing of a document, if length of document is bigger that given batch size it will be chunked and then processed.
 
-verbose (bool): Set it to if you want to see progress bar while processing happens
+* verbose (bool): Set it to if you want to see progress bar while processing happens
 
 Post Processing of extracted Named Entities
 ======================
