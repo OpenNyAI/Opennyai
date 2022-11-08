@@ -1,7 +1,7 @@
 Welcome to OpenNyAI's documentation!
 ===================================
 
-**OpenNyAI** is a framework for natural language processing on Indian legal texts. This python library provides unified access to the inference of following 3 AI models developed by OpenNyAI which focus on Indian court judgments.
+**OpenNyAI** library is a framework for natural language processing on Indian legal texts. This python library provides unified access to the inference of following 3 AI models developed by `OpenNyAI <https://opennyai.org/>`_ which focus on Indian court judgments.
 
 * `Named Entity Recognition (NER) <https://github.com/Legal-NLP-EkStep/legal_NER>`_
 * `Rhetorical Role prediction <https://github.com/Legal-NLP-EkStep/rhetorical-role-baseline>`_
