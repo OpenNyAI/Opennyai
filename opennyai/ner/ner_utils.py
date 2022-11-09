@@ -63,12 +63,16 @@ def get_json_from_spacy_doc(doc) -> dict:
                                                     "text": ent.text,
                                                     "labels": [ent.label_]}))
 
-    final_output = update_json_with_clusters(copy.deepcopy(output), doc.user_data['precedent_clusters'],
+    if doc.user_data.get('precedent_clusters') is not None and doc.user_data.get(
+            'provision_statute_pairs') is not None and doc.user_data.get('statute_clusters') is not None:
+        final_output = update_json_with_clusters(copy.deepcopy(output), doc.user_data['precedent_clusters'],
 
-                                             doc.user_data['provision_statute_pairs'],
-                                             doc.user_data['statute_clusters'])
+                                                 doc.user_data['provision_statute_pairs'],
+                                                 doc.user_data['statute_clusters'])
 
-    return final_output
+        return final_output
+    else:
+        return output
 
 
 def get_csv(doc, f_name, save_path):
