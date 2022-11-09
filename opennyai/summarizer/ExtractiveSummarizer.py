@@ -117,9 +117,9 @@ class ExtractiveSummarizer:
         return file_chunk_sent_scores
 
     def __call__(self, input_data):
-        result = []
         if self.__verbose__:
-            msg.info('Running inference')
+            msg.info('Processing documents with extractive summarizer model!!!')
+        result = []
         for data in tqdm(input_data, disable=not self.__verbose__):
             task_id = data['id'].split('_')[-1]
             preprocessed_data = self._preprocess(data)

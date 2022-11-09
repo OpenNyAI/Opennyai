@@ -2,7 +2,6 @@ import os
 
 import numpy as np
 from sklearn.model_selection import KFold, train_test_split
-from wasabi import msg
 
 from .batch_creator import BatchCreator
 from .dataset_reader import DocumentsDataset
@@ -12,25 +11,8 @@ PUBMED_LABELS = ["DEFAULT", 'mask', "NONE", "PREAMBLE", "FAC", "ISSUE", "ARG_RES
 PUBMED_LABELS_PRES = ["DEFAULT", 'mask', "NONE", "PREAMBLE", "FAC", "ISSUE", "ARG_RESPONDENT", "ARG_PETITIONER",
                       "ANALYSIS", "PRE_RELIED", "PRE_NOT_RELIED", "STA", "RLC", "RPC", "RATIO"]
 
-#
-#
-# NICTA_LABELS =["NONE", "FAC", "ISSUE", "ARG", "ANALYSIS", "PRE", "STA","RLC", "RPC","RATIO"]
-# NICTA_LABELS_PRES =["NONE", "FAC", "ISSUE", "ARG", "ANALYSIS", "PRE", "STA","RLC", "RPC","RATIO"]
-#
-# DRI_LABELS = ["NONE", "FAC", "ISSUE", "ARG", "ANALYSIS", "PRE", "STA","RLC", "RPC","RATIO"]
-# DRI_LABELS_PRES =["NONE", "FAC", "ISSUE", "ARG", "ANALYSIS", "PRE", "STA","RLC", "RPC","RATIO"]
-#
-# ART_LABELS = ["NONE", "FAC", "ISSUE", "ARG", "ANALYSIS", "PRE", "STA","RLC", "RPC","RATIO"]
-# ART_LABELS_PRES = ["NONE", "FAC", "ISSUE", "ARG", "ANALYSIS", "PRE", "STA","RLC", "RPC","RATIO"]
-# #
-# GEN_LABELS = ["mask", "Background", "Problem", "Method", "Result", "Conclusion", "Future Work"]
-# # GEN_LABELS = ["mask", "Background", "Problem", "Contribution", "Method", "Result", "Conclusion", "Future Work"]
-# GEN_LABELS_PRES = GEN_LABELS
-
-
 GEN_LABELS = ["PREAMBLE", "NONE", "FAC", "ISSUE", "ARG_RESPONDENT", "ARG_PETITIONER", "ANALYSIS", "PRE_RELIED",
               "PRE_NOT_RELIED", "STA", "RLC", "RPC", "RATIO"]
-# GEN_LABELS = ["mask", "Background", "Problem", "Contribution", "Method", "Result", "Conclusion", "Future Work"]
 GEN_LABELS_PRES = GEN_LABELS
 
 DRI_TASK = "DRI"
@@ -50,28 +32,6 @@ def tgeneric_task(task_name, train_batch_size, max_docs):
                 labels_pres=GEN_LABELS_PRES)
 
 
-def dri_task(train_batch_size, max_docs):
-    # 10-fold cross validation
-    return Task(DRI_TASK, DRI_LABELS,
-                train_batch_size, 10, max_docs, short_name="DRI",
-                labels_pres=DRI_LABELS_PRES)
-
-
-def art_task(train_batch_size, max_docs):
-    # 9-fold cross validation, Accuracy-Metric
-    return Task(ART_TASK, ART_LABELS,
-                train_batch_size, 9, max_docs,
-                dev_metric="acc", short_name="ART", labels_pres=ART_LABELS_PRES)
-
-
-def art_task_small(train_batch_size, max_docs):
-    # 9-fold cross validation, Accuracy-Metric
-    return Task(ART_TASK + "_small", ART_LABELS,
-                train_batch_size, 9, max_docs,
-                dev_metric="acc", portion_training_data=1.0 / 3.0,
-                task_folder_name=ART_TASK, short_name="mART", labels_pres=ART_LABELS_PRES)
-
-
 def pubmed_task(train_batch_size, max_docs, verbose, data_folder="datasets/"):
     return Task(PUBMED_TASK, PUBMED_LABELS,
                 train_batch_size, 1, max_docs, short_name="PMD", labels_pres=PUBMED_LABELS_PRES,
@@ -83,11 +43,6 @@ def pubmed_task_small(train_batch_size, max_docs):
                 train_batch_size, 1, max_docs,
                 portion_training_data=1.0 / 20.0, task_folder_name=PUBMED_TASK, short_name="mPMD",
                 labels_pres=PUBMED_LABELS_PRES)
-
-
-def nicta_task(train_batch_size, max_docs):
-    return Task(NICTA_TASK, NICTA_LABELS,
-                train_batch_size, 1, max_docs, short_name="NIC", labels_pres=NICTA_LABELS_PRES)
 
 
 class Fold:
@@ -140,16 +95,16 @@ class Task:
 
     def _load_full_set(self, file_suffix='scibert'):
         '''Returns one Fold. '''
-        if self.__verbose__:
-            msg.info("Loading tokenized data...")
+        # if self.__verbose__:
+        #     msg.info("Loading tokenized data...")
         full_examples = DocumentsDataset(os.path.join(self.data_dir, f"full_{file_suffix}.txt"), max_docs=self.max_docs)
-        if self.__verbose__:
-            msg.info("Loading tokenized data finished.")
+        # if self.__verbose__:
+        #     msg.info("Loading tokenized data finished.")
         return list(full_examples)
 
     def _load_train_dev_test_examples(self, file_suffix='scibert') -> Fold:
-        if self.__verbose__:
-            msg.info("Loading tokenized data...")
+        # if self.__verbose__:
+        #     msg.info("Loading tokenized data...")
 
         train_examples = DocumentsDataset(os.path.join(self.data_dir, f"train_{file_suffix}.txt"),
                                           max_docs=self.max_docs)
@@ -158,17 +113,17 @@ class Task:
 
         train_examples = self.truncate_train_examples(train_examples)
 
-        if self.__verbose__:
-            msg.info("Loading tokenized data finished.")
+        # if self.__verbose__:
+        #     msg.info("Loading tokenized data finished.")
         return [(train_examples, dev_examples, test_examples)]
 
     def truncate_train_examples(self, train_examples):
         if self.portion_training_data < 1.0:
             train_examples = list(train_examples)
             new_len = int(len(train_examples) * self.portion_training_data)
-            if self.__verbose__:
-                msg.info(
-                    f"Truncating training examples with factor {self.portion_training_data} from {len(train_examples)} to {new_len}")
+            # if self.__verbose__:
+            #     msg.info(
+            #         f"Truncating training examples with factor {self.portion_training_data} from {len(train_examples)} to {new_len}")
             train_examples = train_examples[0: new_len]
         return train_examples
 
@@ -190,8 +145,8 @@ class Task:
         if self.folds_examples is not None:
             return self.folds_examples
         self.folds_examples = []
-        if self.__verbose__:
-            msg.info(f"Loading data with {self.num_folds} folds...")
+        # if self.__verbose__:
+        #     msg.info(f"Loading data with {self.num_folds} folds...")
         if self.num_folds == 1:
             self.folds_examples = self._load_train_dev_test_examples(file_suffix=file_suffix)
         else:
@@ -217,16 +172,16 @@ class Task:
 
         folds_examples = self.get_folds_examples()
         self.folds = []
-        if self.__verbose__:
-            msg.info(f"Creating batches for {self.num_folds} folds...")
+        # if self.__verbose__:
+        #     msg.info(f"Creating batches for {self.num_folds} folds...")
         for train, dev, test in folds_examples:
             train_batches = self._get_batches(train)
             dev_batches = self._get_batches(dev)
             test_batches = self._get_batches(test)
 
             self.folds.append(Fold(train_batches, dev_batches, test_batches))
-        if self.__verbose__:
-            msg.info(f"Creating batches finished.")
+        # if self.__verbose__:
+        #     msg.info(f"Creating batches finished.")
         return self.folds
 
     def get_stats_counts(self):

@@ -41,7 +41,7 @@ def preprocess_for_summarization(input_data: dict, bert_tokenizer, tokenizer):
                                range(0, len(tokenized), max_bert_tokens_per_chunk - 0)]
                 if len(tokens_list[-1]) < 100:
                     tokens_list = tokens_list[:-1]
-                misc_sentence_id = float(value['id'])
+                misc_sentence_id = float(value['id'].split('_')[-1])
                 for _ in tokens_list:
                     misc_sentence_id += 0.01
                     sent_tokens = bert_tokenizer.convert_tokens_to_string(_).split(

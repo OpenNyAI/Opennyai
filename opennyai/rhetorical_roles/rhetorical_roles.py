@@ -73,8 +73,6 @@ class RhetoricalRolePredictor():
 
         self.model.load_state_dict(load_model_from_cache('RhetoricalRole'))
         self.model.to(self.device)
-        if self.__verbose__:
-            msg.info('Rhetorical Role Prediction model loaded successfully.')
 
         # Ensure to use the same tokenizer used during training
         BERT_VOCAB = "bert-base-uncased"
@@ -107,7 +105,7 @@ class RhetoricalRolePredictor():
             folds = task.get_folds()
             test_batches = folds[0].test
             # metrics, confusion, labels_dict, class_report = eval_model(self.model, test_batches, self.device, task)
-            labels_dict = infer_model(self.model, test_batches, self.device, task)
+            labels_dict = infer_model(self.model, test_batches, self.device, task, verbose=self.__verbose__)
             filename_sent_boundries = json.load(
                 open(os.path.join(self.hsln_format_txt_dirpath, 'sentece_boundries.json')))
 
@@ -124,7 +122,7 @@ class RhetoricalRolePredictor():
                 for i, label in enumerate(annotations):
                     import uuid
                     uid = uuid.uuid4()
-                    label_id = uid.hex
+                    label_id = uid.hex + '_' + str(i)
                     label['labels'] = [pred_labels[pred_id][i]]
                     label['id'] = label_id
 

@@ -1,17 +1,20 @@
 import torch
+from tqdm import tqdm
+from wasabi import msg
 
 from .utils import tensor_dict_to_gpu, tensor_dict_to_cpu
 
 
-def infer_model(model, eval_batches, device, task):
+def infer_model(model, eval_batches, device, task, verbose=False):
     model.eval()
     labels_dict = {}
     predicted_labels = []
     doc_name_list = []
     docwise_predicted_labels = []
-
+    if verbose:
+        msg.info('Processing documents with rhetorical role model!!!')
     with torch.no_grad():
-        for batch in eval_batches:
+        for batch in tqdm(eval_batches, disable=not verbose):
             # move tensor to gpu
             tensor_dict_to_gpu(batch, device)
 

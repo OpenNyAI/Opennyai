@@ -3,6 +3,7 @@ import os
 
 import spacy
 from tqdm import tqdm
+from wasabi import msg
 
 spacy.prefer_gpu()
 
@@ -40,6 +41,8 @@ def split_into_sentences_tokenize_write(data, custom_processed_data_path,
     max_length = 10000
     output_json = []
     filename_sent_boundries = {}  ###### key is the filename and value is dict containing sentence spans {"abc.txt":{"sentence_span":[(1,10),(11,20),...]} , "pqr.txt":{...},...}
+    if verbose:
+        msg.info('Preprocessing rhetorical role model input!!!')
     for data_dict in tqdm(data, disable=not verbose):
 
         doc_id = data_dict['file_id']

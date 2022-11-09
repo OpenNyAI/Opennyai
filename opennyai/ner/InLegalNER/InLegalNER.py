@@ -55,7 +55,7 @@ class InLegalNER:
         """
         processed_data = []
         if verbose:
-            msg.info('Processing documents')
+            msg.info('Processing documents with Legal NER!!!')
         for to_process in tqdm(data, disable=not verbose):
             nlp_doc = extract_entities_from_judgment_text(to_process=to_process, legal_nlp=self.nlp,
                                                           do_sentence_level=do_sentence_level,

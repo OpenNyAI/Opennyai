@@ -57,24 +57,24 @@ To run the 3 OpenNyAI models on judgment texts of your choice please run followi
 
 ```python
 from opennyai import Pipeline
-from opennyai.utils import Data,get_text_from_indiankanoon_url
+from opennyai.utils import Data, get_text_from_indiankanoon_url
 
 # Get court judgment texts on which to run the AI models
 text1 = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/542273/')
 text2 = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/82089984/')
 
 # you can also load your text files directly into this
-texts_to_process = [text1,text2] 
+texts_to_process = [text1, text2]
 
 # create Data object for data  preprocessing before running ML models
-data = Data(texts_to_process)  
+data = Data(texts_to_process)
 
 # If you have access to GPU then set this to True else False
-use_gpu = True 
+use_gpu = True
 
 # Choose which of the AI models you want to run from the 3 models 'NER', 'Rhetorical_Role','Summarizer'. E.g. If just Named Entity is of interest then just select 'NER'
 
-pipeline = Pipeline(components = ['NER', 'Rhetorical_Role','Summarizer'],use_gpu=use_gpu) 
+pipeline = Pipeline(components=['NER', 'Rhetorical_Role', 'Summarizer'], use_gpu=use_gpu, verbose=True)
 
 results = pipeline(data)
 ```
@@ -82,8 +82,9 @@ results = pipeline(data)
 The output of each model is present in following keys of each element of the output
 
 ```python
-results[0]['annotations'] ## shows the result of model at sentence level, each entry will have entities, rhetorical role, and other details
-results[0]['summary'] ## shows Summary for each of the Rheorical Role for first judgment text 
+results[0][
+    'annotations']  ## shows the result of model at sentence level, each entry will have entities, rhetorical role, and other details
+results[0]['summary']  ## shows Summary for each of the Rheorical Role for first judgment text 
 ```
 
 For more details on usage please refer to the [documentation](https://opennyai.readthedocs.io/en/latest/index.html#)
