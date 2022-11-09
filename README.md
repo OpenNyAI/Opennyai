@@ -82,8 +82,7 @@ results = pipeline(data)
 The output of each model is present in following keys of each element of the output
 
 ```python
-results[0][
-    'annotations']  ## shows the result of model at sentence level, each entry will have entities, rhetorical role, and other details
+results[0]['annotations']  ## shows the result of model at sentence level, each entry will have entities, rhetorical role, and other details
 results[0]['summary']  ## shows Summary for each of the Rheorical Role for first judgment text 
 ```
 
