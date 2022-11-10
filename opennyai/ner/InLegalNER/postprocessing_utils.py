@@ -780,7 +780,7 @@ def seperate_provision(doc, clusters):
 
         provision = cluster[0]
         statute = cluster[1]
-        section = re.split(' ,| and |/| or |& ', provision.text)
+        section = re.split(',| and |/| or |&', provision.text)
         start = provision.start_char
         pro = provision.text
         # import pdb;pdb.set_trace()
