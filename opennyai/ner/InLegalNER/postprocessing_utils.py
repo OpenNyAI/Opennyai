@@ -776,14 +776,19 @@ def seperate_provision(doc, clusters):
     new_clusters = []
 
     for cluster in clusters:
+
+
         provision = cluster[0]
         statute = cluster[1]
-        section = re.split(',|and|/|or|&', provision.text)
+        section = re.split(' ,| and |/| or |& ', provision.text)
         start = provision.start_char
         pro = provision.text
+        # import pdb;pdb.set_trace()
         keyword = section[0].split(' ')[0]
+
         if keyword[-1] == 's':
             keyword = keyword[:-1]
+
         combined = False
         for sec in section:
             sec_text = sec.strip()
