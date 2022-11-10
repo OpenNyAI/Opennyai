@@ -53,7 +53,7 @@ class Data:
         else:
             raise RuntimeError('No input or wrong given, we accept input as string or list of strings')
         if preprocessing_nlp_model not in spacy.util.get_installed_models():
-            msg.info(f'Installing {preprocessing_nlp_model} this is a one time process!!')
+            msg.info(f'Installing {preprocessing_nlp_model}. This is a one time process!!')
             if PIP_INSTALLER_URLS.get(preprocessing_nlp_model) is not None and preprocessing_nlp_model in [
                 'en_core_web_trf',
                 'en_core_web_sm',

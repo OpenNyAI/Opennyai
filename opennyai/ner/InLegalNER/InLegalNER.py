@@ -20,7 +20,7 @@ class InLegalNER:
              documentation
         """
         if model_name not in spacy.util.get_installed_models():
-            msg.info(f'Installing {model_name} this is a one time process!!')
+            msg.info(f'Installing {model_name}. This is a one time process!!')
             if PIP_INSTALLER_URLS.get(model_name) is not None:
                 install(PIP_INSTALLER_URLS[model_name])
             else:
