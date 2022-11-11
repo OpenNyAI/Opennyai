@@ -8,7 +8,7 @@ from opennyai.summarizer.ExtractiveSummarizer import ExtractiveSummarizer
 
 
 class Pipeline:
-    def __init__(self, components=None, use_gpu=True, verbose=False):
+    def __init__(self, components=None, use_gpu=True, verbose=True):
         default_component_values = ['NER', 'Rhetorical_Role', 'Summarizer']
         if components is None:
             components = default_component_values
