@@ -12,10 +12,10 @@ def extract_entities_from_judgment_text(to_process, legal_nlp, mini_batch_size, 
         preamble = to_process['preamble_doc']
         if do_sentence_level:
             doc_judgement = get_sentence_docs(judgement, legal_nlp)
-            doc_preamble = legal_nlp(preamble.text)
+            doc_preamble = process_nlp_in_chunks(preamble.text, mini_batch_size, legal_nlp)
         else:
             doc_judgement = process_nlp_in_chunks(judgement.text, mini_batch_size, legal_nlp)
-            doc_preamble = legal_nlp(preamble.text)
+            doc_preamble = process_nlp_in_chunks(preamble.text, mini_batch_size, legal_nlp)
 
         ######### Combine preamble doc & judgement doc
         combined_doc = spacy.tokens.Doc.from_docs([doc_preamble, doc_judgement])
