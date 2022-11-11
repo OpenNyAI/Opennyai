@@ -4,6 +4,7 @@ import re
 import nltk
 import spacy
 
+from Levenshtein import distance as lev
 
 def get_entities(doc, labels):
     entities = []
@@ -550,6 +551,204 @@ def separate_provision_get_pairs_pro(pro_left):
     return matching_pro_left
 
 
+def pick_statute_from_multiple_statutes(statutes, threshold=5):
+    levens = []
+    indexes = {}
+    exclude = []
+    for i, statute in enumerate(statutes):
+        if i in exclude:
+            continue
+
+        if len(statutes) - 1 > i:
+
+            for j, stat in enumerate(statutes[i + 1:]):
+
+                dist = lev(statute.text, stat.text)
+                if dist < threshold:
+
+                    if statute not in indexes.keys():
+                        indexes[statute] = []
+
+                    indexes[statute].append(statutes[i + 1 + j])
+
+                    exclude.append(i + 1 + j)
+        else:
+            indexes[statute] = []
+
+    max_value = (max(indexes.values(), key=len))
+
+    if len(max_value) == 0:
+        return list(indexes.keys())[0]
+    else:
+        return max_value[0]
+
+
+def find_year_statute(statutes_left,total_statutes):
+    ### to find statutes with only years eg. 1986 act
+    regex_only_year = r'(?i)^\d{4}\s*act$'
+    regex_find_year = r'.*([1-3][0-9]{3})'
+    only_year_statutes = [statute for statute in statutes_left if re.findall(regex_only_year, statute.text)]
+    statutes_with_years = {}
+    statutes_to_find = []
+    statutes_found = []
+    for statute in total_statutes:
+        if statute not in only_year_statutes:
+            statute_year = []
+            years = re.findall(regex_find_year, statute.text)
+            if years:
+                for year in years:
+                    if year in statutes_with_years.keys():
+
+                        statutes_with_years[year].append(statute)
+                    else:
+                        statutes_with_years[year] = []
+                        statutes_with_years[year].append(statute)
+        else:
+            statutes_to_find.append(re.findall(regex_find_year, statute.text)[0])
+    for i, statute in enumerate(statutes_to_find):
+        if statute in statutes_with_years.keys():
+            found = pick_statute_from_multiple_statutes(statutes_with_years[statute], threshold=5)
+            statutes_found.append(found)
+        else:
+            statutes_found.append(only_year_statutes[i])
+
+    # cluster=[]
+    # for statute in statutes_found:
+    #     if statute not in cluster.keys():
+    #         cluster[statute]=[]
+    #     cluster_statute.append()
+
+    return only_year_statutes,statutes_found
+
+
+
+
+def create_statute_clusters_using_lev(clusters,statutes,threshold=5):
+
+    for i, statute in enumerate(statutes):
+        done=0
+        for j,stat in enumerate(clusters.keys()):
+            dist=lev(statute.text,stat)
+            if dist<threshold:
+                done=1
+
+                clusters[stat].append(statute)
+        if done==0:
+            clusters[statute.text]=[statute]
+    return clusters
+
+
+
+def get_initials(statute):
+    statute = re.sub("[\(\[].*?[\)\]]", "", statute.strip())
+    statute_left = re.split('\s+', statute.strip().split(',')[0])  # remove year and split
+    acronym = ''
+    stat = ''
+
+    for s in statute_left:
+
+        if s.lower() not in ['act', 'rules', 'order', 'code', 'constitution', '']:
+
+            acronym = acronym + s[0]
+        else:
+            stat = s
+
+    return acronym, stat
+
+
+def create_acronym(statute):
+    acronym, stat = get_initials(statute)
+    regex_act = r'(?i){}'
+    variations = []
+    variation = ' '
+    for a in acronym:
+
+        if a[0].isalpha():
+            if a[0].islower():
+                variation = variation + a + '*\.*\s*'
+            else:
+
+                variation = variation + a + '\.*\s*'
+
+    regex_act = regex_act.format(variation)
+    regex_act = regex_act.replace(' ', '')
+    if stat.strip() != '':
+        regex_act = regex_act + stat[0] + '*\.*[' + stat + ']*'  ##code can be written as c or code
+
+    return regex_act
+
+
+def remove_year(statute):
+    year = re.findall(r'.*([1-3][0-9]{3})', statute)
+    for y in year:
+        statute = statute.replace(y, '')
+    statute = statute.replace(',', '').strip()
+
+    return statute
+
+def find_acronym_statute(statutes_left,total_statutes):
+    regex_check_acronym = r"([A-Z]+[a-z]{0,1}\.*\s*,*)*((A|a)(c|C)(t|T))*\s*"
+    to_find = []
+    to_find_statute=[]
+    found = []
+    acronym_ff_pairs = {}
+    for statute in total_statutes:
+
+
+        if statute in statutes_left and re.fullmatch(regex_check_acronym, remove_year(statute.text)):
+            to_find.append(remove_year(statute.text))
+            to_find_statute.append(statute)
+        else:
+            acr = create_acronym(statute.text)
+            if acr not in acronym_ff_pairs.keys():
+                acronym_ff_pairs[acr] = []
+            acronym_ff_pairs[acr].append(statute)
+
+    for k,statute in enumerate(to_find):
+        counter = 0
+        for acr in acronym_ff_pairs.keys():
+            if re.fullmatch(acr, statute):
+                found.append(acronym_ff_pairs[acr][0])
+                counter = 1
+                break
+
+        if counter == 0:
+            found.append(to_find_statute[k])
+    return to_find_statute,found
+
+def merge_clusters(clusters,threshold=5):
+    levens = []
+    new_clusters= {}
+    exclude = []
+
+    statutes=list(clusters.keys())
+    for i, statute in enumerate(statutes):
+        done=0
+        if i in exclude:
+            continue
+
+        if len(statutes) - 1 > i:
+
+            for j, stat in enumerate(statutes[i + 1:]):
+
+                dist = lev(statute, stat)
+                if dist < threshold:
+                    done=1
+
+                    if statute not in new_clusters.keys():
+                        new_clusters[statute] = clusters[list(clusters.keys())[i]]
+
+                    new_clusters[statute].extend(clusters[list(clusters.keys())[i + 1 + j]])
+
+                    exclude.append(i + 1 + j)
+            if done==0:
+                new_clusters[statute]=clusters[list(clusters.keys())[i]]
+
+
+        else:
+                    new_clusters[statute] = clusters[list(clusters.keys())[i]]
+    return new_clusters
+
 def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters):
     clusters = {}
     statutes = []
@@ -558,20 +757,35 @@ def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters):
     for ent in doc.ents:
         if ent.label_ == 'STATUTE':
             statutes.append(ent)
+
+
     for c in old_statute_clusters.keys():
         if c not in clusters.keys():
             clusters[c.text] = old_statute_clusters[c]
         else:
             clusters[c.text].extend(old_statute_clusters[c])
+
     for c in new_statute_clusters.keys():
         if c not in clusters.keys():
             clusters[c.text] = new_statute_clusters[c]
         else:
             clusters[c.text].extend(new_statute_clusters[c])
-    for statute in statutes:
+
+
+    # clusters_lev=create_statute_clusters_using_lev(statutes,threshold=5)
+    # for c in clusters_lev.keys():
+    #     for k in clusters.keys():
+    #         if k in clusters_lev[c]:
+    #             clusters_lev[c].extend(k)
+    #         del cl
+    flat_list = [item for sublist in clusters.keys() for item in clusters[sublist]]
+    not_done = [item for item in statutes if item not in flat_list]
+
+
+    for statute in not_done:
         stat = check_stat(statute.text)
         if stat == '':
-            not_done.append(statute)
+            # not_done.append(statute)
             continue
         if stat in clusters.keys():
             clusters[stat].append(statute)
@@ -579,7 +793,51 @@ def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters):
             clusters[stat] = []
             clusters[stat].append(statute)
 
-    return clusters
+
+    flat_list = [item for sublist in clusters.keys() for item in clusters[sublist]]
+    not_done = [item for item in statutes if item not in flat_list]
+    statutes_to_find_year,statutes_found_year=find_year_statute(not_done, statutes)
+    statutes_left=[stat for stat in not_done if stat not in statutes_to_find_year]
+    total_statutes_left=[stat for stat in statutes if stat not in statutes_to_find_year]
+
+    statutes_to_find_acronym, statutes_found_acroym=find_acronym_statute(statutes_left,total_statutes_left)
+    statutes_to_find_year.extend(statutes_to_find_acronym)
+    statutes_found_year.extend(statutes_found_acroym)
+
+
+    for j, statute in enumerate(statutes_found_year):
+
+            checker=0
+            for cluster in clusters.keys():
+                if statute in clusters[cluster]:
+                    clusters[cluster].append(statutes_to_find_year[j])
+                    checker=checker+1
+                    break
+            if checker==0:
+                if statute.text not in clusters.keys():
+                    clusters[statute.text] = []
+                clusters[statute.text].append(statutes_to_find_year[j])
+            # else:
+            #     clusters[statute.text]=[]
+            #     clusters[statute.text].append(statutes_to_find_year[j])
+
+    flat_list = [item for sublist in clusters.keys() for item in clusters[sublist]]
+    not_done = [item for item in statutes if item not in flat_list]
+    new_clusters=merge_clusters(clusters)
+    final_clusters=create_statute_clusters_using_lev(new_clusters,not_done,threshold=5)
+
+
+
+
+
+    # (item for sublist in clusters_lev for item in sublist)
+    # for statutes in clusters_lev:
+    #     for j,statute in enumerate(statutes_found_year):
+    #         if statute in statutes:
+    #             statutes.append(statutes_found_year[j])
+
+
+    return final_clusters
 
 
 def check_stat(text):
@@ -731,6 +989,7 @@ def add_statute_head(clusters, stat_clusters):
 
 
 def pro_statute_coref_resol(doc):
+    # clusters_lev=create_statute_clusters_using_lev(statutes,threshold=5)
     new_statutes_clusters, new_statutes, old_statute_clusters = create_unidentified_statutes(doc)
     old_entities = list(doc.ents)
 
@@ -783,7 +1042,6 @@ def seperate_provision(doc, clusters):
         section = re.split(',| and |/| or |&', provision.text)
         start = provision.start_char
         pro = provision.text
-        # import pdb;pdb.set_trace()
         keyword = section[0].split(' ')[0]
 
         if keyword[-1] == 's':
