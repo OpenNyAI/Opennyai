@@ -857,11 +857,11 @@ def check_stat(text):
     match_idact = re.search(regex_idact, text)
     match_sarfaesi = re.search(regex_sarfaesi, text)
     if match_crpc:
-        return 'Criminal Procedure Code'
+        return 'Code of Criminal Procedure '
     elif match_ipc:
         return 'Indian Penal Code'
     elif match_cons:
-        return 'Constitution'
+        return 'Constitution of India'
     elif match_ita:
         return 'Income Tax Act'
     elif match_mv:
