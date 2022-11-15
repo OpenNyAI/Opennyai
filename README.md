@@ -21,11 +21,11 @@ data and model training, please refer to individual git repo links.
 
 # 🔧 1. Installation
 
-To get started using opennyai first create a new python virtual environment:
+To get started using opennyai first create a new python virtual environment using [conda](https://www.anaconda.com/):
 
 ```bash
-python3 -m venv /path/to/new/virtual/environment
-source /path/to/new/virtual/environment/bin/activate
+conda create -n opennyai python=3.8
+conda activate opennyai
 ```
 
 Install it using pip by running the following line in your terminal
