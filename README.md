@@ -9,12 +9,12 @@
 
 Opennyai is a python library for natural language preprocessing on Indian legal texts.
 
-This library provides unified access to the following 3 AI models developed by OpenNyAI which focus on Indian court
+This library provides unified access to the following 3 pre-trained AI models developed by OpenNyAI which focus on Indian court
 judgments:
 
-* [Named Entity Recognition (NER)](https://github.com/Legal-NLP-EkStep/legal_NER)
-* [Rhetorical Role prediction](https://github.com/Legal-NLP-EkStep/rhetorical-role-baseline)
-* [Extractive Summarizer](https://github.com/Legal-NLP-EkStep/judgment_extractive_summarizer)
+* Named Entity Recognition (NER): [GitHub](https://github.com/Legal-NLP-EkStep/legal_NER), [paper](https://arxiv.org/pdf/2211.03442.pdf)
+* Judgment Structuring using Sentence Rhetorical Roles: [GitHub](https://github.com/Legal-NLP-EkStep/rhetorical-role-baseline), [paper](http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.470.pdf)
+* Extractive Summarizer: [GitHub](https://github.com/Legal-NLP-EkStep/judgment_extractive_summarizer)
 
 This library is mainly for running the pretrained models on your custom input judgments text. For more details about
 data and model training, please refer to individual git repo links.
