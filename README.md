@@ -2,7 +2,8 @@
 
 # Opennyai : An efficient NLP Pipeline for Indian Legal documents
 
-[![PyPI version](https://badge.fury.io/py/opennyai.svg)](https://pypi.org/project/opennyai/)
+[![Current Release Version](https://img.shields.io/github/release/OpenNyAI/opennyai.svg?style=flat-square&logo=github)](https://github.com/OpenNyAI/Opennyai/releases)
+[![PyPI version](https://img.shields.io/pypi/v/opennyai.svg?style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/opennyai/)
 [![python version](https://img.shields.io/badge/Python-%3E=3.7-blue)](https://github.com/OpenNyAI/Opennyai)
 [![Downloads](https://pepy.tech/badge/opennyai)](https://github.com/OpenNyAI/Opennyai)
 
