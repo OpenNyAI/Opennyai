@@ -31,7 +31,7 @@ The choice of preprocessing model critically determines the performance of AI mo
 
 Additional Parameters while creating Data object
 -----------
-mini_batch_size (int): This accepts an int as batch size for processing of a document, if length of document is bigger that given batch size it will be chunked and then processed.
+* mini_batch_size (int): This accepts an int as batch size for processing of a document, if length of document is bigger that given batch size it will be chunked and then processed.
 
 * use_gpu (bool): Functionality to give a choice whether to use GPU for processing or not Setting it True doesn't ensure GPU will be utilized it need proper support libraries as mentioned in documentation
 
