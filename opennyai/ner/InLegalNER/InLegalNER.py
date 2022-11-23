@@ -62,6 +62,7 @@ class InLegalNER:
                                                           mini_batch_size=mini_batch_size)
             nlp_doc.user_data['doc_id'] = to_process['file_id']
             nlp_doc.user_data['original_text'] = to_process['original_text']
+            nlp_doc.user_data['preamble_end_char_offset'] = len(to_process['preamble_doc'].text)
             try:
                 if do_sentence_level and do_postprocess:
                     precedent_clusters = precedent_coref_resol(nlp_doc)

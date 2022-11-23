@@ -52,7 +52,10 @@ class Pipeline:
             for doc_rr in rr_output:
                 doc_id = doc_rr['id'].split('_')[1]
                 if combined_results.get(doc_id) is None:
-                    combined_results[doc_id] = {'id': doc_id, 'data': {'text': doc_rr['data']['text']}}
+                    combined_results[doc_id] = {'id': doc_id,
+                                                'data': {'text': doc_rr['data']['text'],
+                                                         'preamble_end_char_offset': doc_rr['data'][
+                                                             'preamble_end_char_offset']}}
 
                 combined_results[doc_id]['annotations'] = doc_rr['annotations']
 
@@ -83,7 +86,8 @@ class Pipeline:
         id = "LegalNER_" + doc.user_data['doc_id']
         final_output = InLegalNER.get_json_from_spacy_doc(doc)
         output = {'id': id, 'annotations': [],
-                  'data': {'text': doc.text, 'original_text': doc.user_data['original_text']}}
+                  'data': {'text': doc.text, 'original_text': doc.user_data['original_text'],
+                           'preamble_end_char_offset': doc.user_data['preamble_end_char_offset']}}
         for sent in doc.sents:
             import uuid
             uid = uuid.uuid4()

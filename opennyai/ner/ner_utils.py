@@ -51,7 +51,8 @@ def get_json_from_spacy_doc(doc) -> dict:
     """
     id = "LegalNER_" + doc.user_data['doc_id']
     output = {'id': id, 'annotations': [],
-              'data': {'text': doc.text, 'original_text': doc.user_data['original_text']}}
+              'data': {'text': doc.text, 'original_text': doc.user_data['original_text'],
+                       'preamble_end_char_offset':doc.user_data['preamble_end_char_offset']}}
     for ent in doc.ents:
         import uuid
         uid = uuid.uuid4()
