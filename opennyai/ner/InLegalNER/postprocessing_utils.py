@@ -848,6 +848,7 @@ def check_stat(text):
     regex_mvact = r'(?i)\b((m\.*\s*v\.*\s*)|(motor\s*\-*vehicle(s)*\s+)act\s*)\b'
     regex_idact = r'(?i)\b((i\.*\s*d\.*\s*)|(industrial\s*\-*dispute(s)*\s+)act\s*)\b'
     regex_sarfaesi = r'(?i)\b((s\.*\s*a\.*\s*r\.*\s*f\.*\s*a\.*\s*e\.*\s*s\.*\s*i\.*\s*)|(securitisation\s*and\s*reconstruction\s*of\s*financial\s*assets\s*and\s*enforcement\s*of\s*security\s*interest\s+)act\s*)\b'
+    regex_cpc=r'(?i)\b(((civil|c)\.*\s*(procedure|p)\.*\s*(c|code)\.*)|(code\s*of\s*civil\s*procedure))\s*'
 
     match_crpc = re.search(regex_crpc, text)
     match_ipc = re.search(regex_ipc, text)
@@ -856,6 +857,7 @@ def check_stat(text):
     match_mv = re.search(regex_mvact, text)
     match_idact = re.search(regex_idact, text)
     match_sarfaesi = re.search(regex_sarfaesi, text)
+    match_cpc=re.search(regex_cpc,text)
     if match_crpc:
         return 'Code of Criminal Procedure '
     elif match_ipc:
@@ -870,6 +872,10 @@ def check_stat(text):
         return 'Industrial Dispute Act'
     elif match_sarfaesi:
         return 'Securitisation and Reconstruction of Financial Assets and Enforcement of Securities Interest Act'
+    elif match_cpc:
+        return 'Code of Civil Procedure'
+    elif text.lower().strip()=='sebi act':
+        return 'Securities and Exchange Board of India Act'
     else:
         return ''
 
