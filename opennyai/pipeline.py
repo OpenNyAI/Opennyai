@@ -43,7 +43,8 @@ class Pipeline:
             for doc_ner in ner_json_results:
                 doc_id = doc_ner['id'].split('_')[1]
                 if combined_results.get(doc_id) is None:
-                    combined_results[doc_id] = {'id': doc_id, 'data': {'text': doc_ner['data']['text']}}
+                    combined_results[doc_id] = {'id': doc_id, 'data': {'text': doc_ner['data']['text'],
+                                                                       'preamble_end_char_offset':doc_ner['data']['preamble_end_char_offset']}}
 
                 combined_results[doc_id]['annotations'] = doc_ner['annotations']
 
