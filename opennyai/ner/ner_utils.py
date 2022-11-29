@@ -27,7 +27,7 @@ def update_json_with_clusters(ls_formatted_doc: dict, precedent_clusters: dict, 
     for entity, statute, normalized_provision, normalized_statute in provision_statute_clusters:
         for result in ls_formatted_doc['annotations']:
             if result['start'] == entity.start_char and result['end'] == entity.end_char:
-                result['normalized_name'] = str(normalized_provision) + ' of ' + str(normalized_statute)
+                result['normalized_name'] = str(normalized_provision) + ' &&& ' + str(normalized_statute) ### &&& used as a separator
 
     for statute_head in statute_clusters.keys():
         for entity in statute_clusters[statute_head]:
