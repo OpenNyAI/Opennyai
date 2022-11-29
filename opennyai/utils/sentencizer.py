@@ -74,15 +74,18 @@ def convert_upper_case_to_title(txt):
 
 def guess_preamble_end(truncated_txt, nlp):
     ######### Guess the end of preamble using hueristics
-    preamble_end = 0
-    max_length = 20000
-    tokens = nlp.tokenizer(truncated_txt)
-    if len(tokens) > max_length:
-        chunks = [tokens[i:i + max_length] for i in range(0, len(tokens), max_length)]
-        nlp_docs = [nlp(i.text) for i in chunks]
-        truncated_doc = spacy.tokens.Doc.from_docs(nlp_docs)
-    else:
-        truncated_doc = nlp(truncated_txt)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+
+        preamble_end = 0
+        max_length = 20000
+        tokens = nlp.tokenizer(truncated_txt)
+        if len(tokens) > max_length:
+            chunks = [tokens[i:i + max_length] for i in range(0, len(tokens), max_length)]
+            nlp_docs = [nlp(i.text) for i in chunks]
+            truncated_doc = spacy.tokens.Doc.from_docs(nlp_docs)
+        else:
+            truncated_doc = nlp(truncated_txt)
     successive_preamble_pattern_breaks = 0
     preamble_patterns_breaks_theshold = 1  ####### end will be marked after these many consecutive sentences which dont match preamble pattern
     sent_list = [sent for sent in truncated_doc.sents]
@@ -151,12 +154,14 @@ def split_main_judgement_to_preamble_and_judgement(text, sentence_splitting_nlp,
 
 
 def process_nlp_in_chunks(judgement_text, mini_batch_size, nlp):
-    max_length = mini_batch_size
-    tokens = nlp.tokenizer(judgement_text)
-    if len(tokens) > max_length:
-        chunks = [tokens[i:i + max_length] for i in range(0, len(tokens), max_length)]
-        nlp_docs = [nlp(i.text) for i in chunks]
-        judgement = spacy.tokens.Doc.from_docs(nlp_docs)
-    else:
-        judgement = nlp(judgement_text)
-    return judgement
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        max_length = mini_batch_size
+        tokens = nlp.tokenizer(judgement_text)
+        if len(tokens) > max_length:
+            chunks = [tokens[i:i + max_length] for i in range(0, len(tokens), max_length)]
+            nlp_docs = [nlp(i.text) for i in chunks]
+            judgement = spacy.tokens.Doc.from_docs(nlp_docs)
+        else:
+            judgement = nlp(judgement_text)
+        return judgement
