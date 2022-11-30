@@ -47,12 +47,12 @@ class Data:
             self.__cache__ = {}
         if isinstance(self.__input_text__, str):
             self.__input_text__ = [self.__input_text__]
-        elif isinstance(self.__input_text__, list) and len(self.__input_text__) >= 1 and all(
+        self.__input_text__ = [text for text in self.__input_text__ if text.strip()]
+        if isinstance(self.__input_text__, list) and len(self.__input_text__) >= 1 and all(
                 isinstance(item, str) for item in self.__input_text__):
             pass
         else:
             raise RuntimeError('No input or wrong given, we accept input as string or list of strings')
-        self.__input_text__ = [text for text in self.__input_text__ if text.strip()]
         if preprocessing_nlp_model not in spacy.util.get_installed_models():
             msg.info(f'Installing {preprocessing_nlp_model}. This is a one time process!!')
             if PIP_INSTALLER_URLS.get(preprocessing_nlp_model) is not None and preprocessing_nlp_model in [
