@@ -22,19 +22,27 @@ def load(model_name: str = 'en_legal_ner_trf', use_gpu: bool = True):
     return InLegalNER(model_name, use_gpu)
 
 
-def update_json_with_clusters(ls_formatted_doc: dict, precedent_clusters: dict, provision_statute_clusters: list,
-                              statute_clusters: dict):
+def update_json_with_provision_statute_clusters(ls_formatted_doc: dict, provision_statute_clusters: list):
     for entity, statute, normalized_provision, normalized_statute in provision_statute_clusters:
         for result in ls_formatted_doc['annotations']:
             if result['start'] == entity.start_char and result['end'] == entity.end_char:
-                result['normalized_name'] = str(normalized_provision) + ' &&& ' + str(normalized_statute) ### &&& used as a separator
+                result['normalized_name'] = str(normalized_provision) + ' &&& ' + str(
+                    normalized_statute)  ### &&& used as a separator
 
+    return ls_formatted_doc
+
+
+def update_json_with_statute_clusters(ls_formatted_doc: dict, statute_clusters: dict):
     for statute_head in statute_clusters.keys():
         for entity in statute_clusters[statute_head]:
             for result in ls_formatted_doc['annotations']:
                 if result['start'] == entity.start_char and result['end'] == entity.end_char:
                     result['normalized_name'] = str(statute_head)
 
+    return ls_formatted_doc
+
+
+def update_json_with_precedent_clusters(ls_formatted_doc: dict, precedent_clusters: dict):
     for precedent_head in precedent_clusters.keys():
         for entity in precedent_clusters[precedent_head]:
             for result in ls_formatted_doc['annotations']:
@@ -52,7 +60,7 @@ def get_json_from_spacy_doc(doc) -> dict:
     id = "LegalNER_" + doc.user_data['doc_id']
     output = {'id': id, 'annotations': [],
               'data': {'text': doc.text, 'original_text': doc.user_data['original_text'],
-                       'preamble_end_char_offset':doc.user_data['preamble_end_char_offset']}}
+                       'preamble_end_char_offset': doc.user_data['preamble_end_char_offset']}}
     for ent in doc.ents:
         import uuid
         uid = uuid.uuid4()
@@ -64,14 +72,16 @@ def get_json_from_spacy_doc(doc) -> dict:
                                                     "text": ent.text,
                                                     "labels": [ent.label_]}))
 
-    if doc.user_data.get('precedent_clusters') is not None and doc.user_data.get(
-            'provision_statute_pairs') is not None and doc.user_data.get('statute_clusters') is not None:
-        final_output = update_json_with_clusters(copy.deepcopy(output), doc.user_data['precedent_clusters'],
+    if doc.user_data.get('provision_statute_pairs') is not None:
+        output = update_json_with_provision_statute_clusters(copy.deepcopy(output),
+                                                             doc.user_data['provision_statute_pairs'])
+    if doc.user_data.get('statute_clusters') is not None:
+        output = update_json_with_statute_clusters(copy.deepcopy(output), doc.user_data['statute_clusters'])
+    if doc.user_data.get('precedent_clusters') is not None:
+        output = update_json_with_precedent_clusters(copy.deepcopy(output),
+                                                     doc.user_data['precedent_clusters'])
 
-                                                 doc.user_data['provision_statute_pairs'],
-                                                 doc.user_data['statute_clusters'])
-
-        return final_output
+        return output
     else:
         return output
 
