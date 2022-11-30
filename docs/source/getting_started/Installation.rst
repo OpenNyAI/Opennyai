@@ -39,11 +39,12 @@ To run the 3 OpenNyAI models on judgment texts of your choice please run followi
 .. code-block:: python
 
     from opennyai import Pipeline
-    from opennyai.utils import Data,get_text_from_indiankanoon_url
+    from opennyai.utils import Data
+    import urllib
 
     ###### Get court judgment texts on which to run the AI models
-    text1 = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/542273/')
-    text2 = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/82089984/')
+    text1 = urllib.request.urlopen('https://raw.githubusercontent.com/OpenNyAI/Opennyai/master/samples/sample_judgment1.txt').read().decode()
+    text2 = urllib.request.urlopen('https://raw.githubusercontent.com/OpenNyAI/Opennyai/master/samples/sample_judgment2.txt').read().decode()
     texts_to_process = [text1,text2] ### you can also load your text files directly into this
     data = Data(texts_to_process)  #### create Data object for data  preprocessing before running ML models
 
