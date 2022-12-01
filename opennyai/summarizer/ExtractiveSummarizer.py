@@ -17,13 +17,14 @@ from .others.utils import preprocess_for_summarization, format_to_bert
 
 
 class ExtractiveSummarizer:
-    def __init__(self, use_gpu: bool = True, verbose: bool = False):
+    def __init__(self, use_gpu: bool = True, verbose: bool = False, summary_length: float = 0.0):
         """Returns object of InLegalNER class.
          It is used for loading Extractive Summarizer model in memory.
         Args:
             use_gpu (bool): Functionality to give a choice whether to use GPU for inference or not
              Setting it True doesn't ensure GPU will be utilized it need proper torch installation
             verbose (bool): When set to True will print info msg while inference
+            summary_length (float): valid range(0-1) Length of summary to get in output. set it to 0 to use adaptive selection
         """
         self.__verbose__ = verbose
         if use_gpu:
@@ -50,6 +51,12 @@ class ExtractiveSummarizer:
         # setup model
         self.model = ExtSummarizer(self.model_args, self.device, state_dict)
         self.model.eval()
+        if summary_length < 0 or summary_length > 1:
+            summary_length_percentage = 0.0
+            msg.info('Invalid input: Summary length need to be in range of 0-1. Setting it to adaptive')
+        else:
+            summary_length_percentage = float(summary_length)
+        self.__summary_length_percentage__ = summary_length_percentage
 
     def _preprocess(self, input_data):
         try:
@@ -127,6 +134,6 @@ class ExtractiveSummarizer:
                                                self.model_args.test_batch_size, self.device,
                                                shuffle=False, is_test=True)
             inference_output = self._inference(data_iter)
-            summary_texts = _postprocess(inference_output, data['annotations'])
+            summary_texts = _postprocess(inference_output, data['annotations'], self.__summary_length_percentage__)
             result.append(copy.deepcopy({"id": 'ExtractiveSummarizer_' + task_id, "summaries": summary_texts}))
         return result

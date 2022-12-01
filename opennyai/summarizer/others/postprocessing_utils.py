@@ -3,7 +3,7 @@ import math
 import re
 
 
-def _postprocess(inference_output, rr_output):
+def _postprocess(inference_output, rr_output, summary_length_percentage):
     lawbriefs_summary_map = {1: "facts", 2: "facts", 3: "arguments_petitioner", 4: "arguments_respondent",
                              5: "issue", 6: "ANALYSIS", 7: 'ANALYSIS',
                              8: 'ANALYSIS', 9: 'ANALYSIS', 10: 'ANALYSIS',
@@ -54,7 +54,8 @@ def _postprocess(inference_output, rr_output):
         ####### Gives threshold for selecting summary sentences. This depends on the length of judgment
         filtered_sent_list = [sent for sent in sent_list if re.search('[a-zA-Z]', sent['sent_txt'])]
 
-        summary_sent_precent = get_adaptive_summary_sent_percent(len(filtered_sent_list))
+        summary_sent_precent = summary_length_percentage * 100 if summary_length_percentage != 0.0 else \
+            get_adaptive_summary_sent_percent(len(filtered_sent_list))
         sents_to_keep = math.ceil(summary_sent_precent * len(filtered_sent_list) / 100)
 
         sent_scores = [float(i['sent_score']) for i in filtered_sent_list]
