@@ -67,6 +67,8 @@ Important parameters while inferring NER model
 
 * do_postprocess (bool): To perform post-processing over processed doc. We recommend to set this to True.
 
+*statute_shortforms_path(path):It is the path of the csv file if the user wants to provide predefined shortforms to create statute clusters.The csv should have 2 columns namely 'fullforms' and 'shortforms' where 'fullforms' contain the full name of the statute eg. 'code of criminal procedure' and shortforms contain the acronym that can be present in the judgment eg.'crpc'.Each row represents a fullform,shortform pair.
+
 * mini_batch_size (int): This accepts an int as batch size for processing of a document, if length of document is bigger that given batch size it will be chunked and then processed.
 
 * verbose (bool): Set it to if you want to see progress bar while processing happens
@@ -177,6 +179,15 @@ Storing extracted Named Entities to a file
     json_result = InLegalNER.get_json_from_spacy_doc(ner_output)
 
 
+In the created json,each entity has a 'normalized_name' associated with it described as below:-
+
+a.Statutes:For statutes,normalized name is the head of the cluster the statute belongs to as explained above in the statute_clusters.
+
+b.Provisions:For provisions,it consists of the name of the provision followed by the statute it belongs to using the separator  '&&&' .
+
+c.Precendents:For precedents,it consists the head of the cluster to which the precedent belongs to as explained above in precedent_clusters.
+
+For every other entity,normalized_name has the same text as the entity text.
 Note: You can import generated json to label studio and visualize all the details about the postprocessing
 
 2. To save result in csv file with linked entities :
