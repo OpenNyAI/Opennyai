@@ -1,6 +1,6 @@
 import collections
 import re
-
+import pandas as pd
 import nltk
 import spacy
 
@@ -680,13 +680,13 @@ def create_acronym(statute):
 
 
 def provide_predefined_statute(fullform, acronyms):
-    if len(acronyms) > 0:
-        acr = ''
-        regex_act = r'(?i){}'
-        regex_acronym = regex_act.format('(' + '|'.join(acronyms) + ')')
-    else:
-        regex_acronym = create_acronym(fullform)
-    return fullform, regex_acronym
+    # if len(acronyms) > 0:
+    acr = ''
+    regex_act = r'(?i){}'
+    regex_acronym = regex_act.format('(\\b' + '\\b|\\b'.join(acronyms) + '\\b)')
+    # else:
+    #     regex_acronym = create_acronym(fullform)
+    return  regex_acronym
 
 def remove_year(statute):
     year = re.findall(r'.*([1-3][0-9]{3})', statute)
@@ -697,7 +697,7 @@ def remove_year(statute):
     return statute
 
 
-def find_acronym_statute(statutes_left, total_statutes):
+def find_acronym_statute(statutes_left, total_statutes,acr_dict):
     regex_check_acronym = r"([A-Z]+[a-z]{0,1}\.*\s*,*)*((A|a)(c|C)(t|T))*\s*"
     to_find = []
     to_find_statute = []
@@ -763,10 +763,22 @@ def merge_clusters(clusters, threshold=5):
     return new_clusters
 
 
-def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters):
+def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters,statute_shortforms_path):
     clusters = {}
     statutes = []
     not_done = []
+    acr_dict = {}
+    if statute_shortforms_path!='':
+        statute_shortforms=pd.read_csv(statute_shortforms_path)
+        fullforms=list(statute_shortforms['fullforms'])
+
+        sf=list(statute_shortforms['shortforms'])
+
+
+        for i,f in enumerate(fullforms):
+            if f not  in acr_dict:
+                acr_dict[f]=[]
+            acr_dict[f].append(sf[i])
 
     for ent in doc.ents:
         if ent.label_ == 'STATUTE':
@@ -784,17 +796,12 @@ def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters):
         else:
             clusters[c.text].extend(new_statute_clusters[c])
 
-    # clusters_lev=create_statute_clusters_using_lev(statutes,threshold=5)
-    # for c in clusters_lev.keys():
-    #     for k in clusters.keys():
-    #         if k in clusters_lev[c]:
-    #             clusters_lev[c].extend(k)
-    #         del cl
+
     flat_list = [item for sublist in clusters.keys() for item in clusters[sublist]]
     not_done = [item for item in statutes if item not in flat_list]
 
     for statute in not_done:
-        stat = check_stat(statute.text)
+        stat = check_stat(statute.text,acr_dict)
         if stat == '':
             # not_done.append(statute)
             continue
@@ -810,7 +817,7 @@ def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters):
     statutes_left = [stat for stat in not_done if stat not in statutes_to_find_year]
     total_statutes_left = [stat for stat in statutes if stat not in statutes_to_find_year]
 
-    statutes_to_find_acronym, statutes_found_acroym = find_acronym_statute(statutes_left, total_statutes_left)
+    statutes_to_find_acronym, statutes_found_acroym = find_acronym_statute(statutes_left, total_statutes_left,acr_dict)
     statutes_to_find_year.extend(statutes_to_find_acronym)
     statutes_found_year.extend(statutes_found_acroym)
 
@@ -844,7 +851,7 @@ def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters):
     return final_clusters
 
 
-def check_stat(text):
+def check_stat(text,acr_dict):
     regex_crpc = r'(?i)\b(((criminal|cr)\.*\s*(procedure|p)\.*\s*(c|code)\.*)|(code\s*of\s*criminal\s*procedure))\s*'
     regex_ipc = r'(?i)\b((i|indian)+\.*\s*(penal|p)\.*\s*(c|code))\.*'
     regex_cons = r'(?i)\b((constitution)+\s*(of\s*india\s*)*)\b'
@@ -862,6 +869,13 @@ def check_stat(text):
     match_idact = re.search(regex_idact, text)
     match_sarfaesi = re.search(regex_sarfaesi, text)
     match_cpc = re.search(regex_cpc, text)
+    if len(acr_dict)>0:
+        for fullform in acr_dict.keys():
+            regex= provide_predefined_statute(fullform, acr_dict[fullform])
+
+            if re.search(regex,text):
+
+                return fullform
     if match_crpc:
         return 'Code of Criminal Procedure '
     elif match_ipc:
@@ -998,8 +1012,9 @@ def add_statute_head(clusters, stat_clusters):
     return new_clusters
 
 
-def pro_statute_coref_resol(doc):
+def pro_statute_coref_resol(doc,statute_shortforms_path):
     # clusters_lev=create_statute_clusters_using_lev(statutes,threshold=5)
+
     new_statutes_clusters, new_statutes, old_statute_clusters = create_unidentified_statutes(doc)
     old_entities = list(doc.ents)
 
@@ -1010,7 +1025,7 @@ def pro_statute_coref_resol(doc):
 
     doc.ents = old_entities
 
-    stat_clusters = create_statute_clusters(doc, old_statute_clusters, new_statutes_clusters)
+    stat_clusters = create_statute_clusters(doc, old_statute_clusters, new_statutes_clusters,statute_shortforms_path)
 
     pro_statute, pro_left, total_statutes = get_exact_match_pro_statute(doc)
 
