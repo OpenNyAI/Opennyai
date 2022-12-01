@@ -148,7 +148,8 @@ def split_main_judgement_to_preamble_and_judgement(text, sentence_splitting_nlp,
         #####  replace new lines in middle of sentence with spaces.
         judgement_text = re.sub(r'(\w[ -]*)(\n+)', r'\1 ', judgement_text)
         judgement = process_nlp_in_chunks(judgement_text, mini_batch_size, sentence_splitting_nlp)
-        preamble = sentence_splitting_nlp(preamble_text)
+        preamble = process_nlp_in_chunks(preamble_text, mini_batch_size, sentence_splitting_nlp)
+
 
         return preamble, judgement
 
