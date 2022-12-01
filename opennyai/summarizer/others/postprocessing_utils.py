@@ -85,7 +85,7 @@ def _postprocess(inference_output, rr_output):
     def combine_rr_summary_outputs(summary_inference_output, rr_output):
         ###### Add the summary details to rr_output inplace
         summary_details = {}  #### keys are sent_id and values are {'in_summary': True,'sent_score':0.1, 'summary_section':'ANALYSIS'}
-        summary_output = list(summary_inference_output.values())[0]
+        summary_output = list(summary_inference_output.values())[0] if list(summary_inference_output.values()) else []
         for sent in summary_output:
             in_summary_flag = sent['in_summary']
             summary_details[sent['sent_id']] = {'in_summary': in_summary_flag,
