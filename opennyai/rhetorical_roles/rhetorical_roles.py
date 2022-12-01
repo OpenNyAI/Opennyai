@@ -33,7 +33,7 @@ class RhetoricalRolePredictor():
 
             "lr": 3e-05,
             "lr_epoch_decay": 0.9,
-            "batch_size": 32,
+            "batch_size": 1,
             "max_seq_length": 128,
             "max_epochs": 40,
             "early_stopping": 5,

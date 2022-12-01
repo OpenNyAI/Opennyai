@@ -55,8 +55,8 @@ class Pipeline:
                 if combined_results.get(doc_id) is None:
                     combined_results[doc_id] = {'id': doc_id,
                                                 'data': {'text': doc_rr['data']['text'],
-                                                         'preamble_end_char_offset': doc_rr['data'][
-                                                             'preamble_end_char_offset']}}
+                                                         'preamble_end_char_offset': doc_rr['data'].get(
+                                                             'preamble_end_char_offset')}}
 
                 combined_results[doc_id]['annotations'] = doc_rr['annotations']
 
