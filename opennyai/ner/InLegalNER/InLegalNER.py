@@ -39,7 +39,7 @@ class InLegalNER:
         self.model_name = model_name
         self.nlp = spacy.load(self.model_name)
 
-    def __call__(self, data, do_sentence_level=True, do_postprocess=True, mini_batch_size=40000, verbose=False):
+    def __call__(self, data, do_sentence_level=True, do_postprocess=True, mini_batch_size=40000, verbose=False,statute_shortforms_path=''):
         """Returns doc of InLegalNER nlp.
          It is used for doing inference on input doc using InLegalNER model in memory.
         Args:
@@ -65,11 +65,12 @@ class InLegalNER:
             nlp_doc.user_data['preamble_end_char_offset'] = len(to_process['preamble_doc'].text)
             try:
                 if do_sentence_level and do_postprocess:
+
                     precedent_clusters = precedent_coref_resol(nlp_doc)
 
                     other_person_entites = other_person_coref_res(nlp_doc)
 
-                    pro_sta_clusters, stat_clusters = pro_statute_coref_resol(nlp_doc)
+                    pro_sta_clusters, stat_clusters = pro_statute_coref_resol(nlp_doc,statute_shortforms_path)
 
                     all_entities = remove_overlapping_entities(nlp_doc.ents, pro_sta_clusters)
 
