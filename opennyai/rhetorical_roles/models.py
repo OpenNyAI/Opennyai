@@ -1,6 +1,7 @@
 import torch
 from transformers import BertModel
-
+import math
+import copy
 from opennyai.rhetorical_roles.allennlp_helper.common.util import pad_sequence_to_length
 from opennyai.rhetorical_roles.allennlp_helper.modules.conditional_random_field.conditional_random_field import \
     ConditionalRandomField
@@ -143,29 +144,29 @@ class BertTokenEmbedder(torch.nn.Module):
             return batch["bert_embeddings"]
 
         attention_mask = batch["attention_mask"].view(-1, tokens)
-        input_ids = batch["input_ids"].view(-1, tokens)
 
-        outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
-        # shape (documents*sentences, tokens, 768)
-        bert_embeddings = outputs[0]
+        #input_ids = batch["input_ids"].view(-1, tokens)
+        # outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
+        # # shape (documents*sentences, tokens, 768)
+        # bert_embeddings = outputs[0]
 
         #### break the large judgements into sentences chunk of given size. Do this while inference
-        # chunk_size = 1024
-        # input_ids = batch["input_ids"].view(-1, tokens)
-        # chunk_cnt = int(math.ceil(input_ids.shape[0]/chunk_size))
-        # input_ids_chunk_list = torch.chunk(input_ids,chunk_cnt)
-        #
-        # attention_mask_chunk_list = torch.chunk(attention_mask,chunk_cnt)
-        # outputs = []
-        # for input_ids,attention_mask in zip(input_ids_chunk_list,attention_mask_chunk_list):
-        #     with torch.no_grad():
-        #         output = self.bert(input_ids=input_ids, attention_mask=attention_mask)
-        #         output = output[0]
-        #         #output = output[0].to('cpu')
-        #     outputs.append(copy.deepcopy(output))
-        #     torch.cuda.empty_cache()
-        #
-        # bert_embeddings = torch.cat(tuple(outputs))  #.to('cuda')
+        chunk_size = 1024
+        input_ids = batch["input_ids"].view(-1, tokens)
+        chunk_cnt = int(math.ceil(input_ids.shape[0]/chunk_size))
+        input_ids_chunk_list = torch.chunk(input_ids,chunk_cnt)
+
+        attention_mask_chunk_list = torch.chunk(attention_mask,chunk_cnt)
+        outputs = []
+        for input_ids,attention_mask in zip(input_ids_chunk_list,attention_mask_chunk_list):
+            with torch.no_grad():
+                output = self.bert(input_ids=input_ids, attention_mask=attention_mask)
+                output = output[0]
+                #output = output[0].to('cpu')
+            outputs.append(copy.deepcopy(output))
+            torch.cuda.empty_cache()
+
+        bert_embeddings = torch.cat(tuple(outputs))  #.to('cuda')
 
         if not self.bert_trainable and batch["task"] in self.cacheable_tasks:
             # cache the embeddings of BERT if it is not fine-tuned
