@@ -64,25 +64,45 @@ class InLegalNER:
             nlp_doc.user_data['doc_id'] = to_process['file_id']
             nlp_doc.user_data['original_text'] = to_process['original_text']
             nlp_doc.user_data['preamble_end_char_offset'] = len(to_process['preamble_doc'].text)
-            try:
-                if do_sentence_level and do_postprocess:
-                    precedent_clusters = precedent_coref_resol(nlp_doc)
+            if do_sentence_level and do_postprocess:
+                all_entities = None
+                postprocessing_success = True
+                precedent_clusters = precedent_coref_resol(nlp_doc)
 
-                    other_person_entites = other_person_coref_res(nlp_doc)
+                other_person_entites = other_person_coref_res(nlp_doc)
 
-                    pro_sta_clusters, stat_clusters = pro_statute_coref_resol(nlp_doc, statute_shortforms_path)
-
+                pro_sta_clusters, stat_clusters = pro_statute_coref_resol(nlp_doc, statute_shortforms_path)
+                if pro_sta_clusters:
                     all_entities = remove_overlapping_entities(nlp_doc.ents, pro_sta_clusters)
 
                     all_entities.extend(other_person_entites)
+                else:
+                    postprocessing_success = False
 
+                if all_entities:
                     nlp_doc.ents = all_entities
+                else:
+                    nlp_doc.ents.extend(other_person_entites)
+
+                if precedent_clusters:
                     nlp_doc.user_data['precedent_clusters'] = precedent_clusters
+                else:
+                    postprocessing_success = False
+
+                if pro_sta_clusters:
                     nlp_doc.user_data['provision_statute_pairs'] = pro_sta_clusters
+                else:
+                    postprocessing_success = False
+
+                if stat_clusters:
                     nlp_doc.user_data['statute_clusters'] = stat_clusters
-            except:
-                msg.warn(
-                    'There was some issue while performing postprocessing, skipping postprocessing...')
+                else:
+                    postprocessing_success = False
+
+                if not postprocessing_success:
+                    msg.warn(
+                        '''There was some issue while performing postprocessing. 
+                        Some of postprocessing info may be absent because of this in doc.''')
             processed_data.append(nlp_doc)
         if len(processed_data) == 1:
             return processed_data[0]

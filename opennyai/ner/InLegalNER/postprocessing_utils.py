@@ -168,33 +168,35 @@ def set_main_cluster(clusters):
 
 
 def precedent_coref_resol(doc):
-    entities_pn = get_entities(doc, ['OTHER_PERSON', 'ORG', 'PETITIONER', 'RESPONDENT'])
-    entities_precedents = get_entities(doc, ['PRECEDENT'])
+    try:
+        entities_pn = get_entities(doc, ['OTHER_PERSON', 'ORG', 'PETITIONER', 'RESPONDENT'])
+        entities_precedents = get_entities(doc, ['PRECEDENT'])
 
-    precedent_breakup = split_precedents(entities_precedents)
+        precedent_breakup = split_precedents(entities_precedents)
 
-    precedent_clusters = create_precedent_clusters(precedent_breakup, threshold=5)
+        precedent_clusters = create_precedent_clusters(precedent_breakup, threshold=5)
 
-    precedent_supra_matches, supras = get_precedent_supras(doc, entities_pn, entities_precedents)
+        precedent_supra_matches, supras = get_precedent_supras(doc, entities_pn, entities_precedents)
 
-    precedent_supra_clusters = merge_supras_precedents(precedent_supra_matches, precedent_clusters)
+        precedent_supra_clusters = merge_supras_precedents(precedent_supra_matches, precedent_clusters)
 
-    final_clusters = set_main_cluster(precedent_supra_clusters)
-    clusters = {}
-    entities = []
+        final_clusters = set_main_cluster(precedent_supra_clusters)
+        clusters = {}
+        entities = []
 
-    for cluster in final_clusters.keys():
-        if len(final_clusters[cluster]) > 1:
-            clusters[cluster] = final_clusters[cluster]
+        for cluster in final_clusters.keys():
+            if len(final_clusters[cluster]) > 1:
+                clusters[cluster] = final_clusters[cluster]
 
-    for entitiy in doc.ents:
-        if entitiy in supras:
-            entitiy.label_ = 'PRECEDENT'
-            entities.append(entitiy)
-        else:
-            entities.append(entitiy)
-    doc.ents = entities
-
+        for entitiy in doc.ents:
+            if entitiy in supras:
+                entitiy.label_ = 'PRECEDENT'
+                entities.append(entitiy)
+            else:
+                entities.append(entitiy)
+        doc.ents = entities
+    except:
+        clusters = None
     return clusters
 
 
@@ -313,40 +315,45 @@ def map_name_wise_other_person(other_person_cleaned, known_person_cleaned):
 
 
 def other_person_coref_res(doc):
-    other_person, other_person_found, entities, known_person = map_exact_other_person(doc)
-    known_person_cleaned = separate_name(known_person, only_first_last_name=False)
-    other_person_cleaned = separate_name(other_person, only_first_last_name=True)
+    try:
+        other_person, other_person_found, entities, known_person = map_exact_other_person(doc)
+        known_person_cleaned = separate_name(known_person, only_first_last_name=False)
+        other_person_cleaned = separate_name(other_person, only_first_last_name=True)
 
-    oth = map_name_wise_other_person(other_person_cleaned, known_person_cleaned)
-    remove = []
-    for o in oth:
+        oth = map_name_wise_other_person(other_person_cleaned, known_person_cleaned)
+        remove = []
+        for o in oth:
 
-        other_person[o[0]].label_ = o[1]
-        if other_person[o[0]] not in other_person_found:
-            other_person_found.append(other_person[o[0]])
+            other_person[o[0]].label_ = o[1]
+            if other_person[o[0]] not in other_person_found:
+                other_person_found.append(other_person[o[0]])
 
-    for person in other_person:
+        for person in other_person:
 
-        if person.label_ == 'OTHER_PERSON':
-            other_person_found.append(person)
+            if person.label_ == 'OTHER_PERSON':
+                other_person_found.append(person)
 
-    other_person_found.extend(known_person)
+        other_person_found.extend(known_person)
+    except:
+        other_person_found = None
 
     return other_person_found
 
 
 def remove_overlapping_entities(ents, pro_sta_clusters):
-    final_ents = []
-    for i in ents:
-        if i.label_ not in ['PETITIONER', 'RESPONDENT', 'LAWYER', 'JUDGE', 'OTHER_PERSON', 'WITNESS', 'PROVISION']:
-            final_ents.append(i)
+    try:
+        final_ents = []
+        for i in ents:
+            if i.label_ not in ['PETITIONER', 'RESPONDENT', 'LAWYER', 'JUDGE', 'OTHER_PERSON', 'WITNESS', 'PROVISION']:
+                final_ents.append(i)
 
-    for cluster in pro_sta_clusters:
-        if cluster[0] not in final_ents:
-            final_ents.append(cluster[0])
+        for cluster in pro_sta_clusters:
+            if cluster[0] not in final_ents:
+                final_ents.append(cluster[0])
 
-    final_ents = spacy.util.filter_spans(final_ents)
-
+        final_ents = spacy.util.filter_spans(final_ents)
+    except:
+        final_ents = None
     return final_ents
 
 
@@ -686,7 +693,8 @@ def provide_predefined_statute(fullform, acronyms):
     regex_acronym = regex_act.format('(\\b' + '\\b|\\b'.join(acronyms) + '\\b)')
     # else:
     #     regex_acronym = create_acronym(fullform)
-    return  regex_acronym
+    return regex_acronym
+
 
 def remove_year(statute):
     year = re.findall(r'.*([1-3][0-9]{3})', statute)
@@ -697,7 +705,7 @@ def remove_year(statute):
     return statute
 
 
-def find_acronym_statute(statutes_left, total_statutes,acr_dict):
+def find_acronym_statute(statutes_left, total_statutes, acr_dict):
     regex_check_acronym = r"([A-Z]+[a-z]{0,1}\.*\s*,*)*((A|a)(c|C)(t|T))*\s*"
     to_find = []
     to_find_statute = []
@@ -722,7 +730,6 @@ def find_acronym_statute(statutes_left, total_statutes,acr_dict):
                 found.append(acronym_ff_pairs[acr][0])
                 counter = 1
                 break
-
 
         if counter == 0:
             found.append(to_find_statute[k])
@@ -763,21 +770,20 @@ def merge_clusters(clusters, threshold=5):
     return new_clusters
 
 
-def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters,statute_shortforms_path):
+def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters, statute_shortforms_path):
     clusters = {}
     statutes = []
     not_done = []
     acr_dict = {}
-    if statute_shortforms_path!='':
-        statute_shortforms=pd.read_csv(statute_shortforms_path)
-        fullforms=list(statute_shortforms['fullforms'])
+    if statute_shortforms_path != '':
+        statute_shortforms = pd.read_csv(statute_shortforms_path)
+        fullforms = list(statute_shortforms['fullforms'])
 
-        sf=list(statute_shortforms['shortforms'])
+        sf = list(statute_shortforms['shortforms'])
 
-
-        for i,f in enumerate(fullforms):
-            if f not  in acr_dict:
-                acr_dict[f]=[]
+        for i, f in enumerate(fullforms):
+            if f not in acr_dict:
+                acr_dict[f] = []
             acr_dict[f].append(sf[i])
 
     for ent in doc.ents:
@@ -796,12 +802,11 @@ def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters,stat
         else:
             clusters[c.text].extend(new_statute_clusters[c])
 
-
     flat_list = [item for sublist in clusters.keys() for item in clusters[sublist]]
     not_done = [item for item in statutes if item not in flat_list]
 
     for statute in not_done:
-        stat = check_stat(statute.text,acr_dict)
+        stat = check_stat(statute.text, acr_dict)
         if stat == '':
             # not_done.append(statute)
             continue
@@ -817,7 +822,7 @@ def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters,stat
     statutes_left = [stat for stat in not_done if stat not in statutes_to_find_year]
     total_statutes_left = [stat for stat in statutes if stat not in statutes_to_find_year]
 
-    statutes_to_find_acronym, statutes_found_acroym = find_acronym_statute(statutes_left, total_statutes_left,acr_dict)
+    statutes_to_find_acronym, statutes_found_acroym = find_acronym_statute(statutes_left, total_statutes_left, acr_dict)
     statutes_to_find_year.extend(statutes_to_find_acronym)
     statutes_found_year.extend(statutes_found_acroym)
 
@@ -851,7 +856,7 @@ def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters,stat
     return final_clusters
 
 
-def check_stat(text,acr_dict):
+def check_stat(text, acr_dict):
     regex_crpc = r'(?i)\b(((criminal|cr)\.*\s*(procedure|p)\.*\s*(c|code)\.*)|(code\s*of\s*criminal\s*procedure))\s*'
     regex_ipc = r'(?i)\b((i|indian)+\.*\s*(penal|p)\.*\s*(c|code))\.*'
     regex_cons = r'(?i)\b((constitution)+\s*(of\s*india\s*)*)\b'
@@ -869,12 +874,11 @@ def check_stat(text,acr_dict):
     match_idact = re.search(regex_idact, text)
     match_sarfaesi = re.search(regex_sarfaesi, text)
     match_cpc = re.search(regex_cpc, text)
-    if len(acr_dict)>0:
+    if len(acr_dict) > 0:
         for fullform in acr_dict.keys():
-            regex= provide_predefined_statute(fullform, acr_dict[fullform])
+            regex = provide_predefined_statute(fullform, acr_dict[fullform])
 
-            if re.search(regex,text):
-
+            if re.search(regex, text):
                 return fullform
     if match_crpc:
         return 'Code of Criminal Procedure '
@@ -1012,46 +1016,50 @@ def add_statute_head(clusters, stat_clusters):
     return new_clusters
 
 
-def pro_statute_coref_resol(doc,statute_shortforms_path):
+def pro_statute_coref_resol(doc, statute_shortforms_path):
     # clusters_lev=create_statute_clusters_using_lev(statutes,threshold=5)
+    try:
 
-    new_statutes_clusters, new_statutes, old_statute_clusters = create_unidentified_statutes(doc)
-    old_entities = list(doc.ents)
+        new_statutes_clusters, new_statutes, old_statute_clusters = create_unidentified_statutes(doc)
+        old_entities = list(doc.ents)
 
-    for ent in new_statutes:
-        if ent not in old_entities:
-            old_entities.append(ent)
-    old_entities = spacy.util.filter_spans(old_entities)
+        for ent in new_statutes:
+            if ent not in old_entities:
+                old_entities.append(ent)
+        old_entities = spacy.util.filter_spans(old_entities)
 
-    doc.ents = old_entities
+        doc.ents = old_entities
 
-    stat_clusters = create_statute_clusters(doc, old_statute_clusters, new_statutes_clusters,statute_shortforms_path)
+        stat_clusters = create_statute_clusters(doc, old_statute_clusters, new_statutes_clusters,
+                                                statute_shortforms_path)
 
-    pro_statute, pro_left, total_statutes = get_exact_match_pro_statute(doc)
+        pro_statute, pro_left, total_statutes = get_exact_match_pro_statute(doc)
 
-    to_remove, matching_pro_statute = separate_provision_get_pairs_statute(pro_statute)
-    matching_pro_left = separate_provision_get_pairs_pro(pro_left)
+        to_remove, matching_pro_statute = separate_provision_get_pairs_statute(pro_statute)
+        matching_pro_left = separate_provision_get_pairs_pro(pro_left)
 
-    for pro in to_remove:
-        if pro in pro_statute:
-            pro_statute.remove(pro)
+        for pro in to_remove:
+            if pro in pro_statute:
+                pro_statute.remove(pro)
 
-    matching_pro_statute, pro_statute = map_pro_statute_on_heuristics(matching_pro_left,
-                                                                      matching_pro_statute,
-                                                                      pro_statute,
-                                                                      total_statutes)
+        matching_pro_statute, pro_statute = map_pro_statute_on_heuristics(matching_pro_left,
+                                                                          matching_pro_statute,
+                                                                          pro_statute,
+                                                                          total_statutes)
 
-    clusters = get_clusters(pro_statute, total_statutes)
+        clusters = get_clusters(pro_statute, total_statutes)
 
-    clusters = seperate_provision(doc, clusters)
+        clusters = seperate_provision(doc, clusters)
 
-    new_entities = remove_unidentified_statutes(doc, new_statutes)
-    doc.ents = new_entities
+        new_entities = remove_unidentified_statutes(doc, new_statutes)
+        doc.ents = new_entities
 
-    # for cluster in new_statutes_clusters.keys():
-    #     stat_clusters[cluster.text] = new_statutes_clusters[cluster]
+        # for cluster in new_statutes_clusters.keys():
+        #     stat_clusters[cluster.text] = new_statutes_clusters[cluster]
 
-    new_clusters = add_statute_head(clusters, stat_clusters)
+        new_clusters = add_statute_head(clusters, stat_clusters)
+    except:
+        new_clusters, stat_clusters = None, None
 
     return new_clusters, stat_clusters
 
