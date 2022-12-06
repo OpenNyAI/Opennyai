@@ -38,3 +38,5 @@ Additional Parameters while creating Data object
 * use_cache (bool): Set it to true if you want to enable caching while preprocessing. Always set this to True.
 
 * verbose (bool): Set it to if you want to see progress bar while processing happens
+
+* file_ids (list): List of custom file ids to use for documents

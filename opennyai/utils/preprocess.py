@@ -12,7 +12,7 @@ from .sentencizer import split_main_judgement_to_preamble_and_judgement
 class Data:
     def __init__(self, input_text: Union[str, list], preprocessing_nlp_model: str = 'en_core_web_trf',
                  mini_batch_size: int = 40000, use_gpu: bool = True,
-                 use_cache: bool = True, verbose: bool = False):
+                 use_cache: bool = True, verbose: bool = False, file_ids: list = []):
         """Returns object of Data class.
          It is used for common preprocessing of all the components present in this library.
         Args:
@@ -26,6 +26,7 @@ class Data:
              documentation
             use_cache (bool): Set it to true if you want to enable caching while preprocessing
             verbose (bool): Set it to if you want to see progress bar while processing happens
+            file_ids (list): list of custom file ids to use with documents
 
             Examples::
             >>> text = 'Section 319 Cr.P.C. contemplates a situation where the evidence adduced by the prosecution for Respondent No.3-G. Sambiah on 20th June 1984'
@@ -43,11 +44,24 @@ class Data:
         self.__mini_batch_size__ = mini_batch_size
         self.__verbose__ = verbose
         self.__use_cache__ = use_cache
+        self.__file_ids__ = []
         if self.__use_cache__:
             self.__cache__ = {}
+        if self.__file_ids__ and (len(self.__file_ids__) != len(self.__input_text__)):
+            raise RuntimeError('Count of file_ids not equal to count of input text')
         if isinstance(self.__input_text__, str):
             self.__input_text__ = [self.__input_text__]
-        self.__input_text__ = [text for text in self.__input_text__ if text.strip()]
+        if self.__file_ids__:
+            texts = []
+            ids = []
+            for index, text in self.__input_text__:
+                if text.strip():
+                    texts.append(text)
+                    ids.append(self.__file_ids__[index])
+            self.__input_text__ = texts
+            self.__file_ids__ = ids
+        else:
+            self.__input_text__ = [text for text in self.__input_text__ if text.strip()]
         if isinstance(self.__input_text__, list) and len(self.__input_text__) >= 1 and all(
                 isinstance(item, str) for item in self.__input_text__):
             pass
@@ -83,7 +97,10 @@ class Data:
                 f'There was an error while loading {preprocessing_nlp_model}\n To rectify try running:\n pip install -U {PIP_INSTALLER_URLS[preprocessing_nlp_model]}')
 
     def _clean_cache(self):
-        ids = [sha256(text.encode('utf-8')).hexdigest() for text in self.__input_text__]
+        if not self.__file_ids__:
+            ids = [sha256(text.encode('utf-8')).hexdigest() for text in self.__input_text__]
+        else:
+            ids = self.__file_ids__
         for key in self.__cache__.keys():
             if str(key) not in ids:
                 self.__cache__.pop(str(key))
@@ -97,8 +114,11 @@ class Data:
         data = []
         if self.__verbose__:
             msg.info('Processing input data!!!')
-        for text in tqdm(to_process, disable=not self.__verbose__):
-            file_id = sha256(text.encode('utf-8')).hexdigest()
+        for index, text in tqdm(enumerate(to_process), disable=not self.__verbose__, total=len(to_process)):
+            if self.__file_ids__:
+                file_id = self.__file_ids__[index]
+            else:
+                file_id = sha256(text.encode('utf-8')).hexdigest()
             if self.__use_cache__ and self.__cache__.get(file_id) is not None:
                 data.append(self.__cache__[file_id])
             else:
