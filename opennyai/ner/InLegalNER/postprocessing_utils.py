@@ -140,7 +140,7 @@ def create_precedent_clusters(precedent_breakup, threshold):
                     cluster.append(list(precedent_breakup.keys())[j])
             precedent_clusters[cluster_num] = cluster
             cluster_num = cluster_num + 1
-        print(precedent_clusters)
+
 
     return precedent_clusters
 
