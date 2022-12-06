@@ -1,9 +1,10 @@
 import collections
+import math
 import re
 import pandas as pd
 import nltk
 import spacy
-
+from thefuzz import fuzz
 from Levenshtein import distance as lev
 
 
@@ -33,7 +34,7 @@ def calculate_lev(names, threshold):
     return pairs, len(pairs.keys())
 
 
-def get_precedent_supras(doc, entities_pn, entities_precedents):
+def get_precedent_supras(doc, entities_pn, precedent_breakup,entities_precedents,changes_threshold=2):
     text = doc.text
     ends = [ent.end_char for ent in entities_pn]
     supras = []
@@ -47,19 +48,45 @@ def get_precedent_supras(doc, entities_pn, entities_precedents):
 
     supra_precedent_matches = {}
 
+
     for supra in supras:
         matches = []
+        supra_text = re.sub(' +', '', supra.text.lower())
+        # threshold=(100-(math.ceil(100/len(supra_text))*changes_threshold)) ###changes_threshold has no. of characters that could be changed
 
-        for i, precedent in enumerate(entities_precedents):
+        for i, precedent in enumerate(precedent_breakup.keys()):
             if precedent.start > supra.end:
                 break
-            supra_text = re.sub(' +', '', supra.text)
-            precedent_text = re.sub(' +', '', precedent.text)
-            supra_text = supra_text.replace('(', '\(').replace(')', '\)')
-            match = re.search(supra_text, precedent_text, re.IGNORECASE)
 
-            if match:
-                matches.append(precedent)
+            pet =precedent_breakup[precedent][0].split(' and ')[0]
+            res = precedent_breakup[precedent][1].split(' and ')[0]
+
+            supra_text = supra_text.replace('(', '\(').replace(')', '\)')
+
+            pet_text = re.sub(' +', '', pet.lower())
+            res_text = re.sub(' +', '', res.lower())
+            found=0
+            for petitioner in  pet_text.split(' '):
+                if lev(petitioner,supra_text)<=changes_threshold:
+                    found=found+1
+                    matches.append(precedent)
+            if found==0:
+                for respondent in res_text.split(' '):
+                    if lev(respondent, supra_text) <= changes_threshold:
+                        found = found + 1
+                        matches.append(precedent)
+            #
+            # pet_dist = fuzz.partial_ratio(pet_text, supra_text)
+            # res_dist = fuzz.partial_ratio(res_text, supra_text)
+
+            # match = re.search(supra_text, precedent_text, re.IGNORECASE)
+            #
+            # if match:
+            #     matches.append(precedent)
+
+            # if pet_dist>threshold or res_dist>threshold:
+            #
+            #     matches.append(precedent)
         if len(matches) > 0:
             supra_precedent_matches[supra] = matches[-1]
 
@@ -106,6 +133,7 @@ def create_precedent_clusters(precedent_breakup, threshold):
 
             precedent_clusters[cluster_num] = cluster
             cluster_num = cluster_num + 1
+
         elif cit != None:
             for j in range(i + 1, len(precedent_breakup)):
                 cit_1 = list(precedent_breakup.values())[j][2]
@@ -114,6 +142,7 @@ def create_precedent_clusters(precedent_breakup, threshold):
                     cluster.append(list(precedent_breakup.keys())[j])
             precedent_clusters[cluster_num] = cluster
             cluster_num = cluster_num + 1
+        print(precedent_clusters)
 
     return precedent_clusters
 
@@ -129,7 +158,7 @@ def split_precedents(precedents):
             cit = citation.group()
             text = entity.text[:citation.start()]
         else:
-            cit = ''
+            cit = None
             text = entity.text
         vs = re.search(regex_vs, text)
         if vs:
@@ -156,6 +185,7 @@ def merge_supras_precedents(precedent_supra_matches, precedent_clusters):
             precedent_clusters[counter] = [list(precedent_supra_matches.keys())[i], s_p_match]
             counter = counter + 1
 
+
     return precedent_clusters
 
 
@@ -176,7 +206,8 @@ def precedent_coref_resol(doc):
 
         precedent_clusters = create_precedent_clusters(precedent_breakup, threshold=5)
 
-        precedent_supra_matches, supras = get_precedent_supras(doc, entities_pn, entities_precedents)
+        precedent_supra_matches, supras = get_precedent_supras(doc, entities_pn,precedent_breakup, entities_precedents,changes_threshold=2)
+
 
         precedent_supra_clusters = merge_supras_precedents(precedent_supra_matches, precedent_clusters)
 
@@ -435,6 +466,7 @@ def separate_provision_get_pairs_statute(pro_statute):
 
 
 def check_validity(provision, statute):
+
     if 'article' in provision.text.lower():
         if 'constitution' in statute.text.lower() or 'rules' in statute.text.lower():
             return False
@@ -769,6 +801,7 @@ def merge_clusters(clusters, threshold=5):
             new_clusters[statute] = clusters[list(clusters.keys())[i]]
     return new_clusters
 
+# def statute_clusters_with_years()
 
 def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters, statute_shortforms_path):
     clusters = {}
@@ -865,6 +898,12 @@ def check_stat(text, acr_dict):
     regex_idact = r'(?i)\b((i\.*\s*d\.*\s*)|(industrial\s*\-*dispute(s)*\s+)act\s*)\b'
     regex_sarfaesi = r'(?i)\b((s\.*\s*a\.*\s*r\.*\s*f\.*\s*a\.*\s*e\.*\s*s\.*\s*i\.*\s*)|(securitisation\s*and\s*reconstruction\s*of\s*financial\s*assets\s*and\s*enforcement\s*of\s*security\s*interest\s+)act\s*)\b'
     regex_cpc = r'(?i)\b(((civil|c)\.*\s*(procedure|p)\.*\s*(c|code)\.*)|(code\s*of\s*civil\s*procedure))\s*'
+    regex_ndpc=r'(?i)\b((narcotic|n\.*)\s*(drugs\s*and|d\.*)\s*(psychotropic|p\.*)\s*(substances|s\.*)\s*(act)*)\s*'
+    regex_ni=r'(?i)\b((negotiable|n\.*)\s*(instruments|i\.*)\s*(act))\s*'
+    regex_pocso=r'(?i)\b((prevention|p\.*)\s*(of|o\.*)\s*(children|c\.*)\s*(from)*\s*(sexual|s\.*)\s*(offences|o\.*)\s*(act)*\s*)'
+    regex_pota=r'(?i)\b((prevention|p\.*)\s*(of|o\.*)\s*(terrorism|t\.*)\s*(act|a\.*)\s*)'
+    regex_tada=r'(?i)\b((terrorist|t\.*)\s*(and|a\.*)\s*(disruptive|d\.*)\s*(activities|a\.*)\s*)'
+    regex_tp=r'(?i)\b((transfer|t\.*)\s*(of)*\s*(property|p\.*)\s*(act))\s*'
 
     match_crpc = re.search(regex_crpc, text)
     match_ipc = re.search(regex_ipc, text)
@@ -874,7 +913,17 @@ def check_stat(text, acr_dict):
     match_idact = re.search(regex_idact, text)
     match_sarfaesi = re.search(regex_sarfaesi, text)
     match_cpc = re.search(regex_cpc, text)
+<<<<<<< HEAD
     if len(acr_dict) > 0:
+=======
+    match_ndpc=re.search(regex_ndpc,text)
+    match_ni=re.search(regex_ni,text)
+    match_pocso = re.search(regex_pocso, text)
+    match_pota = re.search(regex_pota, text)
+    match_tada = re.search(regex_tada, text)
+    match_tp = re.search(regex_tp, text)
+    if len(acr_dict)>0:
+>>>>>>> 54356d8 (Improved precedent matching logic)
         for fullform in acr_dict.keys():
             regex = provide_predefined_statute(fullform, acr_dict[fullform])
 
@@ -898,6 +947,20 @@ def check_stat(text, acr_dict):
         return 'Code of Civil Procedure'
     elif text.lower().strip() == 'sebi act':
         return 'Securities and Exchange Board of India Act'
+    elif match_ndpc:
+        return 'Narcotic Drugs and Psychotropic Substances Act'
+    elif match_ni:
+
+        return 'Negotiable Instruments act'
+    elif match_pocso:
+        return 'Protection Of Children from Sexual Offences Act'
+    elif match_pota:
+        return 'Prevention of Terrorism Act'
+    elif match_tada:
+        return 'Terrorist and Disruptive Activities Act'
+    elif match_tp:
+        return 'Transfer of Property Act'
+
     else:
         return ''
 
