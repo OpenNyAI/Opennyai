@@ -106,7 +106,7 @@ class InLegalNER:
 
                 if not postprocessing_success:
                     msg.warn(
-                        '''There was some issue while performing postprocessing. 
+                        f'''There was some issue while performing postprocessing for doc id {to_process['file_id']}. 
                         Some of postprocessing info may be absent because of this in doc.''')
             processed_data.append(nlp_doc)
         if len(processed_data) == 1:
