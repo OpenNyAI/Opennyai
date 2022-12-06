@@ -44,7 +44,7 @@ class Data:
         self.__mini_batch_size__ = mini_batch_size
         self.__verbose__ = verbose
         self.__use_cache__ = use_cache
-        self.__file_ids__ = []
+        self.__file_ids__ = file_ids
         if self.__use_cache__:
             self.__cache__ = {}
         if self.__file_ids__ and (len(self.__file_ids__) != len(self.__input_text__)):
