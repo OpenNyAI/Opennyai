@@ -37,12 +37,17 @@ Use following python to get structure of 2 court judgments using sentence rhetor
 .. code-block:: python
 
     from opennyai import RhetoricalRolePredictor
-    from opennyai.utils import Data,get_text_from_indiankanoon_url
+    from opennyai.utils import Data
+    import urllib
 
-    text1 = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/811682/')
-    text2 = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/1386912/')
+    ###### Get court judgment texts on which to run the AI models
+    text1 = urllib.request.urlopen('https://raw.githubusercontent.com/OpenNyAI/Opennyai/master/samples/sample_judgment1.txt').read().decode()
+    text2 = urllib.request.urlopen('https://raw.githubusercontent.com/OpenNyAI/Opennyai/master/samples/sample_judgment2.txt').read().decode()
     texts_to_process = [text1,text2] ### you can also load your text files directly into this
     data = Data(texts_to_process)  #### create Data object for data  preprocessing before running ML models
 
-    rr_model = RhetoricalRolePredictor(use_gpu=True)
-    rr_output = rr_model(data)
+    pipeline = Pipeline(components=['Rhetorical_Role'], use_gpu=use_gpu, verbose=True)
+
+    results = pipeline(data)
+
+    json_result_doc_1 = results[0]

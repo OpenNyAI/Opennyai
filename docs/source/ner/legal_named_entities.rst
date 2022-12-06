@@ -38,13 +38,26 @@ Use following python to extract entities from single court judgment. For running
 .. code-block:: python
 
     import opennyai.ner as InLegalNER
-    from opennyai.utils import Data,get_text_from_indiankanoon_url
+    from opennyai.utils import Data
+    import urllib
 
-    text = get_text_from_indiankanoon_url('https://indiankanoon.org/doc/811682/')
-    data = Data(text) #### Data object for preprocessing
-    NER_model = InLegalNER.load(model_name='en_legal_ner_trf', use_gpu=True)  ## load spacy pipeline for Named Entity Recognition
-    ner_output = NER_model(data, do_sentence_level=True,do_postprocess=True)
-    identified_entites = [(ent, ent.label_) for ent in ner_output.ents]
+    ###### Get court judgment texts on which to run the AI models
+    text1 = urllib.request.urlopen('https://raw.githubusercontent.com/OpenNyAI/Opennyai/master/samples/sample_judgment1.txt').read().decode()
+    text2 = urllib.request.urlopen('https://raw.githubusercontent.com/OpenNyAI/Opennyai/master/samples/sample_judgment2.txt').read().decode()
+    texts_to_process = [text1,text2] ### you can also load your text files directly into this
+    data = Data(texts_to_process)  #### create Data object for data  preprocessing before running ML models
+
+    pipeline = Pipeline(components=['NER'], use_gpu=use_gpu, verbose=True,ner_model_name='en_legal_ner_trf',
+                 ner_mini_batch_size=40000, ner_do_sentence_level=True, ner_do_postprocess=True,
+                 ner_statute_shortforms_path='')
+
+    results = pipeline(data)
+
+    json_result_doc_1 = results[0]
+
+    ner_doc_1 = pipeline._ner_model_output[0]
+
+    identified_entites = [(ent, ent.label_) for ent in ner_doc_1.ents]
 
 Output of NER model is a spacy doc and identified_entities is list of entities extracted.
 
@@ -57,19 +70,19 @@ Output of NER model is a spacy doc and identified_entities is list of entities e
 
 Important parameters while loading NER model
 --------------------
-* model_name (string): Accepts a model name of spacy as InLegalNER that will be used for NER inference available models are 'en_legal_ner_trf', 'en_legal_ner_sm'. 'en_legal_ner_trf' has best accuracy but can be slow, on the other hand 'en_legal_ner_sm' is fast but less accurate.
+* ner_model_name (string): Accepts a model name of spacy as InLegalNER that will be used for NER inference available models are 'en_legal_ner_trf', 'en_legal_ner_sm'. 'en_legal_ner_trf' has best accuracy but can be slow, on the other hand 'en_legal_ner_sm' is fast but less accurate.
 
 * use_gpu (bool): Functionality to give a choice whether to use GPU for inference or not. Setting it True doesn't ensure GPU will be utilized it need proper support libraries as mentioned in documentation
 
 Important parameters while inferring NER model
 --------------------
-* do_sentence_level (bool): To perform inference at sentence level or not, at sentence level it better accuracy. We recommend setting this to True.
+* ner_do_sentence_level (bool): To perform inference at sentence level or not, at sentence level it better accuracy. We recommend setting this to True.
 
-* do_postprocess (bool): To perform post-processing over processed doc. We recommend to set this to True.
+* ner_do_postprocess (bool): To perform post-processing over processed doc. We recommend to set this to True.
 
-* statute_shortforms_path(path):It is the path of the csv file if the user wants to provide predefined shortforms to create statute clusters.The csv should have 2 columns namely 'fullforms' and 'shortforms' where 'fullforms' contain the full name of the statute eg. 'code of criminal procedure' and shortforms contain the acronym that can be present in the judgment eg.'crpc'.Each row represents a fullform,shortform pair.
+* ner_statute_shortforms_path(path):It is the path of the csv file if the user wants to provide predefined shortforms to create statute clusters.The csv should have 2 columns namely 'fullforms' and 'shortforms' where 'fullforms' contain the full name of the statute eg. 'code of criminal procedure' and shortforms contain the acronym that can be present in the judgment eg.'crpc'.Each row represents a fullform,shortform pair.
 
-* mini_batch_size (int): This accepts an int as batch size for processing of a document, if length of document is bigger that given batch size it will be chunked and then processed.
+* ner_mini_batch_size (int): This accepts an int as batch size for processing of a document, if length of document is bigger that given batch size it will be chunked and then processed.
 
 * verbose (bool): Set it to if you want to see progress bar while processing happens
 
@@ -77,7 +90,7 @@ Post Processing of extracted Named Entities
 ======================
 Since the document level context was not used duiring annotation,it is important to capture the document level context while inference. This can be done via postprocessing using rules.
 
-To perform postprocessing on the extracted entities specify `do_postprocessing=True`.
+To perform postprocessing on the extracted entities specify `ner_do_postprocess=True`.
 
 The postprocessing is done on these entities:
 
@@ -86,7 +99,7 @@ citation,only petitioner's name supra etc.For eg. 'darambir vs state of maharash
 are  clustered together and the longest precedent in the cluster is the head of the cluster.The output is a dict where the keys are the head of the cluster (longest precedent) and value
 is a list of all the precedents in that cluster. To access the list, use
 
-`doc.user_data['precedent_clusters']`
+`ner_doc_1.user_data['precedent_clusters']`
 
 For example
  [{Madhu Limaye v. State of Mahrashtra: [Madhu Limaye v. State of Mahrashtra, Madhu Limaye v. State of Maharashtra, Madhu Limaye, Madhu Limaye, Madhu Limaye]}]
@@ -96,7 +109,7 @@ Many a times,the way a statute is referred within a judgment is explicitly menti
 So,every mention of MV act would belong to the same cluster with head as "Motor Vehicle Act". .It can be
 used by:
 
-`doc.user_data['statute_clusters']`
+`ner_doc_1.user_data['statute_clusters']`
 
 For example:
 { 'Criminal Procedure Code': [Code of Criminal Procedure,Crpc] }
@@ -107,7 +120,7 @@ corresponding statutes are not mentioned explicitly .To find statutes for these 
 The output is a list of named tuples, each tuple contains provision-statute-normalised provision-normalised statutes text eg. (362,IPC,'Section 362','Indian Penal Code') .It can be
 used by:
 
-`doc.user_data['provision_statute_pairs']`
+`ner_doc_1.user_data['provision_statute_pairs']`
 
 For example
 [(Section 369, Crpc, 'Section 369','Criminal Procedure Code'), (Section 424, Crpc, 'Section 424','Criminal Procedure Code')]
@@ -128,7 +141,7 @@ To visualize the NER result on single judgment text please run
 
     from spacy import displacy
     from opennyai.ner.ner_utils import ner_displacy_option
-    displacy.serve(ner_output, style='ent',port=8080,options=ner_displacy_option)
+    displacy.serve(ner_doc_1, style='ent',port=8080,options=ner_displacy_option)
 
 
 Please click on the link displayed in the console to see the annotated entities.
@@ -141,7 +154,8 @@ Getting unique provisions,statutes and precedents
 
 .. code-block:: python
 
-    precedents=InLegalNER.get_unique_precedent_count(ner_output)
+    from opennyai.ner import get_unique_precedent_count
+    precedents=InLegalNER.get_unique_precedent_count(ner_doc_1)
     
 It will return a dictionary with name of the precedents  as keys and number of times they occured as values.
  For eg. State of Punjab v. Phil  and Anr: [State of Punjab v. Phil Rani and Anr, Phil ]
@@ -151,7 +165,8 @@ It will return a dictionary with name of the precedents  as keys and number of t
 
 .. code-block:: python
 
-    provisions=InLegalNER.get_unique_provision_count(ner_output)
+    from opennyai.ner import get_unique_provision_count
+    provisions=get_unique_provision_count(ner_doc_1)
     
 It will return a dictionary with name of the provisions as keys and number of times they occured as values.
  For eg.{'Article 226 of Constitution': 11, 'Article 227 of Constitution': 12}
@@ -160,7 +175,8 @@ It will return a dictionary with name of the provisions as keys and number of ti
 
 .. code-block:: python
 
-    statutes=InLegalNER.get_unique_statute_count(ner_output)
+    from opennyai.ner import get_unique_statute_count
+    statutes=get_unique_statute_count(ner_doc_1)
 
 
 It will return a dictionary with name of the statutes as keys and number of times they occured as values.
@@ -171,30 +187,12 @@ It will return a dictionary with name of the statutes as keys and number of time
 
 Storing extracted Named Entities to a file
 ======================
-1. To get result in json format with span information:
-
-
-.. code-block:: python
-
-    json_result = InLegalNER.get_json_from_spacy_doc(ner_output)
-
-
-In the created json,each entity has a 'normalized_name' associated with it described as below:-
-
-a.Statutes:For statutes,normalized name is the head of the cluster the statute belongs to as explained above in the statute_clusters.
-
-b.Provisions:For provisions,it consists of the name of the provision followed by the statute it belongs to using the separator  '&&&' .
-
-c.Precendents:For precedents,it consists the head of the cluster to which the precedent belongs to as explained above in precedent_clusters.
-
-For every other entity,normalized_name has the same text as the entity text.
-Note: You can import generated json to label studio and visualize all the details about the postprocessing
-
-2. To save result in csv file with linked entities :
+1. To save result in csv file with linked entities :
 
 .. code-block:: python
 
-    InLegalNER.get_csv(ner_output,file_name,save_path):
+    from opennyai.ner import get_csv
+    get_csv(ner_doc_1,file_name,save_path):
 In the created csv,it will have 4 columns namely:
 
 'file_name': name of the file/judgment
