@@ -913,9 +913,7 @@ def check_stat(text, acr_dict):
     match_idact = re.search(regex_idact, text)
     match_sarfaesi = re.search(regex_sarfaesi, text)
     match_cpc = re.search(regex_cpc, text)
-<<<<<<< HEAD
-    if len(acr_dict) > 0:
-=======
+
     match_ndpc=re.search(regex_ndpc,text)
     match_ni=re.search(regex_ni,text)
     match_pocso = re.search(regex_pocso, text)
@@ -923,7 +921,7 @@ def check_stat(text, acr_dict):
     match_tada = re.search(regex_tada, text)
     match_tp = re.search(regex_tp, text)
     if len(acr_dict)>0:
->>>>>>> 54356d8 (Improved precedent matching logic)
+
         for fullform in acr_dict.keys():
             regex = provide_predefined_statute(fullform, acr_dict[fullform])
 
