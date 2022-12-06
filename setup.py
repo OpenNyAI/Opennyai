@@ -47,7 +47,7 @@ setup(
         "tqdm>=4.63.0,<4.64.1",
         "prettytable>=3.1.1,<3.4.1",
         "scikit-learn", "pytest",
-        "levenshtein"],
+        "levenshtein","Levenshtein","thefuzz"],
     tests_require=["pytest", "pytest-cov"],
     python_requires=">=3.7.0",
 )
