@@ -86,7 +86,7 @@ class InLegalNER:
                 else:
                     ents = list(nlp_doc.ents)
                     ents.extend(other_person_entites)
-                    ents = tuple(ents)
+                    ents = spacy.util.filter_spans(tuple(ents))
                     nlp_doc.ents = ents
 
                 if precedent_clusters:
