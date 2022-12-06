@@ -54,7 +54,7 @@ class Data:
         if self.__file_ids__:
             texts = []
             ids = []
-            for index, text in self.__input_text__:
+            for index, text in enumerate(self.__input_text__):
                 if text.strip():
                     texts.append(text)
                     ids.append(self.__file_ids__[index])
