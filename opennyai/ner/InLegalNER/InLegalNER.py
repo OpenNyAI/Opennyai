@@ -1,3 +1,5 @@
+import copy
+
 import spacy
 from tqdm import tqdm
 from wasabi import msg
@@ -82,7 +84,10 @@ class InLegalNER:
                 if all_entities:
                     nlp_doc.ents = all_entities
                 else:
-                    nlp_doc.ents.extend(other_person_entites)
+                    ents = list(copy.deepcopy(nlp_doc.ents))
+                    ents.extend(other_person_entites)
+                    ents = tuple(ents)
+                    nlp_doc.ents = ents
 
                 if precedent_clusters:
                     nlp_doc.user_data['precedent_clusters'] = precedent_clusters
