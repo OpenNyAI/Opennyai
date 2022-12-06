@@ -54,6 +54,20 @@ To run the 3 OpenNyAI models on judgment texts of your choice please run followi
     results = pipeline(data)
 
 
+Extra parameters for Pipeline:
+
+* components (list): Models that you want to run over your input judgements
+* use_gpu (bool): Functionality to give a choice whether to use GPU for inference or not. Setting it True doesn't ensure GPU will be utilized it need proper support libraries as mentioned in documentation
+* verbose (bool): Set it to True if you want to see progress bar/updates while processing happens
+* ner_model_name (string): Accepts a model name of spacy as InLegalNER that will be used for NER inference available models are 'en_legal_ner_trf', 'en_legal_ner_sm'. 'en_legal_ner_trf' has best accuracy but can be slow, on the other hand 'en_legal_ner_sm' is fast but less accurate.
+* ner_mini_batch_size (int): This accepts an int as batch size for processing of a document, if length of document is bigger that given batch size it will be chunked and then processed.
+* ner_do_sentence_level (bool): To perform inference at sentence level or not, at sentence level it better accuracy. We recommend setting this to True.
+* ner_do_postprocess (bool): To perform post-processing over processed doc. We recommend to set this to True.
+* ner_statute_shortforms_path (path):It is the path of the csv file if the user wants to provide predefined shortforms to create statute clusters.The csv should have 2 columns namely 'fullforms' and 'shortforms' where 'fullforms' contain the full name of the statute eg. 'code of criminal procedure' and shortforms contain the acronym that can be present in the judgment eg.'crpc'.Each row represents a fullform,shortform pair.
+* summarizer_summary_length (float): Give you the functionality to choose the length of generated summary. Default is 0 which will set it to adaptive length selection. Valid input lie in range(0-1)
+
+
+
 The predictions of each of the models is added at the sentence level.
 
 For each of the sentence in an output,

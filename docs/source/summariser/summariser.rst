@@ -48,7 +48,7 @@ To use Summarizer model simply execute code below. For running all 3 AI models t
     rr_model = RhetoricalRolePredictor(use_gpu=True)
     rr_output = rr_model(data)
 
-    summarizer = ExtractiveSummarizer(use_gpu=True, verbose=False)
+    summarizer = ExtractiveSummarizer(use_gpu=True, verbose=False, summary_length=0.0)
     summaries = summarizer(rr_output)
 
 
