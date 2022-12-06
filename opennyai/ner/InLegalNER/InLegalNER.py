@@ -84,7 +84,7 @@ class InLegalNER:
                 if all_entities:
                     nlp_doc.ents = all_entities
                 else:
-                    ents = list(copy.deepcopy(nlp_doc.ents))
+                    ents = list(nlp_doc.ents)
                     ents.extend(other_person_entites)
                     ents = tuple(ents)
                     nlp_doc.ents = ents
