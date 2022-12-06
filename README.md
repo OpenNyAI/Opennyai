@@ -9,11 +9,15 @@
 
 Opennyai is a python library for natural language preprocessing on Indian legal texts.
 
-This library provides unified access to the following 3 pre-trained AI models developed by OpenNyAI which focus on Indian court
+This library provides unified access to the following 3 pre-trained AI models developed by OpenNyAI which focus on
+Indian court
 judgments:
 
-* Named Entity Recognition (NER): [GitHub](https://github.com/Legal-NLP-EkStep/legal_NER), [paper](https://arxiv.org/pdf/2211.03442.pdf)
-* Judgment Structuring using Sentence Rhetorical Roles: [GitHub](https://github.com/Legal-NLP-EkStep/rhetorical-role-baseline), [paper](http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.470.pdf)
+* Named Entity Recognition (NER): [GitHub](https://github.com/Legal-NLP-EkStep/legal_NER)
+  , [paper](https://arxiv.org/pdf/2211.03442.pdf)
+* Judgment Structuring using Sentence Rhetorical
+  Roles: [GitHub](https://github.com/Legal-NLP-EkStep/rhetorical-role-baseline)
+  , [paper](http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.470.pdf)
 * Extractive Summarizer: [GitHub](https://github.com/Legal-NLP-EkStep/judgment_extractive_summarizer)
 
 This library is mainly for running the pretrained models on your custom input judgments text. For more details about
@@ -60,9 +64,12 @@ To run the 3 OpenNyAI models on judgment texts of your choice please run followi
 from opennyai import Pipeline
 from opennyai.utils import Data
 import urllib
+
 # Get court judgment texts on which to run the AI models
-text1 = urllib.request.urlopen('https://raw.githubusercontent.com/OpenNyAI/Opennyai/master/samples/sample_judgment1.txt').read().decode()
-text2 = urllib.request.urlopen('https://raw.githubusercontent.com/OpenNyAI/Opennyai/master/samples/sample_judgment2.txt').read().decode()
+text1 = urllib.request.urlopen(
+    'https://raw.githubusercontent.com/OpenNyAI/Opennyai/master/samples/sample_judgment1.txt').read().decode()
+text2 = urllib.request.urlopen(
+    'https://raw.githubusercontent.com/OpenNyAI/Opennyai/master/samples/sample_judgment2.txt').read().decode()
 
 # you can also load your text files directly into this
 texts_to_process = [text1, text2]
@@ -83,7 +90,8 @@ results = pipeline(data)
 The output of each model is present in following keys of each element of the output
 
 ```python
-results[0]['annotations']  ## shows the result of model at sentence level, each entry will have entities, rhetorical role, and other details
+results[0][
+    'annotations']  ## shows the result of model at sentence level, each entry will have entities, rhetorical role, and other details
 results[0]['summary']  ## shows Summary for each of the Rheorical Role for first judgment text 
 ```
 

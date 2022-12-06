@@ -150,7 +150,6 @@ def split_main_judgement_to_preamble_and_judgement(text, sentence_splitting_nlp,
         judgement = process_nlp_in_chunks(judgement_text, mini_batch_size, sentence_splitting_nlp)
         preamble = process_nlp_in_chunks(preamble_text, mini_batch_size, sentence_splitting_nlp)
 
-
         return preamble, judgement
 
 
