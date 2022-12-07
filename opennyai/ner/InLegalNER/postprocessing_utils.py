@@ -33,6 +33,64 @@ def calculate_lev(names, threshold):
     return pairs, len(pairs.keys())
 
 
+def get_supra_match_by_fuzzy(supra,precedent_breakup,threshold):
+        matches=[]
+        supra_text = re.sub(' +', '', supra.text.lower())
+
+        for i, precedent in enumerate(precedent_breakup.keys()):
+            pet = precedent_breakup[precedent][0]
+            res = precedent_breakup[precedent][1]
+            pet_text=''
+            res_text=''
+            if precedent.start > supra.end:
+                break
+
+            if pet != None:
+                pet = pet.split(' and ')[0]
+                pet_text = re.sub(' +', ' ', pet.lower())
+
+            if res != None:
+                res = res.split(' and ')[0]
+                res_text = re.sub(' +', ' ', res.lower())
+
+            supra_text = supra_text.replace('(', '\(').replace(')', '\)')
+
+            if pet == None and res == None:
+                continue
+
+            found = 0
+            req_length=len(supra_text.split(' '))
+
+            for petitioner in pet_text.split(' '):
+                for s in supra_text.split(' '):
+                    if lev(petitioner, s) <= threshold:
+                        found = found + 1
+                        threshold=threshold-lev(petitioner,s)
+
+            if found != req_length:
+
+
+                for respondent in res_text.split(' '):
+                    for s in supra_text.split(' '):
+                        if lev(respondent, s) <= threshold:
+                            found = found + 1
+                            threshold = threshold - lev(respondent, s)
+
+                            # matches.append(precedent)
+
+
+
+
+            if found==req_length:
+
+                    matches.append(precedent)
+
+
+        if len(matches) > 0:
+            return matches[-1]
+        else:
+            return None
+
 def get_precedent_supras(doc, entities_pn, precedent_breakup, entities_precedents, changes_threshold=2):
     text = doc.text
     ends = [ent.end_char for ent in entities_pn]
@@ -49,44 +107,26 @@ def get_precedent_supras(doc, entities_pn, precedent_breakup, entities_precedent
 
     for supra in supras:
         matches = []
-        supra_text = re.sub(' +', '', supra.text.lower())
-        # threshold=(100-(math.ceil(100/len(supra_text))*changes_threshold)) ###changes_threshold has no. of characters that could be changed
+        supra_text = re.sub(' +', '', supra.text)
 
-        for i, precedent in enumerate(precedent_breakup.keys()):
+        for i, precedent in enumerate(entities_precedents):
             if precedent.start > supra.end:
                 break
 
-            pet = precedent_breakup[precedent][0].split(' and ')[0]
-            res = precedent_breakup[precedent][1].split(' and ')[0]
-
+            precedent_text = re.sub(' +', '', precedent.text)
             supra_text = supra_text.replace('(', '\(').replace(')', '\)')
+            match = re.search(supra_text, precedent_text, re.IGNORECASE)
 
-            pet_text = re.sub(' +', '', pet.lower())
-            res_text = re.sub(' +', '', res.lower())
-            found = 0
-            for petitioner in pet_text.split(' '):
-                if lev(petitioner, supra_text) <= changes_threshold:
-                    found = found + 1
-                    matches.append(precedent)
-            if found == 0:
-                for respondent in res_text.split(' '):
-                    if lev(respondent, supra_text) <= changes_threshold:
-                        found = found + 1
-                        matches.append(precedent)
-            #
-            # pet_dist = fuzz.partial_ratio(pet_text, supra_text)
-            # res_dist = fuzz.partial_ratio(res_text, supra_text)
-
-            # match = re.search(supra_text, precedent_text, re.IGNORECASE)
-            #
-            # if match:
-            #     matches.append(precedent)
-
-            # if pet_dist>threshold or res_dist>threshold:
-            #
-            #     matches.append(precedent)
+            if match:
+                matches.append(precedent)
         if len(matches) > 0:
             supra_precedent_matches[supra] = matches[-1]
+        else:
+            match=get_supra_match_by_fuzzy(supra,precedent_breakup,changes_threshold)
+
+            if match != None:
+                supra_precedent_matches[supra]=match
+
 
     return supra_precedent_matches, supras
 
@@ -195,9 +235,10 @@ def set_main_cluster(clusters):
 
 
 def precedent_coref_resol(doc):
-    try:
+    # try:
         entities_pn = get_entities(doc, ['OTHER_PERSON', 'ORG', 'PETITIONER', 'RESPONDENT'])
         entities_precedents = get_entities(doc, ['PRECEDENT'])
+
 
         precedent_breakup = split_precedents(entities_precedents)
 
@@ -223,9 +264,9 @@ def precedent_coref_resol(doc):
             else:
                 entities.append(entitiy)
         doc.ents = entities
-    except:
-        clusters = None
-    return clusters
+    # except:
+    #     clusters = None
+        return clusters
 
 
 def get_roles(doc):
