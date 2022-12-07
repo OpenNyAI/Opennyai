@@ -78,7 +78,7 @@ class InLegalNER:
                     all_entities = remove_overlapping_entities(nlp_doc.ents, pro_sta_clusters)
 
                     all_entities.extend(other_person_entites)
-                else:
+                elif pro_sta_clusters is None and stat_clusters is None:
                     postprocessing_success = False
 
                 if all_entities:
@@ -91,17 +91,17 @@ class InLegalNER:
 
                 if precedent_clusters:
                     nlp_doc.user_data['precedent_clusters'] = precedent_clusters
-                else:
+                elif precedent_clusters is None:
                     postprocessing_success = False
 
                 if pro_sta_clusters:
                     nlp_doc.user_data['provision_statute_pairs'] = pro_sta_clusters
-                else:
+                elif pro_sta_clusters is None:
                     postprocessing_success = False
 
                 if stat_clusters:
                     nlp_doc.user_data['statute_clusters'] = stat_clusters
-                else:
+                elif stat_clusters is None:
                     postprocessing_success = False
 
                 if not postprocessing_success:
