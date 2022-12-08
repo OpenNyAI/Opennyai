@@ -116,7 +116,7 @@ class Data:
             msg.info('Processing input data!!!')
         for index, text in tqdm(enumerate(to_process), disable=not self.__verbose__, total=len(to_process)):
             if self.__file_ids__:
-                file_id = self.__file_ids__[index]
+                file_id = self.__file_ids__[item]
             else:
                 file_id = sha256(text.encode('utf-8')).hexdigest()
             if self.__use_cache__ and self.__cache__.get(file_id) is not None:
