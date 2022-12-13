@@ -36,13 +36,14 @@ def remove_unwanted_text(text):
 
 
 def get_keyword_based_preamble_end_char_offset(text):
-    preamble_end_keywords = ["JUDGMENT", "ORDER", "J U D G M E N T", "O R D E R", "JUDGMENT & ORDER", "COMMON ORDER",
+    preamble_end_keywords = ["JUDGMENT", "ORDER", "JUDGMENT & ORDER", "COMMON ORDER",
                              "ORAL JUDGMENT"]
     preamble_end_char_offset = 0
 
     ### search for preamble end keywords on new lines
     for preamble_keyword in preamble_end_keywords:
-        match = re.search(r'\n\s*' + preamble_keyword + r'\s*\n', text)
+        preamble_regex = re.compile(r'\n\s*[^A-Za-z0-9]{0,2}\s*' + ' {0,3}'.join([i for i in preamble_keyword]) + r'\s*[^A-Za-z0-9]{0,1}\n')
+        match = re.search(preamble_regex, text)
         if match:
             preamble_end_char_offset = match.span()[1]
             break
@@ -50,7 +51,7 @@ def get_keyword_based_preamble_end_char_offset(text):
     #### if not found then search for the keywords anywhere
     if preamble_end_char_offset == 0:
         for preamble_keyword in preamble_end_keywords:
-            match = re.search(preamble_keyword, text)
+            match = re.search(' {0,3}'.join([i for i in preamble_keyword]), text)
             if match:
                 preamble_end_char_offset = match.span()[1]
                 break

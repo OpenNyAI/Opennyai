@@ -91,7 +91,7 @@ class Data:
 
         try:
             self.__preprocessing_nlp__ = spacy.load(preprocessing_nlp_model,
-                                                    exclude=['attribute_ruler', 'lemmatizer', 'ner'])
+                                                    exclude=['lemmatizer', 'ner'])
         except:
             raise RuntimeError(
                 f'There was an error while loading {preprocessing_nlp_model}\n To rectify try running:\n pip install -U {PIP_INSTALLER_URLS[preprocessing_nlp_model]}')
@@ -122,6 +122,8 @@ class Data:
             if self.__use_cache__ and self.__cache__.get(file_id) is not None:
                 data.append(self.__cache__[file_id])
             else:
+                original_text = text
+                text = text.encode(encoding='ascii', errors='ignore').decode()
                 preamble_doc, judgement_doc = split_main_judgement_to_preamble_and_judgement(text=text,
                                                                                              sentence_splitting_nlp=self.__preprocessing_nlp__,
                                                                                              mini_batch_size=self.__mini_batch_size__)
@@ -134,7 +136,7 @@ class Data:
                 _processed_data = {'file_id': file_id,
                                    "preamble_doc": preamble_doc,
                                    "judgement_doc": judgement_doc,
-                                   "original_text": text}
+                                   "original_text": original_text}
                 if self.__use_cache__:
                     self.__cache__[file_id] = _processed_data
                 data.append(_processed_data)
