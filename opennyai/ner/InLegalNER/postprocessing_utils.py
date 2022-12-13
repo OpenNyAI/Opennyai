@@ -235,7 +235,7 @@ def set_main_cluster(clusters):
 
 
 def precedent_coref_resol(doc):
-    # try:
+    try:
         entities_pn = get_entities(doc, ['OTHER_PERSON', 'ORG', 'PETITIONER', 'RESPONDENT'])
         entities_precedents = get_entities(doc, ['PRECEDENT'])
 
@@ -264,9 +264,9 @@ def precedent_coref_resol(doc):
             else:
                 entities.append(entitiy)
         doc.ents = entities
-    # except:
-    #     clusters = None
-        return clusters
+    except:
+        clusters = None
+    return clusters
 
 
 def get_roles(doc):
@@ -276,7 +276,7 @@ def get_roles(doc):
     entities_to_remove = []
 
     for i, ents in enumerate(entities):
-        if ents.label_ == 'OTHER_PERSON':
+        if ents.label_ == 'OTHER_PERSON' or ents.label_=='ORG':
 
             entities_to_remove.append(ents)
             other_person.append(ents)
@@ -386,6 +386,7 @@ def map_name_wise_other_person(other_person_cleaned, known_person_cleaned):
 def other_person_coref_res(doc):
     try:
         other_person, other_person_found, entities, known_person = map_exact_other_person(doc)
+
         known_person_cleaned = separate_name(known_person, only_first_last_name=False)
         other_person_cleaned = separate_name(other_person, only_first_last_name=True)
 
@@ -399,12 +400,14 @@ def other_person_coref_res(doc):
 
         for person in other_person:
 
-            if person.label_ == 'OTHER_PERSON':
+            if person.label_ == 'OTHER_PERSON' or person.label_=='ORG':
                 other_person_found.append(person)
 
         other_person_found.extend(known_person)
+
     except:
         other_person_found = None
+
 
     return other_person_found
 
@@ -413,7 +416,7 @@ def remove_overlapping_entities(ents, pro_sta_clusters):
     try:
         final_ents = []
         for i in ents:
-            if i.label_ not in ['PETITIONER', 'RESPONDENT', 'LAWYER', 'JUDGE', 'OTHER_PERSON', 'WITNESS', 'PROVISION']:
+            if i.label_ not in ['PETITIONER', 'RESPONDENT', 'LAWYER', 'JUDGE', 'OTHER_PERSON', 'WITNESS', 'PROVISION','ORG']:
                 final_ents.append(i)
 
         for cluster in pro_sta_clusters:
@@ -837,9 +840,9 @@ def merge_clusters(clusters, threshold=5):
         else:
             new_clusters[statute] = clusters[list(clusters.keys())[i]]
     return new_clusters
-
-
-# def statute_clusters_with_years()
+#
+#
+# def statute_clusters_with_years():
 
 def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters, statute_shortforms_path):
     clusters = {}
