@@ -840,9 +840,73 @@ def merge_clusters(clusters, threshold=5):
         else:
             new_clusters[statute] = clusters[list(clusters.keys())[i]]
     return new_clusters
-#
-#
-# def statute_clusters_with_years():
+
+
+def statute_clusters_with_years(statutes):
+        clusters={}
+
+        done=[]
+
+
+        regex_find_year = r'.*([1-3][0-9]{3})'
+        statute_cleaned=[]
+        years_cleaned=[]
+        for statute in statutes:
+                    years = re.findall(regex_find_year, statute.text)
+                    year=''
+                    if len(re.findall(regex_find_year, statute.text))>0:
+
+                        year=years[0]
+
+                    statute_cleaned.append(statute.text.replace(year,'').replace(',','').strip().lower())
+                    years_cleaned.append(year)
+
+
+        indices_done=[]
+        for m,statute in enumerate(statute_cleaned):
+
+            if m  in indices_done:
+                continue
+            indices = [i for i, x in enumerate(statute_cleaned) if x == statute]
+            indices_done.extend(indices)
+            no_years=[]
+            with_years=[]
+
+
+            if len(indices)>1:
+                for indice  in indices:
+                    if years_cleaned[indice]=='':
+                        no_years.append(indice)
+                    else:
+                        with_years.append(int(years_cleaned[indice]))
+                if len(with_years)>1:
+                    max_indice=with_years.index(max(with_years))
+                    clusters[statutes[max_indice].text] = [statutes[max_indice]]
+                    done.append(statutes[max_indice])
+                    for ind in no_years:
+                        clusters[statutes[max_indice].text].append(statutes[ind])
+                        done.append(statutes[ind])
+
+
+
+                else:
+                    clusters[statutes[max_indice].text]=[]
+                    for ind in indices:
+                        clusters[statutes[max_indice].text].append(statutes[ind])
+                        done.append(statutes[ind])
+
+
+
+        not_done=[statute for statute in statutes if statute not in done]
+
+        return clusters,not_done
+
+
+
+
+
+
+
 
 def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters, statute_shortforms_path):
     clusters = {}
@@ -879,7 +943,8 @@ def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters, sta
     flat_list = [item for sublist in clusters.keys() for item in clusters[sublist]]
     not_done = [item for item in statutes if item not in flat_list]
 
-    for statute in not_done:
+    for i,statute in enumerate(not_done):
+
         stat = check_stat(statute.text, acr_dict)
         if stat == '':
             # not_done.append(statute)
@@ -889,9 +954,12 @@ def create_statute_clusters(doc, old_statute_clusters, new_statute_clusters, sta
         else:
             clusters[stat] = []
             clusters[stat].append(statute)
-
     flat_list = [item for sublist in clusters.keys() for item in clusters[sublist]]
     not_done = [item for item in statutes if item not in flat_list]
+
+    new_clusters,not_done=statute_clusters_with_years(not_done)
+
+    clusters.update(new_clusters)
     statutes_to_find_year, statutes_found_year = find_year_statute(not_done, statutes)
     statutes_left = [stat for stat in not_done if stat not in statutes_to_find_year]
     total_statutes_left = [stat for stat in statutes if stat not in statutes_to_find_year]
@@ -1120,7 +1188,8 @@ def add_statute_head(clusters, stat_clusters):
 
 def pro_statute_coref_resol(doc, statute_shortforms_path):
     # clusters_lev=create_statute_clusters_using_lev(statutes,threshold=5)
-    try:
+    # try:
+
 
         new_statutes_clusters, new_statutes, old_statute_clusters = create_unidentified_statutes(doc)
         old_entities = list(doc.ents)
@@ -1160,10 +1229,10 @@ def pro_statute_coref_resol(doc, statute_shortforms_path):
         #     stat_clusters[cluster.text] = new_statutes_clusters[cluster]
 
         new_clusters = add_statute_head(clusters, stat_clusters)
-    except:
-        new_clusters, stat_clusters = None, None
+    # except:
+    #     new_clusters, stat_clusters = None, None
 
-    return new_clusters, stat_clusters
+        return new_clusters, stat_clusters
 
 
 def seperate_provision(doc, clusters):
