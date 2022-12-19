@@ -891,10 +891,10 @@ def statute_clusters_with_years(statutes):
 
                 else:
                     if len(with_years)==1:
-                        indi=years_cleaned.index(with_years[0])
+                        indi=years_cleaned.index(str(with_years[0]))
                     else:
                         if len(no_years)>0:
-                            indi=years_cleaned.index(no_years[0])
+                            indi=years_cleaned.index('')
                         else:
                             continue
                     clusters[statutes[indi].text]=[]
