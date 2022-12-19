@@ -880,7 +880,7 @@ def statute_clusters_with_years(statutes):
                     else:
                         with_years.append(int(years_cleaned[indice]))
                 if len(with_years)>1:
-                    max_indice=with_years.index(max(with_years))
+                    max_indice=years_cleaned.index(str((max(with_years))))
                     clusters[statutes[max_indice].text] = [statutes[max_indice]]
                     done.append(statutes[max_indice])
                     for ind in no_years:
@@ -890,9 +890,16 @@ def statute_clusters_with_years(statutes):
 
 
                 else:
-                    clusters[statutes[max_indice].text]=[]
+                    if len(with_years)==1:
+                        indi=years_cleaned.index(with_years[0])
+                    else:
+                        if len(no_years)>0:
+                            indi=years_cleaned.index(no_years[0])
+                        else:
+                            continue
+                    clusters[statutes[indi].text]=[]
                     for ind in indices:
-                        clusters[statutes[max_indice].text].append(statutes[ind])
+                        clusters[statutes[indi].text].append(statutes[ind])
                         done.append(statutes[ind])
 
 
