@@ -1,7 +1,6 @@
 import collections
 import re
-
-import nltk
+import math
 import pandas as pd
 import spacy
 from Levenshtein import distance as lev
@@ -24,7 +23,7 @@ def calculate_lev(names, threshold):
         pair = []
 
         for j in range(i + 1, len(names)):
-            dis = nltk.edit_distance(name, names[j])
+            dis = lev(name, names[j])
             if dis <= threshold:
                 pair.append(j)
                 deselect.append(j)
@@ -131,10 +130,11 @@ def get_precedent_supras(doc, entities_pn, precedent_breakup, entities_precedent
     return supra_precedent_matches, supras
 
 
-def create_precedent_clusters(precedent_breakup, threshold):
+def create_precedent_clusters(precedent_breakup, percentage_threshold):
     cluster_num = 0
     exclude = []
     precedent_clusters = {}
+
     for i, pre in enumerate(precedent_breakup.keys()):
 
         if i in exclude:
@@ -142,6 +142,8 @@ def create_precedent_clusters(precedent_breakup, threshold):
         pet = precedent_breakup[pre][0]
         res = precedent_breakup[pre][1]
         cit = precedent_breakup[pre][2]
+        threshold_pet=math.ceil((percentage_threshold/100)*len(pet))
+        threshold_res=math.ceil((percentage_threshold/100)*len(res))
 
         cluster = []
         cluster.append(pre)
@@ -162,10 +164,10 @@ def create_precedent_clusters(precedent_breakup, threshold):
                             cluster.append(list(precedent_breakup.keys())[j])
                 else:
 
-                    dis_pet = nltk.edit_distance(pet, pet_1)
-                    dis_res = nltk.edit_distance(res, res_1)
+                    dis_pet = lev(pet, pet_1)
+                    dis_res = lev(res, res_1)
 
-                    if dis_pet < threshold and dis_res < threshold:
+                    if dis_pet < threshold_pet and dis_res < threshold_res:
                         exclude.append(j)
                         cluster.append(list(precedent_breakup.keys())[j])
 
@@ -235,21 +237,30 @@ def set_main_cluster(clusters):
 
 
 def precedent_coref_resol(doc):
+    '''
+  It is used for creating precedent clusters
+    Parameters:
+        doc : nlp doc object containing all the entity information
+    Returns:
+        clusters: dict with keys as head of each cluster and value is a list of all precedents in that cluster
+   '''
+
     try:
-        entities_pn = get_entities(doc, ['OTHER_PERSON', 'ORG', 'PETITIONER', 'RESPONDENT'])
+        entities_noun = get_entities(doc, ['OTHER_PERSON', 'ORG', 'PETITIONER', 'RESPONDENT'])
         entities_precedents = get_entities(doc, ['PRECEDENT'])
 
 
-        precedent_breakup = split_precedents(entities_precedents)
+        precedent_breakup = split_precedents(entities_precedents) ###split precedents into petitioner,respondent and citation
 
-        precedent_clusters = create_precedent_clusters(precedent_breakup, threshold=5)
+        precedent_clusters = create_precedent_clusters(precedent_breakup, percentage_threshold=20)  ###create precedent clusters based on fuzzy matching of petitioner,respondent and citation
 
-        precedent_supra_matches, supras = get_precedent_supras(doc, entities_pn, precedent_breakup, entities_precedents,
+
+        precedent_supra_matches, supras = get_precedent_supras(doc, entities_noun, precedent_breakup, entities_precedents,  ### get all the supras from judgment text and create entities
                                                                changes_threshold=2)
 
-        precedent_supra_clusters = merge_supras_precedents(precedent_supra_matches, precedent_clusters)
+        precedent_supra_clusters = merge_supras_precedents(precedent_supra_matches, precedent_clusters)  ###asssign supras to the created clusters
 
-        final_clusters = set_main_cluster(precedent_supra_clusters)
+        final_clusters = set_main_cluster(precedent_supra_clusters) ###assign head to each cluster
         clusters = {}
         entities = []
 
@@ -257,7 +268,7 @@ def precedent_coref_resol(doc):
             if len(final_clusters[cluster]) > 1:
                 clusters[cluster] = final_clusters[cluster]
 
-        for entitiy in doc.ents:
+        for entitiy in doc.ents:    ###change label of supras to precedents
             if entitiy in supras:
                 entitiy.label_ = 'PRECEDENT'
                 entities.append(entitiy)
