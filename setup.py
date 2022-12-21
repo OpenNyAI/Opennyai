@@ -13,7 +13,7 @@ Instructions for creating a release of the opennyai library.
 
 setup(
     name="opennyai",
-    version="0.0.9",
+    version="0.0.10",
     url="",
     author="Aman Tiwari",
     author_email="aman.tiwari@thoughtworks.com",
