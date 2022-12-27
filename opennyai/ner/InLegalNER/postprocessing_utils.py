@@ -532,7 +532,6 @@ def check_validity(provision, statute):
 
 
 def map_pro_statute_on_heuristics(matching_pro_left, matching_pro_statute, pro_statute, total_statutes):
-    provisions_left = []
     co = 0
     if len(total_statutes) > 0:
 
@@ -592,7 +591,7 @@ def map_pro_statute_on_heuristics(matching_pro_left, matching_pro_statute, pro_s
     return matching_pro_statute, pro_statute
 
 
-def get_clusters(pro_statute, total_statute):
+def get_clusters(pro_statute):
     custom_ents = []
     k = 0
     clusters = []
@@ -1206,10 +1205,19 @@ def add_statute_head(clusters, stat_clusters):
 
 def pro_statute_coref_resol(doc, statute_shortforms_path):
     # clusters_lev=create_statute_clusters_using_lev(statutes,threshold=5)
-    # try:
+    '''
+     It is used for creating statute and provision clusters
+       Parameters:
+           doc : nlp doc object containing all the entity information
+           statute_shortforms_path: path to the csv containing predefined statute shortforms
+       Returns:
+           provision_clusters:  list of named tuples, each tuple contains provision-statute-normalised provision-normalised statutes text
+           stat_clusters:  dict with keys as head of each cluster and value is a list of all statutes in that cluster
+      '''
+    try:
 
 
-        new_statutes_clusters, new_statutes, old_statute_clusters = create_unidentified_statutes(doc)
+        new_statutes_clusters, new_statutes, old_statute_clusters = create_unidentified_statutes(doc)  ###create statutes that are within the parantheses like hereby referred as 'act'
         old_entities = list(doc.ents)
 
         for ent in new_statutes:
@@ -1220,12 +1228,10 @@ def pro_statute_coref_resol(doc, statute_shortforms_path):
         doc.ents = old_entities
 
         stat_clusters = create_statute_clusters(doc, old_statute_clusters, new_statutes_clusters,
-                                                statute_shortforms_path)
-
-        pro_statute, pro_left, total_statutes = get_exact_match_pro_statute(doc)
-
-        to_remove, matching_pro_statute = separate_provision_get_pairs_statute(pro_statute)
-        matching_pro_left = separate_provision_get_pairs_pro(pro_left)
+                                                statute_shortforms_path)  ###create cluster of statutes based on matching exact statute names,by years and by acronyms
+        pro_statute, pro_left, total_statutes = get_exact_match_pro_statute(doc)  ###create pairs of explicit provision-statutes
+        to_remove, matching_pro_statute = separate_provision_get_pairs_statute(pro_statute)  ###separate provisions like section 2 and 3 and remove only subsection and clauses
+        matching_pro_left = separate_provision_get_pairs_pro(pro_left)  ###separate provisions for the left provisions
 
         for pro in to_remove:
             if pro in pro_statute:
@@ -1234,23 +1240,23 @@ def pro_statute_coref_resol(doc, statute_shortforms_path):
         matching_pro_statute, pro_statute = map_pro_statute_on_heuristics(matching_pro_left,
                                                                           matching_pro_statute,
                                                                           pro_statute,
-                                                                          total_statutes)
+                                                                          total_statutes)   ###map left provisions to statutes based on the heuristics
 
-        clusters = get_clusters(pro_statute, total_statutes)
+        clusters = get_clusters(pro_statute)  ###assign each provision to the statute cluster it belongs to
 
-        clusters = seperate_provision(doc, clusters)
+        clusters = seperate_provision(doc, clusters)  ###separate provisions and create new entities for them
 
-        new_entities = remove_unidentified_statutes(doc, new_statutes)
+        new_entities = remove_unidentified_statutes(doc, new_statutes)  ###remove the extra statutes identified initially
         doc.ents = new_entities
 
         # for cluster in new_statutes_clusters.keys():
         #     stat_clusters[cluster.text] = new_statutes_clusters[cluster]
 
-        new_clusters = add_statute_head(clusters, stat_clusters)
-    # except:
-    #     new_clusters, stat_clusters = None, None
+        provision_clusters = add_statute_head(clusters, stat_clusters)   ###add statute head to each provision-statute pair
+    except:
+        provision_clusters, stat_clusters = None, None
 
-        return new_clusters, stat_clusters
+    return provision_clusters, stat_clusters
 
 
 def seperate_provision(doc, clusters):
