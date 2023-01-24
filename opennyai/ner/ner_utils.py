@@ -92,7 +92,12 @@ def get_csv(doc, f_name, save_path):
     entity = []
     label = []
     normalised_entities = []
-
+    if doc.user_data.get('provision_statute_pairs') is None:
+        doc.user_data['provision_statute_pairs'] = []
+    if doc.user_data.get('precedent_clusters') is None:
+        doc.user_data['precedent_clusters'] = {}
+    if doc.user_data.get('statute_clusters') is None:
+        doc.user_data['statute_clusters'] = {}
     for pro_ent in doc.user_data['provision_statute_pairs']:
         file_name.append(f_name)
         entity.append(pro_ent[0])
