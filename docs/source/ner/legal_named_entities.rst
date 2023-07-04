@@ -91,7 +91,7 @@ Post Processing of extracted Named Entities
 ======================
 Since the document level context was not used duiring annotation,it is important to capture the document level context while inference. This can be done via postprocessing using rules.
 
-To perform postprocessing on the extracted entities specify `ner_do_postprocess=True`.
+To perform postprocessing on the extracted entities specify `ner_do_postprocess=True`. The key `normalized_name` of each entity contains the output of postprocessing.
 
 The postprocessing is done on these entities:
 
