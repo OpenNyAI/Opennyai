@@ -38,6 +38,7 @@ Use following python to extract entities from single court judgment. For running
 .. code-block:: python
 
     import opennyai.ner as InLegalNER
+    from opennyai import Pipeline
     from opennyai.utils import Data
     import urllib
 
