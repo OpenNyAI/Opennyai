@@ -99,6 +99,7 @@ For more details on usage please refer to the [documentation](https://opennyai.r
 
 Google Colab Notebook
 ----------------------
+We encourage you to use the local machine installation of opennyai library instead of Google colab as it works with python 3.8. Since Google colab works with higher versions of python, opennyai installation does not work.
 
 | Description               | Link  |
 |---------------------------|-------|
