@@ -4,7 +4,8 @@
 
 [![Current Release Version](https://img.shields.io/github/release/OpenNyAI/opennyai.svg?style=flat-square&logo=github)](https://github.com/OpenNyAI/Opennyai/releases)
 [![PyPI version](https://img.shields.io/pypi/v/opennyai.svg?style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/opennyai/)
-[![python version](https://img.shields.io/badge/Python-%3E=3.7-blue)](https://github.com/OpenNyAI/Opennyai)
+[![python version](https://img.shields.io/badge/Python-%3E=3.8-blue)](https://github.com/OpenNyAI/Opennyai)
+[![python version](https://img.shields.io/badge/Python-<3.11-blue)](https://github.com/OpenNyAI/Opennyai)
 [![Downloads](https://pepy.tech/badge/opennyai)](https://github.com/OpenNyAI/Opennyai)
 
 Opennyai is a python library for natural language preprocessing on Indian legal texts.
@@ -26,6 +27,8 @@ data and model training, please refer to individual git repo links.
 # 🔧 1. Installation
 
 To get started using opennyai first create a new python virtual environment using [conda](https://www.anaconda.com/):
+
+Supports python 3.8, 3.9, 3.10
 
 ```bash
 conda create -n opennyai python=3.8
