@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "opennyai"
-version = "0.0.12"
+version = "0.0.13"
 description = "A SpaCy pipeline and models for NLP on indian legal text."
-authors = ["Aman Tiwari <aman.tiwari@thoughtworks.com>"]
+authors = ["Aman Tiwari <work.amantiwari@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
