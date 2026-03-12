@@ -15,10 +15,10 @@ Indian court
 judgments:
 
 * Named Entity Recognition (NER): [GitHub](https://github.com/Legal-NLP-EkStep/legal_NER)
-  , [paper](https://arxiv.org/pdf/2211.03442.pdf) [Huggingface Datasets](https://huggingface.co/datasets/opennyaiorg/InLegalNER)
+  , [paper](https://arxiv.org/pdf/2211.03442.pdf), [Huggingface Datasets](https://huggingface.co/datasets/opennyaiorg/InLegalNER)
 * Judgment Structuring using Sentence Rhetorical
-  Roles: [GitHub](https://github.com/Legal-NLP-EkStep/rhetorical-role-baseline) [Huggingface Datasets](https://huggingface.co/datasets/opennyaiorg/InRhetoricalRoles)
-  , [paper](http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.470.pdf)
+  Roles: [GitHub](https://github.com/Legal-NLP-EkStep/rhetorical-role-baseline) 
+  , [paper](http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.470.pdf), [Huggingface Datasets](https://huggingface.co/datasets/opennyaiorg/InRhetoricalRoles)
 * Extractive Summarizer: [GitHub](https://github.com/Legal-NLP-EkStep/judgment_extractive_summarizer)
 
 This library is mainly for running the pretrained models on your custom input judgments text. For more details about
