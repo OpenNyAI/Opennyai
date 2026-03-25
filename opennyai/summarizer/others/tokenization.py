@@ -18,13 +18,28 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import collections
 import os
+import tempfile
 import unicodedata
+import urllib.request
 from io import open
 
-from pytorch_transformers import cached_path
 from wasabi import msg
 
 from opennyai.utils.download import CACHE_DIR
+
+
+def cached_path(url_or_path, cache_dir=None):
+    """Download a URL to a local cache dir and return the local path (or pass through if already local)."""
+    if os.path.isfile(url_or_path):
+        return url_or_path
+    if cache_dir is None:
+        cache_dir = os.path.join(CACHE_DIR, "hub_cache")
+    os.makedirs(cache_dir, exist_ok=True)
+    filename = url_or_path.split("/")[-1]
+    local_path = os.path.join(cache_dir, filename)
+    if not os.path.isfile(local_path):
+        urllib.request.urlretrieve(url_or_path, local_path)
+    return local_path
 
 EXTRACTIVE_SUMMARIZER_CACHE_PATH = os.path.join(CACHE_DIR, 'ExtractiveSummarizer'.lower())
 

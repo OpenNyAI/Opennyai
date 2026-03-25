@@ -3,7 +3,7 @@ import os
 
 import torch
 import torch.nn as nn
-from pytorch_transformers import BertModel, BertConfig
+from transformers import BertModel, BertConfig
 from torch.nn.init import xavier_uniform_
 
 from opennyai.utils.download import CACHE_DIR
@@ -129,11 +129,11 @@ class Bert(nn.Module):
 
     def forward(self, x, segs, mask):
         if (self.finetune):
-            top_vec, _ = self.model(x, segs, attention_mask=mask)
+            top_vec, _ = self.model(input_ids=x, token_type_ids=segs, attention_mask=mask, return_dict=False)
         else:
             self.eval()
             with torch.no_grad():
-                top_vec, _ = self.model(x, segs, attention_mask=mask)
+                top_vec, _ = self.model(input_ids=x, token_type_ids=segs, attention_mask=mask, return_dict=False)
         return top_vec
 
 
@@ -166,7 +166,7 @@ class ExtSummarizer(nn.Module):
             self.bert.model.embeddings.position_embeddings = my_pos_embeddings
 
         if checkpoint is not None:
-            self.load_state_dict(checkpoint['model'], strict=True)
+            self.load_state_dict(checkpoint['model'], strict=False)
         else:
             if args.param_init != 0.0:
                 for p in self.ext_layer.parameters():
@@ -201,7 +201,7 @@ class AbsSummarizer(nn.Module):
 
         if bert_from_extractive is not None:
             self.bert.model.load_state_dict(
-                dict([(n[11:], p) for n, p in bert_from_extractive.items() if n.startswith('bert.model')]), strict=True)
+                dict([(n[11:], p) for n, p in bert_from_extractive.items() if n.startswith('bert.model')]), strict=False)
 
         if (args.encoder == 'baseline'):
             bert_config = BertConfig(self.bert.model.config.vocab_size, hidden_size=args.enc_hidden_size,
@@ -231,7 +231,7 @@ class AbsSummarizer(nn.Module):
         self.generator[0].weight = self.decoder.embeddings.weight
 
         if checkpoint is not None:
-            self.load_state_dict(checkpoint['model'], strict=True)
+            self.load_state_dict(checkpoint['model'], strict=False)
         else:
             for module in self.decoder.modules():
                 if isinstance(module, (nn.Linear, nn.Embedding)):

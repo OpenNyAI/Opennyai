@@ -5,7 +5,7 @@ import spacy
 from tqdm import tqdm
 from wasabi import msg
 
-from .download import PIP_INSTALLER_URLS, install
+from .download import PIP_INSTALLER_URLS, install, patch_model_spacy_version
 from .sentencizer import split_main_judgement_to_preamble_and_judgement
 
 
@@ -74,6 +74,7 @@ class Data:
                 'en_core_web_sm',
                 'en_core_web_md']:
                 install(PIP_INSTALLER_URLS[preprocessing_nlp_model])
+                patch_model_spacy_version(preprocessing_nlp_model)
             else:
                 raise RuntimeError(
                     f'{preprocessing_nlp_model} doesn\'t exist in list of available opennyai preprocessing models')

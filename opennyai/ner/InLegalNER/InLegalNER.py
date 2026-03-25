@@ -4,7 +4,7 @@ import spacy
 from tqdm import tqdm
 from wasabi import msg
 
-from opennyai.utils.download import install, PIP_INSTALLER_URLS
+from opennyai.utils.download import install, patch_model_spacy_version, PIP_INSTALLER_URLS
 from .entity_recognizer_utils import extract_entities_from_judgment_text
 from .postprocessing_utils import precedent_coref_resol, other_person_coref_res, pro_statute_coref_resol, \
     remove_overlapping_entities
@@ -25,8 +25,12 @@ class InLegalNER:
             msg.info(f'Installing {model_name}. This is a one time process!!')
             if PIP_INSTALLER_URLS.get(model_name) is not None:
                 install(PIP_INSTALLER_URLS[model_name])
+                patch_model_spacy_version(model_name)
             else:
                 raise RuntimeError(f'{model_name} doesn\'t exist in list of available opennyai ner models')
+        else:
+            # Patch on every load in case the env was upgraded after the initial install
+            patch_model_spacy_version(model_name)
         if use_gpu:
             try:
                 if spacy.prefer_gpu():
