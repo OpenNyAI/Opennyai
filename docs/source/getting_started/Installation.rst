@@ -1,11 +1,11 @@
 Installation
 ============
 
-To get started using opennyai first create a new conda environment:
+To get started using opennyai first create a new conda environment (Python 3.9–3.12 supported, including Python 3.11 on Windows):
 
 .. code-block::
 
-    conda create -n opennyai python=3.8
+    conda create -n opennyai python=3.11
     conda activate opennyai
 
 Install it using pip by running the following line in your terminal
@@ -13,6 +13,14 @@ Install it using pip by running the following line in your terminal
 .. code-block::
 
     pip install opennyai
+
+**Key dependencies installed automatically:**
+
+* ``spacy >= 3.4.4, < 3.7`` (Python 3.11 compatible wheels available)
+* ``spacy-transformers >= 1.2.0, < 1.3``
+* ``torch >= 2.0, < 3.0``
+* ``transformers >= 4.30, < 5.0``
+* ``numpy >= 1.23, < 2.0``
 
 For GPU support
 ---------------
@@ -26,8 +34,6 @@ If you want to utilize spacy with GPU please install `Cupy <https://anaconda.org
 
 
 In case of any issue with installation please refer to `spacy installation with cupy <https://spacy.io/usage>`_
-
-Remember you need spacy of 3.2.4 version for models to work perfectly.
 
 
 

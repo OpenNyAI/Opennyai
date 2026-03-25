@@ -4,8 +4,8 @@
 
 [![Current Release Version](https://img.shields.io/github/release/OpenNyAI/opennyai.svg?style=flat-square&logo=github)](https://github.com/OpenNyAI/Opennyai/releases)
 [![PyPI version](https://img.shields.io/pypi/v/opennyai.svg?style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/opennyai/)
-[![python version](https://img.shields.io/badge/Python-%3E=3.8-blue)](https://github.com/OpenNyAI/Opennyai)
-[![python version](https://img.shields.io/badge/Python-<3.11-blue)](https://github.com/OpenNyAI/Opennyai)
+[![python version](https://img.shields.io/badge/Python-%3E=3.9-blue)](https://github.com/OpenNyAI/Opennyai)
+[![python version](https://img.shields.io/badge/Python-<3.13-blue)](https://github.com/OpenNyAI/Opennyai)
 [![Downloads](https://pepy.tech/badge/opennyai)](https://github.com/OpenNyAI/Opennyai)
 
 Opennyai is a python library for natural language preprocessing on Indian legal texts.
@@ -28,10 +28,10 @@ data and model training, please refer to individual git repo links.
 
 To get started using opennyai first create a new python virtual environment using [conda](https://www.anaconda.com/):
 
-Supports python 3.8, 3.9, 3.10
+Supports Python 3.9, 3.10, 3.11, 3.12 (including Windows)
 
 ```bash
-conda create -n opennyai python=3.8
+conda create -n opennyai python=3.11
 conda activate opennyai
 ```
 
@@ -40,6 +40,13 @@ Install it using pip by running the following line in your terminal
 ```bash
 pip install -U opennyai
 ```
+
+**Key dependencies installed automatically:**
+- `spacy >= 3.4.4, < 3.7` (Python 3.11 compatible)
+- `spacy-transformers >= 1.2.0, < 1.3`
+- `torch >= 2.0, < 3.0`
+- `transformers >= 4.30, < 5.0`
+- `numpy >= 1.23, < 2.0`
 
 #### For GPU support
 
@@ -52,8 +59,6 @@ pip install cupy-cuda<your_cuda_version> ##### E.g. cupy-cuda112
 ```
 
 In case of any issue with installation please refer to [spacy installation with cupy](https://spacy.io/usage)
-
-Remember you need spacy of 3.2.4 version for models to work perfectly.
 
 # 📖 2. Documentation
 
@@ -102,7 +107,7 @@ For more details on usage please refer to the [documentation](https://opennyai.r
 
 Google Colab Notebook
 ----------------------
-We encourage you to use the local machine installation of opennyai library instead of Google colab as it works with python 3.8. Since Google colab works with higher versions of python, opennyai installation does not work.
+This fork supports Python 3.9–3.12, so it is compatible with Google Colab (which uses Python 3.10+).
 
 | Description               | Link  |
 |---------------------------|-------|
