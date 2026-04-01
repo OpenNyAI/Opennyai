@@ -121,9 +121,9 @@ class Bert(nn.Module):
     def __init__(self, large, temp_dir=EXTRACTIVE_SUMMARIZER_CACHE_PATH, finetune=False):
         super(Bert, self).__init__()
         if (large):
-            self.model = BertModel.from_pretrained('bert-large-uncased', cache_dir=temp_dir)
+            self.model = BertModel.from_pretrained('bert-large-uncased')
         else:
-            self.model = BertModel.from_pretrained('bert-base-uncased', cache_dir=temp_dir)
+            self.model = BertModel.from_pretrained('bert-base-uncased')
 
         self.finetune = finetune
 

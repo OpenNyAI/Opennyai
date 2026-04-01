@@ -1,6 +1,6 @@
 [project]
 name = "opennyai"
-version = "0.0.12"
+version = "0.0.14"
 description = "A SpaCy pipeline and models for NLP on Indian legal text."
 authors = [{ name = "OpenNyAI Team", email = "aman.tiwari@thoughtworks.com" }]
 license = { text = "MIT" }
