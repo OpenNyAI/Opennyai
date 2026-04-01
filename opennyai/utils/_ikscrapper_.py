@@ -65,12 +65,12 @@ def get_text_from_indiankanoon_url(url: str) -> str:
         judgment_txt = ''
 
         ###### remove known footer, header patterns
-    regex_patterns_to_remove = [{'pattern': 'http://www.judis.nic.in(\s*?\x0c\s*?)?'},
+    regex_patterns_to_remove = [{'pattern': r'http://www.judis.nic.in(\s*?\x0c\s*?)?'},
                                 {
-                                    'pattern': '(::: Uploaded on - \d\d/\d\d/\d\d\d\d\s+)?::: Downloaded on - .{5,50}:::'},
-                                {'pattern': 'https://www.mhc.tn.gov.in/judis/(\s*?\x0c\s*?)?'},
+                                    'pattern': r'(::: Uploaded on - \d\d/\d\d/\d\d\d\d\s+)?::: Downloaded on - .{5,50}:::'},
+                                {'pattern': r'https://www.mhc.tn.gov.in/judis/(\s*?\x0c\s*?)?'},
                                 {
-                                    'pattern': 'Signature Not Verified Signed By:.{5,100}Signing Date:\d\d\.\d\d\.\d\d\d\d(.{1,50}Page \d+\s*?! of \d+\s*?!\s*?\d\d:\d\d:\d\d)?',
+                                    'pattern': r'Signature Not Verified Signed By:.{5,100}Signing Date:\d\d\.\d\d\.\d\d\d\d(.{1,50}Page \d+\s*?! of \d+\s*?!\s*?\d\d:\d\d:\d\d)?',
                                     'flags': re.DOTALL | re.IGNORECASE},
                                 ]
     for pattern_dict in regex_patterns_to_remove:

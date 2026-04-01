@@ -52,7 +52,7 @@ def get_supra_match_by_fuzzy(supra,precedent_breakup,threshold):
                 res = res.split(' and ')[0]
                 res_text = re.sub(' +', ' ', res.lower())
 
-            supra_text = supra_text.replace('(', '\(').replace(')', '\)')
+            supra_text = supra_text.replace('(', r'\(').replace(')', r'\)')
 
             if pet == None and res == None:
                 continue
@@ -113,7 +113,7 @@ def get_precedent_supras(doc, entities_pn, precedent_breakup, entities_precedent
                 break
 
             precedent_text = re.sub(' +', '', precedent.text)
-            supra_text = supra_text.replace('(', '\(').replace(')', '\)')
+            supra_text = supra_text.replace('(', r'\(').replace(')', r'\)')
             match = re.search(supra_text, precedent_text, re.IGNORECASE)
 
             if match:
@@ -190,7 +190,7 @@ def create_precedent_clusters(precedent_breakup, percentage_threshold):
 def split_precedents(precedents):
     precedent_breakup = {}
     regex_vs = r'\b(?i)((v(\.|/)*s*\.*)|versus)\s+'
-    regex_cit = '(\(\d+\)|\d+|\[\d+\])\s*(\(\d+\)|\d+|\[\d+\])*\s*[A-Z\.]+\s*(\(\d+\)|\d+|\[\d+\])*\s*'
+    regex_cit = r'(\(\d+\)|\d+|\[\d+\])\s*(\(\d+\)|\d+|\[\d+\])*\s*[A-Z\.]+\s*(\(\d+\)|\d+|\[\d+\])*\s*'
 
     for entity in precedents:
         citation = re.search(regex_cit, entity.text)
@@ -732,8 +732,8 @@ def create_statute_clusters_using_lev(clusters, statutes, threshold=5):
 
 
 def get_initials(statute):
-    statute = re.sub("[\(\[].*?[\)\]]", "", statute.strip())
-    statute_left = re.split('\s+', statute.strip().split(',')[0])  # remove year and split
+    statute = re.sub(r"[\(\[].*?[\)\]]", "", statute.strip())
+    statute_left = re.split(r'\s+', statute.strip().split(',')[0])  # remove year and split
     acronym = ''
     stat = ''
 
@@ -755,16 +755,16 @@ def create_acronym(statute):
     for a in acronym:
         if a[0].isalpha():
             if a[0].islower():
-                variation = variation + a + '*\.*\s*'
+                variation = variation + a + r'*\.*\s*'
             else:
-                variation = variation + a + '\.*\s*'
+                variation = variation + a + r'\.*\s*'
     regex_act = regex_act.format(variation)
     regex_act = regex_act.replace(' ', '')
     if stat.strip() != '':
         if stat.lower() == 'code':
-            regex_act = regex_act + stat[0] + '*\.*[' + stat + ']*'  ##code can be written as c or code
+            regex_act = regex_act + stat[0] + r'*\.*[' + stat + ']*'  ##code can be written as c or code
         else:
-            regex_act = regex_act + '\.*(' + stat + ')\\b'
+            regex_act = regex_act + r'\.*(' + stat + r')\b'
     return regex_act
 
 
