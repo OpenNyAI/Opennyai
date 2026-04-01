@@ -27,8 +27,8 @@ def clean(x):
 
 
 def recover_from_corenlp(s):
-    s = re.sub(r' \'{\w}', '\'\g<1>', s)
-    s = re.sub(r'\'\' {\w}', '\'\'\g<1>', s)
+    s = re.sub(r' \'{\w}', r'\'\g<1>', s)
+    s = re.sub(r'\'\' {\w}', r'\'\'\g<1>', s)
 
 
 def load_json(p, lower):
