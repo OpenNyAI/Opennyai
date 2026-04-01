@@ -71,7 +71,7 @@ class RhetoricalRolePredictor():
         task = create_task(pubmed_task)
         self.model = getattr(models, self.config["model"])(self.config, [task])
 
-        self.model.load_state_dict(load_model_from_cache('RhetoricalRole'))
+        self.model.load_state_dict(load_model_from_cache('RhetoricalRole'), strict=False)
         self.model.to(self.device)
 
         # Ensure to use the same tokenizer used during training
