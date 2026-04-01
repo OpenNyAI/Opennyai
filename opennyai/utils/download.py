@@ -15,8 +15,8 @@ PIP_INSTALLER_URLS = {
     "en_core_web_trf": "https://github.com/explosion/spacy-models/releases/download/en_core_web_trf-3.8.0/en_core_web_trf-3.8.0-py3-none-any.whl",
 }
 TORCH_PT_MODEL_URLS = {
-    "RhetoricalRole": "https://storage.googleapis.com/indianlegalbert/OPEN_SOURCED_FILES/Rhetorical_Role_Benchmark/Model/model.pt",
-    "ExtractiveSummarizer": "https://storage.googleapis.com/indianlegalbert/OPEN_SOURCED_FILES/Extractive_summarization/model/model_headnotes/model.pt"
+    "RhetoricalRole": "https://huggingface.co/opennyaiorg/InRhetoricalRoles/resolve/main/InRhetoricalRoleModel.pt",
+    "ExtractiveSummarizer": "https://huggingface.co/opennyaiorg/InExtractiveSummarizer/resolve/main/InExtractiveSummarizerModel.pt",
 }
 CACHE_DIR = os.path.join(str(Path.home()), '.opennyai')
 
