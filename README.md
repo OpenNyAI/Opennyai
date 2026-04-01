@@ -4,7 +4,7 @@
 
 [![Current Release Version](https://img.shields.io/github/release/OpenNyAI/opennyai.svg?style=flat-square&logo=github)](https://github.com/OpenNyAI/Opennyai/releases)
 [![PyPI version](https://img.shields.io/pypi/v/opennyai.svg?style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/opennyai/)
-[![python version](https://img.shields.io/badge/Python-%3E=3.7-blue)](https://github.com/OpenNyAI/Opennyai)
+[![python version](https://img.shields.io/badge/Python-%3E=3.13-blue)](https://github.com/OpenNyAI/Opennyai)
 [![Downloads](https://pepy.tech/badge/opennyai)](https://github.com/OpenNyAI/Opennyai)
 
 Opennyai is a python library for natural language preprocessing on Indian legal texts.
@@ -25,32 +25,41 @@ data and model training, please refer to individual git repo links.
 
 # 🔧 1. Installation
 
-To get started using opennyai first create a new python virtual environment using [conda](https://www.anaconda.com/):
+### Using uv (recommended)
+
+Install [uv](https://docs.astral.sh/uv/) if you haven't already:
 
 ```bash
-conda create -n opennyai python=3.8
-conda activate opennyai
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-Install it using pip by running the following line in your terminal
+Create a virtual environment and install opennyai:
 
 ```bash
+uv venv --python 3.13
+source .venv/bin/activate
+uv pip install opennyai
+```
+
+### Using pip
+
+You can also install with pip directly (requires Python >= 3.13):
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
 pip install -U opennyai
 ```
 
 #### For GPU support
 
-If you want to utilize spacy with GPU please install [Cupy](https://anaconda.org/conda-forge/cupy) and
-[cudatoolkit](https://anaconda.org/anaconda/cudatoolkit) dependency of appropriate version.
+If you want to utilize spacy with GPU please install [Cupy](https://cupy.dev/) with the appropriate CUDA version:
 
 ```bash
-conda install cudatoolkit==<your_cuda_version> #### E.g. cudatoolkit==11.2
-pip install cupy-cuda<your_cuda_version> ##### E.g. cupy-cuda112
+pip install cupy-cuda12x  # For CUDA 12.x
 ```
 
-In case of any issue with installation please refer to [spacy installation with cupy](https://spacy.io/usage)
-
-Remember you need spacy of 3.2.4 version for models to work perfectly.
+In case of any issue with installation please refer to [spacy installation with cupy](https://spacy.io/usage).
 
 # 📖 2. Documentation
 
@@ -104,7 +113,3 @@ Google Colab Notebook
 |---------------------------|-------|
 | Run Inference          | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1rNA6XVyD-GCTd0YtosjiKON_p9bGuVwz) |
 
-Visualization of outputs
------------------------
-We encourage users to use [our webapp](https://summarizer-fer6v2lowq-uc.a.run.app/) for visualizing the results for a
-judgment of your choice.
