@@ -788,7 +788,13 @@ def remove_year(statute):
 
 
 def find_acronym_statute(statutes_left, total_statutes, acr_dict):
-    regex_check_acronym = r"([A-Z]+[a-z]{0,1}\.*\s*,*)*((A|a)(c|C)(t|T))*\s*"
+    # `[A-Z]+` nested inside a `*` group gave the engine exponentially many ways
+    # to split a run of capitals between the two quantifiers, so a long
+    # capitalised token that fails the overall match backtracks catastrophically
+    # (28 capitals took over a minute, doubling every two characters). Matching
+    # one capital per repetition makes the parse unambiguous and linear. The
+    # language accepted is unchanged.
+    regex_check_acronym = r"(?:[A-Z][a-z]?\.*\s*,*)*(?:[Aa][cC][tT])*\s*"
     to_find = []
     to_find_statute = []
     found = []
