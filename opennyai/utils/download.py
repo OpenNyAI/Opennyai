@@ -39,6 +39,11 @@ def install(package: str):
     # Fix wheels with invalid version in filename by reading actual version from metadata
     if "-any-py3-" in filename:
         import zipfile
+
+        # Read the version first and close the archive before renaming. Windows
+        # refuses to rename a file while a handle to it is open, so renaming
+        # inside the `with` block raises PermissionError: [WinError 32].
+        version = None
         with zipfile.ZipFile(local_path) as zf:
             for name in zf.namelist():
                 if name.endswith("/METADATA"):
@@ -46,12 +51,14 @@ def install(package: str):
                     for line in metadata.splitlines():
                         if line.startswith("Version:"):
                             version = line.split(":", 1)[1].strip()
-                            fixed_filename = filename.replace("-any-py3-", f"-{version}-py3-")
-                            fixed_path = os.path.join(tmp_dir, fixed_filename)
-                            os.rename(local_path, fixed_path)
-                            local_path = fixed_path
                             break
                     break
+
+        if version:
+            fixed_filename = filename.replace("-any-py3-", f"-{version}-py3-")
+            fixed_path = os.path.join(tmp_dir, fixed_filename)
+            os.rename(local_path, fixed_path)
+            local_path = fixed_path
 
     uv_path = shutil.which("uv")
     env = os.environ.copy()
